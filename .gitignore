@@ -1,0 +1,6 @@
+tools/*.exe
+tools/*.dll
+tools/old/*.exe
+tools/old/*.dll
+
+.vscode/
