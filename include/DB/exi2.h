@@ -12,10 +12,10 @@ volatile u32 EXI_CD006834 : 0xCD006834;
 volatile u32 EXI_CD006838 : 0xCD006838;
 
 void __DBEXIInit(void);
-BOOL __DBEXIReadReg(u32, void*, u32);
-BOOL __DBEXIWriteReg(u32, const void*, u32);
-BOOL __DBEXIReadRam(u32, void*, u32);
-BOOL __DBEXIWriteRam(u32, const void*, u32);
+BOOL __DBEXIReadReg(u32, void*, int);
+BOOL __DBEXIWriteReg(u32, const void*, int);
+BOOL __DBEXIReadRam(u32, void*, int);
+BOOL __DBEXIWriteRam(u32, const void*, int);
 
 #ifdef __cplusplus
 }
