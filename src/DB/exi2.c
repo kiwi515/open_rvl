@@ -4,12 +4,14 @@
 #include <OS/OSInterrupt.h>
 
 static BOOL __EXI2Select(void) {
-    EXI_CD006828 = ((EXI_CD006828 & 0x405) | 0xC0);
+    u32 temp = EXI_CD006828;
+    EXI_CD006828 = ((temp & 0x405) | 0xC0);
     return TRUE;
 }
 
 static BOOL __EXI2Deselect(void) {
-    EXI_CD006828 &= 0x405;
+    u32 temp = EXI_CD006828;
+    EXI_CD006828 = temp & 0x405;
     return TRUE;
 }
 
@@ -94,8 +96,6 @@ BOOL __DBEXIReadReg(u32 val, void* mem, int size) {
     return error == FALSE;
 }
 
-#ifdef NONMATCHING
-// https://decomp.me/scratch/kH701
 BOOL __DBEXIWriteReg(u32 val, const void* mem, int size) {
     BOOL error = FALSE;
     u32 write_val = 0;
@@ -121,12 +121,7 @@ BOOL __DBEXIWriteReg(u32 val, const void* mem, int size) {
 
     return error == FALSE;
 }
-#else
-#error
-#endif
 
-#ifdef NONMATCHING
-// https://decomp.me/scratch/i9hq8
 BOOL __DBEXIReadRam(u32 val, void* mem, int size) {
     BOOL error = FALSE;
     u32 read_val;
@@ -146,12 +141,7 @@ BOOL __DBEXIReadRam(u32 val, void* mem, int size) {
 
     return error == FALSE;
 }
-#else
-#error
-#endif
 
-#ifdef NONMATCHING
-// https://decomp.me/scratch/rXnf6
 BOOL __DBEXIWriteRam(u32 val, const void* mem, int size) {
     BOOL error = FALSE;
     u32* lmem = (u32*)mem;
@@ -170,6 +160,3 @@ BOOL __DBEXIWriteRam(u32 val, const void* mem, int size) {
 
     return error == FALSE;
 }
-#else
-#error
-#endif
