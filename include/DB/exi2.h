@@ -1,11 +1,11 @@
-#ifndef RVL_SDK_EXI_EXI_H
-#define RVL_SDK_EXI_EXI_H
+#ifndef RVL_SDK_DB_EXI2_H
+#define RVL_SDK_DB_EXI2_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef enum { EXI_MEM_READ, EXI_MEM_WRITE, EXI_MEM_OP2 } EXIOperation;
+typedef enum { EXI_OP_READ, EXI_OP_WRITE, EXI_OP_OP2 } EXIOperation;
 
 volatile u32 EXI_CD006828 : 0xCD006828;
 volatile u32 EXI_CD006834 : 0xCD006834;
