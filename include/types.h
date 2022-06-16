@@ -3,6 +3,8 @@
 #include <stddef.h>
 
 #define ROUND_UP(x, align) (((x) + (align)-1) & (-(align)))
+#define ROUND_UP_PTR(x, align)                                                 \
+    ((void*)((((u32)(x)) + (align)-1) & (~((align)-1))))
 
 typedef unsigned long long u64;
 typedef signed long long s64;
