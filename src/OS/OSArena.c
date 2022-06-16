@@ -29,13 +29,10 @@ void OSSetMEM2ArenaLo(void* lo) { s_mem2ArenaLo = lo; }
 
 void OSSetArenaLo(void* lo) { OSSetMEM1ArenaLo(lo); }
 
-#ifdef NONMATCHING
-// https://decomp.me/scratch/5RY4W
-void* OSAllocFromMEM1ArenaLo(size_t sz, int align) {
-    u8* mem = ROUND_UP_PTR(OSGetMEM1ArenaLo(), align);
-    OSSetMEM1ArenaLo(ROUND_UP_PTR(mem + sz, align));
-    return mem;
+void* OSAllocFromMEM1ArenaLo(size_t sz, u32 align) {
+    u8* blk_start = ROUND_UP_PTR(OSGetMEM1ArenaLo(), align);
+    u8* blk_end = blk_start + sz;
+    blk_end = ROUND_UP_PTR(blk_end, align);
+    OSSetMEM1ArenaLo(blk_end);
+    return blk_start;
 }
-#else
-#error
-#endif

@@ -21,7 +21,7 @@ void OSSetMEM1ArenaLo(void*);
 void OSSetMEM2ArenaLo(void*);
 void OSSetArenaLo(void*);
 
-void* OSAllocFromMEM1ArenaLo(size_t, int);
+void* OSAllocFromMEM1ArenaLo(size_t, u32);
 
 #ifdef __cplusplus
 }
