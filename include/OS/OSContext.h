@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-typedef struct {
+typedef struct OSContext {
     u32 gprs[32]; // at 0x0
     u32 cr;       // at 0x80
     u32 lr;       // at 0x84

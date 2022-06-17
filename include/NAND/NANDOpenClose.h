@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-typedef struct {
+typedef struct NANDFileInfo {
     char UNK_0x0[0x8C];
 } NANDFileInfo;
 

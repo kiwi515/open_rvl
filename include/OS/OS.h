@@ -15,7 +15,7 @@ volatile u16 OS_AI_DMA_ADDR_LO : 0xCC005032;
 
 volatile u32 OS_DI_DMA_ADDR : 0xCD006014;
 
-typedef struct {
+typedef struct OSIOSRev {
     u8 id;         // at 0x0
     u8 ver_major;  // at 0x1
     u8 ver_minor;  // at 0x2
