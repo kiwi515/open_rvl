@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_OS_ERROR
-#define RVL_SDK_OS_ERROR
+#ifndef RVL_SDK_OS_ERROR_H
+#define RVL_SDK_OS_ERROR_H
 #include "OSContext.h"
 #include <types.h>
 #ifdef __cplusplus

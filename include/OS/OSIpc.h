@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_OS_IPC
-#define RVL_SDK_OS_IPC
+#ifndef RVL_SDK_OS_IPC_H
+#define RVL_SDK_OS_IPC_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

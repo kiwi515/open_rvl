@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_OS_LINK
-#define RVL_SDK_OS_LINK
+#ifndef RVL_SDK_OS_LINK_H
+#define RVL_SDK_OS_LINK_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

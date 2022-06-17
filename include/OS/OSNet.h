@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_OS_NET
-#define RVL_SDK_OS_NET
+#ifndef RVL_SDK_OS_NET_H
+#define RVL_SDK_OS_NET_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

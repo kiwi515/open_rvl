@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_OS_TIME
-#define RVL_SDK_OS_TIME
+#ifndef RVL_SDK_OS_TIME_H
+#define RVL_SDK_OS_TIME_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_OS_INTERRUPT
-#define RVL_SDK_OS_INTERRUPT
+#ifndef RVL_SDK_OS_INTERRUPT_H
+#define RVL_SDK_OS_INTERRUPT_H
 #include "OSContext.h"
 #include <types.h>
 #ifdef __cplusplus

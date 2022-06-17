@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_OS_THREAD
-#define RVL_SDK_OS_THREAD
+#ifndef RVL_SDK_OS_THREAD_H
+#define RVL_SDK_OS_THREAD_H
 #include "OSContext.h"
 #include <types.h>
 #ifdef __cplusplus
