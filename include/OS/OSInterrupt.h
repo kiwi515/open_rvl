@@ -8,6 +8,10 @@ extern "C" {
 
 typedef void (*OSInterruptHandler)(u32, OSContext*);
 
+extern u32 __OSLastInterruptSrr0;
+extern s16 __OSLastInterrupt;
+extern s64 __OSLastInterruptTime;
+
 u32 OSDisableInterrupts(void);
 void OSRestoreInterrupts(u32);
 OSInterruptHandler __OSSetInterruptHandler(u32, OSInterruptHandler);

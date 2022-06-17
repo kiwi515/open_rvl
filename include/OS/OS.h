@@ -7,6 +7,14 @@ extern "C" {
 
 volatile u32 OS_PI_REG : 0xcc003000;
 
+volatile u16 OS_ARAM_DMA_ADDR_HI : 0xCC005020;
+volatile u16 OS_ARAM_DMA_ADDR_LO : 0xCC005022;
+
+volatile u16 OS_AI_DMA_ADDR_HI : 0xCC005030;
+volatile u16 OS_AI_DMA_ADDR_LO : 0xCC005032;
+
+volatile u32 OS_DI_DMA_ADDR : 0xCD006014;
+
 typedef struct {
     u8 id;         // at 0x0
     u8 ver_major;  // at 0x1

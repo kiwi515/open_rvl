@@ -1,13 +1,14 @@
-#ifndef STDDEF_H
-#define STDDEF_H
+#ifndef STDARG_H
+#define STDARG_H
 
-#ifndef NULL
-#define NULL 0
-#endif // NULL
+typedef struct __va_list_struct {
+    char gpr;
+    char fpr;
+    char* input_arg_area;
+    char* reg_save_area;
+} va_list[1];
 
-typedef unsigned long size_t;
-
-#define offsetof(ST, M) ((size_t) & (((ST*)0)->M))
+void* __va_arg(va_list, int);
 
 #define va_start(ARG, VA_LIST) ((void)ARG, __builtin_va_info(&VA_LIST))
 #define va_end(VA_LIST) ((void)VA_LIST)

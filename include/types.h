@@ -1,5 +1,6 @@
 #ifndef TYPES_H
 #define TYPES_H
+#include <stdarg.h>
 #include <stddef.h>
 
 #define ROUND_UP(x, align) (((x) + (align)-1) & (-(align)))
