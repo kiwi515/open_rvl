@@ -12,6 +12,9 @@ extern u32 __OSLastInterruptSrr0;
 extern s16 __OSLastInterrupt;
 extern s64 __OSLastInterruptTime;
 
+extern void* __RAS_OSDisableInterrupts_begin;
+extern void* __RAS_OSDisableInterrupts_end;
+
 u32 OSDisableInterrupts(void);
 void OSRestoreInterrupts(u32);
 OSInterruptHandler __OSSetInterruptHandler(u32, OSInterruptHandler);

@@ -52,7 +52,7 @@ OSErrorHandler OSSetErrorHandler(u16 error, OSErrorHandler handler) {
 
         if (handler != NULL) {
             int i;
-            for (thread = OS_FIRST_THREAD; thread != NULL;
+            for (thread = OS_THREAD_QUEUE.head; thread != NULL;
                  thread = thread->next) {
                 thread->context.srr1 |= 0x900;
 
@@ -73,7 +73,7 @@ OSErrorHandler OSSetErrorHandler(u16 error, OSErrorHandler handler) {
             fpscr |= __OSFpscrEnableBits & 0xF8;
             msr |= 0x900;
         } else {
-            for (thread = OS_FIRST_THREAD; thread != NULL;
+            for (thread = OS_THREAD_QUEUE.head; thread != NULL;
                  thread = thread->next) {
                 thread->context.srr1 &= ~0x900;
                 thread->context.fpscr &= ~0xF8;
@@ -108,25 +108,25 @@ void __OSUnhandledException(u8 error, OSContext* ctx, u32 dsisr, u32 dar) {
             msr = PPCMfmsr();
             PPCMtmsr(msr | 0x2000);
 
-            if (OS_CURRENT_CONTEXT != NULL) {
-                OSSaveFPUContext(OS_CURRENT_CONTEXT);
+            if (OS_CURRENT_FPU_CONTEXT != NULL) {
+                OSSaveFPUContext(OS_CURRENT_FPU_CONTEXT);
             }
 
             fpscr = PPCMffpscr();
             PPCMtfpscr(fpscr & 0x6005F8FF);
             PPCMtmsr(msr);
 
-            if (OS_CURRENT_CONTEXT == ctx) {
+            if (OS_CURRENT_FPU_CONTEXT == ctx) {
                 OSDisableScheduler();
                 __OSErrorTable[error](error, ctx, dsisr, dar);
                 ctx->srr1 &= ~0x2000;
-                OS_CURRENT_CONTEXT = NULL;
+                OS_CURRENT_FPU_CONTEXT = NULL;
                 ctx->fpscr &= 0x6005F8FF;
                 OSEnableScheduler();
                 __OSReschedule();
             } else {
                 ctx->srr1 &= ~0x2000;
-                OS_CURRENT_CONTEXT = NULL;
+                OS_CURRENT_FPU_CONTEXT = NULL;
             }
 
             OSLoadContext(ctx);

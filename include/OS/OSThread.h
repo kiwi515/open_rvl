@@ -37,7 +37,7 @@ typedef struct OSThread {
     char UNK_0x30C[0xC];
 } OSThread;
 
-OSThread* OS_FIRST_THREAD : 0x800000DC;
+OSThreadQueue OS_THREAD_QUEUE : 0x800000DC;
 
 void OSInitThreadQueue(OSThreadQueue*);
 OSThread* OSGetCurrentThread(void);

@@ -24,7 +24,11 @@ typedef struct OSIOSRev {
     u8 build_year; // at 0x5
 } OSIOSRev;
 
+typedef void (*OSExceptionHandler)(u8, OSContext*);
+
 void __OSGetIOSRev(OSIOSRev*);
+
+void __OSSetExceptionHandler(u16, OSExceptionHandler);
 
 #ifdef __cplusplus
 }

@@ -18,16 +18,26 @@ typedef struct OSContext {
     u32 srr1;  // at 0x19C
     u16 SHORT_0x1A0;
     u16 SHORT_0x1A2;
-    char UNK_0x1A4[0x1C8 - 0x1A4];
+    u32 gqrs[8]; // at 0x1A4
+    char UNK_0x1C4[0x1C8 - 0x1C4];
     f64 psfs[32]; // at 0x1C8
 } OSContext;
 
-OSContext* OS_CURRENT_CONTEXT : 0x800000D8;
+OSContext* OS_CURRENT_CONTEXT : 0x800000D4;
+OSContext* OS_CURRENT_FPU_CONTEXT : 0x800000D8;
 
 void OSSaveFPUContext(OSContext*);
+void OSSetCurrentContext(OSContext*);
+OSContext* OSGetCurrentContext(void);
+BOOL OSSaveContext(OSContext*);
 void OSLoadContext(OSContext*);
 void* OSGetStackPointer(void);
+void OSSwitchFiber(void*, void*);
+void OSSwitchFiberEx(u32, u32, u32, u32, void*, void*);
+void OSClearContext(OSContext*);
+void OSInitContext(OSContext*);
 void OSDumpContext(const OSContext*);
+void __OSContextInit(void);
 
 #ifdef __cplusplus
 }
