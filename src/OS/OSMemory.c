@@ -454,6 +454,7 @@ static void BATConfig(void) {
     void* mem2end;
 
     if (OS_HOLLYWOOD_VER == 0) {
+        // Did they mean to call the function?
         if (&OSGetPhysicalMem1Size == NULL) {
             RealMode(ConfigMEM_ES1_0);
             return;
