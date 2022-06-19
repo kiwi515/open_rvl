@@ -19,12 +19,12 @@ volatile u16 OS_AI_DMA_ADDR_LO : 0xCC005032;
 volatile u32 OS_DI_DMA_ADDR : 0xCD006014;
 
 typedef struct OSIOSRev {
-    u8 id;         // at 0x0
-    u8 ver_major;  // at 0x1
-    u8 ver_minor;  // at 0x2
-    u8 build_mon;  // at 0x3
-    u8 build_day;  // at 0x4
-    u8 build_year; // at 0x5
+    u8 id;        // at 0x0
+    u8 verMajor;  // at 0x1
+    u8 verMinor;  // at 0x2
+    u8 buildMon;  // at 0x3
+    u8 buildDay;  // at 0x4
+    u8 buildYear; // at 0x5
 } OSIOSRev;
 
 typedef void (*OSExceptionHandler)(u8, OSContext*);

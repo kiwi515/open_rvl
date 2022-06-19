@@ -12,7 +12,7 @@ void __OSInitNet(void) {
     OSIOSRev rev;
     __OSGetIOSRev(&rev);
 
-    if (rev.ver_major <= 4 || rev.ver_major == 9) {
+    if (rev.verMajor <= 4 || rev.verMajor == 9) {
         return;
     }
 
