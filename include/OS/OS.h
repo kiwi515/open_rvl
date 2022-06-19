@@ -1,11 +1,14 @@
 #ifndef RVL_SDK_OS_H
 #define RVL_SDK_OS_H
+#include "OSContext.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-volatile u32 OS_PI_REG : 0xcc003000;
+u32 OS_HOLLYWOOD_VER : 0x80003138;
+
+volatile u32 OS_PI_REG : 0xCC003000;
 
 volatile u16 OS_ARAM_DMA_ADDR_HI : 0xCC005020;
 volatile u16 OS_ARAM_DMA_ADDR_LO : 0xCC005022;
