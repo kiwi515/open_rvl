@@ -16,6 +16,7 @@ extern void* __RAS_OSDisableInterrupts_begin;
 extern void* __RAS_OSDisableInterrupts_end;
 
 u32 OSDisableInterrupts(void);
+u32 OSEnableInterrupts(void);
 void OSRestoreInterrupts(u32);
 OSInterruptHandler __OSSetInterruptHandler(u32, OSInterruptHandler);
 

@@ -399,12 +399,13 @@ void OSClearContext(OSContext* ctx) {
     }
 }
 
-asm void OSInitContext(register OSContext* ctx) {
+asm void OSInitContext(register OSContext* ctx, register void* srr0,
+                       register void* stack) {
     // clang-format off
     nofralloc
     
-    stw r4, 0x198(ctx)
-    stw r5, 4(ctx)
+    stw srr0, 0x198(ctx)
+    stw stack, 4(ctx)
     li r11, 0
     ori r11, r11, 0x9032
     stw r11, 0x19c(ctx)

@@ -35,7 +35,7 @@ void* OSGetStackPointer(void);
 void OSSwitchFiber(void*, void*);
 void OSSwitchFiberEx(u32, u32, u32, u32, void*, void*);
 void OSClearContext(OSContext*);
-void OSInitContext(OSContext*);
+void OSInitContext(OSContext*, void*, void*);
 void OSDumpContext(const OSContext*);
 void __OSContextInit(void);
 
