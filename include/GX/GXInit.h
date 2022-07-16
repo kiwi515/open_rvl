@@ -16,7 +16,7 @@ typedef struct _GXData {
     u32 dirtyFlags; // at 0x5FC
 } GXData;
 
-extern GXData* __GXData;
+extern GXData* const __GXData;
 
 #ifdef __cplusplus
 }
