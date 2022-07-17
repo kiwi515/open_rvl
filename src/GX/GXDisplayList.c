@@ -64,13 +64,11 @@ u32 GXEndDisplayList(void) {
 }
 
 void GXCallDisplayList(void* list, u32 size) {
-    GXData* data = __GXData;
-
-    if (data->dirtyFlags != 0) {
+    if (__GXData->dirtyFlags != 0) {
         __GXSetDirtyState();
     }
 
-    if (data->WORD_0x0 == 0) {
+    if (__GXData->WORD_0x0 == 0) {
         __GXSendFlushPrim();
     }
 
