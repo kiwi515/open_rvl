@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_GX_LIGHT_H
 #define RVL_SDK_GX_LIGHT_H
-#include <GX.h>
+#include "GX.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

@@ -7,8 +7,8 @@ extern "C" {
 
 // Pack value into bitfield
 #define GX_BITFIELD_SET(field, pos, size, value)                               \
-    (field) =                                                                  \
-        __rlwimi((field), (value), (pos), 31 - (pos) - (size) + 1, 31 - (pos))
+    (field) = __rlwimi((field), (value), 31 - (pos) - (size) + 1, (pos),       \
+                       (pos) + (size)-1)
 
 extern volatile union {
     char c;

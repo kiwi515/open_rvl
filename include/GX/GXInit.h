@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_GX_INIT_H
 #define RVL_SDK_GX_INIT_H
-#include <GX.h>
+#include "GX.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
@@ -19,7 +19,12 @@ typedef struct _GXData {
     u32 WORDS_0xB8[2];
     u32 WORD_0xC0;
     u32 WORD_0xC4;
-    char UNK_0xC8[0x254 - 0xC8];
+    char UNK_0xC8[0x170 - 0xC8];
+    u32 WORD_0x170;
+    u32 WORD_0x174;
+    u32 WORD_0x178;
+    u32 WORD_0x17C;
+    char UNK_0x180[0x254 - 0x180];
     u32 WORD_0x254;
     char UNK_0x258[0x5F8 - 0x258];
     u8 dlistBegan; // at 0x5F8

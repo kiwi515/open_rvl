@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_GX_DISPLAY_LIST_H
 #define RVL_SDK_GX_DISPLAY_LIST_H
-#include <GX.h>
+#include "GX.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
