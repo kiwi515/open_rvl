@@ -321,7 +321,7 @@ void GXSetNumChans(u8 num) {
 }
 
 void GXSetChanCtrl(GXChannelID chan, u8 r4, GXColorSrc src0, GXColorSrc src1,
-                   u32 light, GXDiffuseFn diffFn, GXAttnFn attnFn) {
+                   GXLightID light, GXDiffuseFn diffFn, GXAttnFn attnFn) {
     u32 field = 0;
     const u32 idx = chan & 3;
 
@@ -332,8 +332,8 @@ void GXSetChanCtrl(GXChannelID chan, u8 r4, GXColorSrc src0, GXColorSrc src1,
                     (attnFn == GX_ATTN_FN_0) ? GX_DIFFUSE_FN_0 : diffFn);
     GX_BITFIELD_SET(field, 22, 1, attnFn != GX_ATTN_FN_2);
     GX_BITFIELD_SET(field, 21, 1, attnFn != GX_ATTN_FN_0);
-    GX_BITFIELD_SET(field, 26, 4, light);
-    GX_BITFIELD_SET(field, 17, 4, light >> 4);
+    GX_BITFIELD_SET(field, 26, 4, (u32)light);
+    GX_BITFIELD_SET(field, 17, 4, (u32)light >> 4);
 
     __GXData->WORDS_0xB8[idx] = field;
     __GXData->dirtyFlags |= (0x1000 << (idx));

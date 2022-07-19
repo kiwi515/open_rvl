@@ -83,8 +83,8 @@ void GXLoadLightObjIndx(u32, u32);
 void GXSetChanAmbColor(GXChannelID, GXColor);
 void GXSetChanMatColor(GXChannelID, GXColor);
 void GXSetNumChans(u8);
-void GXSetChanCtrl(GXChannelID, u8, GXColorSrc, GXColorSrc, u32, GXDiffuseFn,
-                   GXAttnFn);
+void GXSetChanCtrl(GXChannelID, u8, GXColorSrc, GXColorSrc, GXLightID,
+                   GXDiffuseFn, GXAttnFn);
 
 #ifdef __cplusplus
 }
