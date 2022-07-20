@@ -13,6 +13,7 @@ extern "C" {
 extern volatile union {
     char c;
     short s;
+    unsigned short us;
     int i;
     void* p;
     float f;

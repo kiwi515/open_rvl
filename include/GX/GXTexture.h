@@ -24,6 +24,8 @@ typedef enum _GXTexMapID {
     GX_MAX_TEXMAP
 } GXTexMapID;
 
+void __GXSetSUTexRegs(void);
+
 #ifdef __cplusplus
 }
 #endif
