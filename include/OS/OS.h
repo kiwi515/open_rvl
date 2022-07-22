@@ -33,6 +33,8 @@ void __OSGetIOSRev(OSIOSRev*);
 
 void __OSSetExceptionHandler(u16, OSExceptionHandler);
 
+void OSRegisterVersion(const char*);
+
 #ifdef __cplusplus
 }
 #endif
