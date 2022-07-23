@@ -24,14 +24,14 @@ static const char* __RFLVersion =
 static const RFLCoordinateData scCoordinate = {0x01200000, 0x00000000,
                                                0x00000000, 0x00000000};
 
-static RFLiManager* sRFLManager = NULL;
+static RFLManager* sRFLManager = NULL;
 static RFLError sRFLLastErrCode = RFL_ERR_1;
 static u8 sRFLBrokenType;
 static RFLReason sRFLLastReason;
 
 u32 RFLGetWorkSize(BOOL deluxTex) {
-    return deluxTex ? RFL_DELUXE_WORK_SIZE + sizeof(RFLiManager)
-                    : RFL_WORK_SIZE + sizeof(RFLiManager);
+    return deluxTex ? RFL_DELUXE_WORK_SIZE + sizeof(RFLManager)
+                    : RFL_WORK_SIZE + sizeof(RFLManager);
 }
 
 RFLError RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
@@ -51,14 +51,14 @@ RFLError RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         workSize = deluxTex ? RFL_DELUXE_WORK_SIZE : RFL_WORK_SIZE;
         memset(workBuffer, 0, workSize);
 
-        sRFLManager = (RFLiManager*)workBuffer;
+        sRFLManager = (RFLManager*)workBuffer;
         sRFLLastErrCode = RFL_ERR_1;
         sRFLLastReason = RFL_REASON_0;
         sRFLBrokenType = 0;
-        sRFLManager->workBuffer = (u8*)workBuffer + sizeof(RFLiManager);
+        sRFLManager->workBuffer = (u8*)workBuffer + sizeof(RFLManager);
 
-        heapSize = deluxTex ? RFL_DELUXE_WORK_SIZE - sizeof(RFLiManager)
-                            : RFL_WORK_SIZE - sizeof(RFLiManager);
+        heapSize = deluxTex ? RFL_DELUXE_WORK_SIZE - sizeof(RFLManager)
+                            : RFL_WORK_SIZE - sizeof(RFLManager);
 
         RFLiGetManager()->rootHeap =
             MEMCreateExpHeapEx(RFLiGetManager()->workBuffer, heapSize, 0x1);
@@ -90,11 +90,11 @@ RFLError RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         RFLiSetCoordinateData(&scCoordinate);
 
         if (resBuffer != NULL) {
-            RFLiLoader* loader =
+            RFLLoader* loader =
                 RFLAvailable() ? &RFLiGetManager()->loader : NULL;
-            loader->WORD_0x98 = 1;
-            loader->resSize = resSize;
-            loader->resBuffer = resBuffer;
+            loader->cached = TRUE;
+            loader->cacheSize = resSize;
+            loader->cache = resBuffer;
         }
 
         error = RFLiBootLoadAsync();
@@ -167,15 +167,15 @@ void* RFLiAlloc32(u32 size) { return allocal_(size, 32); }
 
 void RFLiFree(void* mem) { MEMFreeToExpHeap(RFLiGetManager()->tmpHeap, mem); }
 
-RFLiDBManager* RFLiGetDBManager(void) {
+RFLDBManager* RFLiGetDBManager(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->dbMgr;
 }
 
-RFLiHDBManager* RFLiGetHDBManager(void) {
+RFLHDBManager* RFLiGetHDBManager(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->hdbMgr;
 }
 
-RFLiLoader* RFLiGetLoader(void) {
+RFLLoader* RFLiGetLoader(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->loader;
 }
 
@@ -185,7 +185,7 @@ BOOL RFLiGetWorking(void) {
 
 void RFLiSetWorking(BOOL working) { RFLiGetManager()->working = working; }
 
-RFLiManager* RFLiGetManager(void) { return sRFLManager; }
+RFLManager* RFLiGetManager(void) { return sRFLManager; }
 
 RFLError RFLGetAsyncStatus(void) {
     if (!RFLAvailable()) {
@@ -219,11 +219,11 @@ RFLError RFLWaitAsync(void) {
     return status;
 }
 
-RFLiAccInfo* RFLiGetAccInfo(RFLAccessType type) {
-    return !RFLAvailable() ? NULL : &RFLiGetManager()->accInfo[type];
+RFLAccInfo* RFLiGetAccInfo(RFLAccessType type) {
+    return !RFLAvailable() ? NULL : &RFLiGetManager()->info[type];
 }
 
-RFLiCtrlBufManager* RFLiGetCtrlBufManager(void) {
+RFLCtrlBufManager* RFLiGetCtrlBufManager(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->ctrlBufMgr;
 }
 

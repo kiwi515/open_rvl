@@ -16,8 +16,10 @@ typedef enum {
     NAND_ACCESS_3 //!< RW?
 } NANDAccessType;
 
-int NANDOpen(const char*, NANDFileInfo*, NANDAccessType);
-int NANDClose(NANDFileInfo*);
+s32 NANDOpen(const char*, NANDFileInfo*, u8);
+s32 NANDPrivateOpen(const char*, NANDFileInfo*, u8);
+
+s32 NANDClose(NANDFileInfo*);
 
 #ifdef __cplusplus
 }

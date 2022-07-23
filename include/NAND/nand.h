@@ -6,9 +6,16 @@
 extern "C" {
 #endif
 
-int NANDDelete(const char*);
-int NANDRead(NANDFileInfo*, void*, u32);
-int NANDWrite(NANDFileInfo*, const void*, u32);
+typedef enum {
+    NAND_SEEK_BEGIN,
+    NAND_SEEK_0, //!< SEEK_CUR?
+    NAND_SEEK_1, //!< SEEK_END?
+} NANDSeekOrigin;
+
+s32 NANDDelete(const char*);
+s32 NANDRead(NANDFileInfo*, void*, u32);
+s32 NANDWrite(NANDFileInfo*, const void*, u32);
+s32 NANDSeek(NANDFileInfo*, s32, NANDSeekOrigin);
 
 #ifdef __cplusplus
 }
