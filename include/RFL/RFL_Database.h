@@ -10,7 +10,7 @@ typedef void RFLLoadDBCallback(void);
 
 void RFLiInitDatabase(MEMiHeapHead*);
 
-RFLError RFLiBootLoadDatabaseAsync(RFLLoadDBCallback);
+RFLResult RFLiBootLoadDatabaseAsync(RFLLoadDBCallback);
 
 #ifdef __cplusplus
 }

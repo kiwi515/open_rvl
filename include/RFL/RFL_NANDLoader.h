@@ -7,7 +7,7 @@ extern "C" {
 #endif
 
 void RFLiInitLoader(void);
-RFLError RFLiLoadResourceHeaderAsync(void);
+RFLResult RFLiLoadResourceHeaderAsync(void);
 u32 RFLiGetTexSize(RFLPartTex, u16);
 void* RFLiLoadTexture(RFLPartTex, u16, void*);
 u32 RFLiGetShpTexSize(RFLPartShpTex, u16);

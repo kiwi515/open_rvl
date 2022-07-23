@@ -1,6 +1,7 @@
 #ifndef RVL_SDK_RFL_SYSTEM_H
 #define RVL_SDK_RFL_SYSTEM_H
 #include <MEM/mem_heapCommon.h>
+#include <OS/OSAlarm.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
@@ -12,17 +13,17 @@ typedef UNKTYPE (*RFLModelDrawDoneCallback)(UNKTYPE);
 typedef UNKTYPE (*RFLAccessCallback)(UNKTYPE);
 
 typedef enum {
-    RFL_ERR_NONE,
-    RFL_ERR_1,
-    RFL_ERR_2,
-    RFL_ERR_3,
-    RFL_ERR_4,
-    RFL_ERR_CRITICAL,
-    RFL_ERR_BUSY
-} RFLError;
+    RFL_RESULT_OK,
+    RFL_RESULT_1,
+    RFL_RESULT_2,
+    RFL_RESULT_3,
+    RFL_RESULT_4,
+    RFL_RESULT_CRITICAL,
+    RFL_RESULT_BUSY
+} RFLResult;
 
 typedef enum {
-    RFL_REASON_0,
+    RFL_REASON_NONE,
 } RFLReason;
 
 typedef enum {
@@ -32,11 +33,7 @@ typedef enum {
     RFL_BROKEN_3,
 } RFLBrokenType;
 
-typedef enum {
-    RFL_ACCESS_DB,
-    RFL_ACCESS_RES,
-    RFL_ACCESS_TYPE_MAX
-} RFLAccessType;
+typedef enum { RFL_ACCESS_DB, RFL_ACCESS_RES, RFL_ACCESS_MAX } RFLAccessType;
 
 /**
  * @brief Face lib texture resources
@@ -136,7 +133,13 @@ typedef struct RFLHDBManager {
 
 typedef struct RFLAccInfo {
     RFLAccessCallback callback; // at 0x0
-    char UNK_0x4[0x1E0 - 0x4];
+    char UNK_0x4[0x48 - 0x4];
+    NANDFileInfo file; // at 0x48
+    char UNK_0xD4[0x198 - 0xD4];
+    OSAlarm alarm; // at 0x198
+    char UNK_0x1C4[0x1D4 - 0x1C4];
+    void* safeBuffer; // at 0x1D4
+    char UNK_0x1D8[0x1E0 - 0x1D8];
 } RFLAccInfo;
 
 // TO-DO: Size
@@ -155,14 +158,14 @@ typedef struct RFLManager {
     char UNK_0x16D[0x1AAC - 0x16D];
     RFLCtrlBufManager ctrlBufMgr; // at 0x1AAC
     char UNK_0x1AAD[0x1B34 - 0x1AAD];
-    BOOL working;    // at 0x1B34
-    BOOL deluxTex;   // at 0x1B38
-    u8 brokenType;   // at 0x1B3C
-    RFLError status; // at 0x1B40
+    BOOL working;     // at 0x1B34
+    BOOL deluxTex;    // at 0x1B38
+    u8 brokenType;    // at 0x1B3C
+    RFLResult status; // at 0x1B40
     u32 WORD_0x1B44;
     RFLReason reason; // at 0x1B48
     u32 WORD_0x1B4C;
-    RFLAccInfo info[RFL_ACCESS_TYPE_MAX]; // at 0x1B50
+    RFLAccInfo info[RFL_ACCESS_MAX]; // at 0x1B50
     char UNK_0x1F10[0x1F14 - 0x1F10];
     RFLIconDrawDoneCallback iconDrawDone;   // at 0x1F14
     RFLModelDrawDoneCallback modelDrawDone; // at 0x1F18
@@ -170,10 +173,10 @@ typedef struct RFLManager {
 } RFLManager;
 
 u32 RFLGetWorkSize(BOOL);
-RFLError RFLInitResAsync(void*, void*, u32, BOOL);
-RFLError RFLInitRes(void*, void*, u32, BOOL);
+RFLResult RFLInitResAsync(void*, void*, u32, BOOL);
+RFLResult RFLInitRes(void*, void*, u32, BOOL);
 void RFLExit(void);
-RFLError RFLiBootLoadAsync(void);
+RFLResult RFLiBootLoadAsync(void);
 BOOL RFLAvailable(void);
 void* RFLiAlloc(u32);
 void* RFLiAlloc32(u32);
@@ -184,9 +187,9 @@ RFLLoader* RFLiGetLoader(void);
 BOOL RFLiGetWorking(void);
 void RFLiSetWorking(BOOL);
 RFLManager* RFLiGetManager(void);
-RFLError RFLGetAsyncStatus(void);
+RFLResult RFLGetAsyncStatus(void);
 RFLReason RFLGetLastReason(void);
-RFLError RFLWaitAsync(void);
+RFLResult RFLWaitAsync(void);
 RFLAccInfo* RFLiGetAccInfo(RFLAccessType);
 RFLCtrlBufManager* RFLiGetCtrlBufManager(void);
 RFLReason RFLiGetLastReason(void);

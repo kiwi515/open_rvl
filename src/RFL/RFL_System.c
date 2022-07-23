@@ -25,7 +25,7 @@ static const RFLCoordinateData scCoordinate = {0x01200000, 0x00000000,
                                                0x00000000, 0x00000000};
 
 static RFLManager* sRFLManager = NULL;
-static RFLError sRFLLastErrCode = RFL_ERR_1;
+static RFLResult sRFLLastErrCode = RFL_RESULT_1;
 static u8 sRFLBrokenType;
 static RFLReason sRFLLastReason;
 
@@ -34,15 +34,15 @@ u32 RFLGetWorkSize(BOOL deluxTex) {
                     : RFL_WORK_SIZE + sizeof(RFLManager);
 }
 
-RFLError RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
-                         BOOL deluxTex) {
+RFLResult RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
+                          BOOL deluxTex) {
     u32 workSize;
     u32 heapSize;
     void* heapBuffer;
-    RFLError error;
+    RFLResult error;
 
     if (resBuffer == NULL) {
-        return RFL_ERR_CRITICAL;
+        return RFL_RESULT_CRITICAL;
     }
 
     if (RFLiGetManager() == NULL) {
@@ -52,8 +52,8 @@ RFLError RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         memset(workBuffer, 0, workSize);
 
         sRFLManager = (RFLManager*)workBuffer;
-        sRFLLastErrCode = RFL_ERR_1;
-        sRFLLastReason = RFL_REASON_0;
+        sRFLLastErrCode = RFL_RESULT_1;
+        sRFLLastReason = RFL_REASON_NONE;
         sRFLBrokenType = 0;
         sRFLManager->workBuffer = (u8*)workBuffer + sizeof(RFLManager);
 
@@ -74,9 +74,9 @@ RFLError RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         RFLiGetManager()->tmpHeap =
             MEMCreateExpHeapEx(heapBuffer, heapSize, 0x1);
 
-        RFLiGetManager()->status = RFL_ERR_NONE;
+        RFLiGetManager()->status = RFL_RESULT_OK;
         RFLiGetManager()->WORD_0x1B44 = 0;
-        RFLiGetManager()->reason = RFL_REASON_0;
+        RFLiGetManager()->reason = RFL_REASON_NONE;
         RFLiGetManager()->WORD_0x1B4C = 0;
         RFLiGetManager()->deluxTex = deluxTex;
         RFLiGetManager()->brokenType = 0;
@@ -98,18 +98,18 @@ RFLError RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         }
 
         error = RFLiBootLoadAsync();
-        if (error != RFL_ERR_BUSY && error != RFL_ERR_NONE) {
+        if (error != RFL_RESULT_BUSY && error != RFL_RESULT_OK) {
             RFLExit();
         }
     } else {
-        error = RFL_ERR_NONE;
+        error = RFL_RESULT_OK;
     }
 
     return error;
 }
 
-RFLError RFLInitRes(void* workBuffer, void* resBuffer, u32 resSize,
-                    BOOL deluxTex) {
+RFLResult RFLInitRes(void* workBuffer, void* resBuffer, u32 resSize,
+                     BOOL deluxTex) {
     RFLInitResAsync(workBuffer, resBuffer, resSize, deluxTex);
     return RFLWaitAsync();
 }
@@ -122,7 +122,7 @@ void RFLExit(void) {
     RFLWaitAsync();
     sRFLLastErrCode = RFLGetAsyncStatus();
     sRFLLastReason = RFLAvailable() ? (RFLAvailable() ? RFLiGetManager()->reason
-                                                      : RFL_REASON_0)
+                                                      : RFL_REASON_NONE)
                                     : sRFLLastReason;
     sRFLBrokenType = RFLiGetManager()->brokenType;
 
@@ -142,16 +142,16 @@ static void bootloadDB2Res_(void) {
     RFLiLoadResourceHeaderAsync();
 
     switch (RFLWaitAsync()) {
-    case RFL_ERR_3:
-    case RFL_ERR_NONE:
-    case RFL_ERR_BUSY:
+    case RFL_RESULT_3:
+    case RFL_RESULT_OK:
+    case RFL_RESULT_BUSY:
         break;
     default:
         RFLExit();
     }
 }
 
-RFLError RFLiBootLoadAsync(void) {
+RFLResult RFLiBootLoadAsync(void) {
     return RFLiBootLoadDatabaseAsync(bootloadDB2Res_);
 }
 
@@ -187,17 +187,17 @@ void RFLiSetWorking(BOOL working) { RFLiGetManager()->working = working; }
 
 RFLManager* RFLiGetManager(void) { return sRFLManager; }
 
-RFLError RFLGetAsyncStatus(void) {
+RFLResult RFLGetAsyncStatus(void) {
     if (!RFLAvailable()) {
         return sRFLLastErrCode;
     }
 
     if (RFLiIsWorking()) {
-        return RFL_ERR_BUSY;
+        return RFL_RESULT_BUSY;
     }
 
     if (RFLiCriticalError()) {
-        return RFL_ERR_CRITICAL;
+        return RFL_RESULT_CRITICAL;
     }
 
     return RFLiGetManager()->status;
@@ -206,15 +206,15 @@ RFLError RFLGetAsyncStatus(void) {
 RFLReason RFLGetLastReason(void) {
     return !RFLAvailable()
                ? sRFLLastReason
-               : (RFLAvailable() ? RFLiGetManager()->reason : RFL_REASON_0);
+               : (RFLAvailable() ? RFLiGetManager()->reason : RFL_REASON_NONE);
 }
 
-RFLError RFLWaitAsync(void) {
-    volatile RFLError status;
+RFLResult RFLWaitAsync(void) {
+    volatile RFLResult status;
 
     do {
         status = RFLGetAsyncStatus();
-    } while (status == RFL_ERR_BUSY);
+    } while (status == RFL_RESULT_BUSY);
 
     return status;
 }
@@ -228,7 +228,7 @@ RFLCtrlBufManager* RFLiGetCtrlBufManager(void) {
 }
 
 RFLReason RFLiGetLastReason(void) {
-    return !RFLAvailable() ? RFL_REASON_0 : RFLiGetManager()->reason;
+    return !RFLAvailable() ? RFL_REASON_NONE : RFLiGetManager()->reason;
 }
 
 void RFLiSetFileBroken(RFLBrokenType type) {

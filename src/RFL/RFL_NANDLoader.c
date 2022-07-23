@@ -57,7 +57,7 @@ static void loadResRead2ndcallback_(void) {
     loader = RFLiGetLoader();
     free = FALSE;
     cb = NULL;
-    if (RFLGetAsyncStatus() == RFL_ERR_NONE) {
+    if (RFLGetAsyncStatus() == RFL_RESULT_OK) {
         const u16 res = loader->numResources;
         headerBuf1 = (u32*)loader->headerBuf1;
         if (res < RFL_ARC_MAX) {
@@ -69,9 +69,9 @@ static void loadResRead2ndcallback_(void) {
             loader->numResources++;
             switch (RFLiReadAsync(RFL_ACCESS_RES, loader->headerBuf2, 32,
                                   loadResRead2ndcallback_, *(headerBuf1 + 1))) {
-            case RFL_ERR_BUSY:
+            case RFL_RESULT_BUSY:
                 break;
-            case RFL_ERR_NONE:
+            case RFL_RESULT_OK:
                 break;
             default:
                 free = TRUE;
@@ -104,7 +104,7 @@ static void loadResRead1stcallback_(void) {
 
     loader = RFLiGetLoader();
     free = FALSE;
-    if (RFLGetAsyncStatus() == RFL_ERR_NONE) {
+    if (RFLGetAsyncStatus() == RFL_RESULT_OK) {
         headerBuf1 = (u32*)loader->headerBuf1;
         loader->version = *(u16*)((u8*)headerBuf1 + 2);
 
@@ -114,9 +114,9 @@ static void loadResRead1stcallback_(void) {
 
         switch (RFLiReadAsync(RFL_ACCESS_RES, headerBuf2, 32,
                               loadResRead2ndcallback_, *(headerBuf1 + 1))) {
-        case RFL_ERR_BUSY:
+        case RFL_RESULT_BUSY:
             break;
-        case RFL_ERR_NONE:
+        case RFL_RESULT_OK:
             break;
         default:
             free = TRUE;
@@ -144,14 +144,14 @@ static void loadResGetlengthcallback_(void) {
     void* headerBuf1;
 
     loader = RFLiGetLoader();
-    if (RFLGetAsyncStatus() == RFL_ERR_NONE) {
+    if (RFLGetAsyncStatus() == RFL_RESULT_OK) {
         headerBuf1 = RFLiAlloc32(0x100);
         loader->headerBuf1 = headerBuf1;
         switch (RFLiReadAsync(RFL_ACCESS_RES, headerBuf1, 0x100,
                               loadResRead1stcallback_, 0)) {
-        case RFL_ERR_BUSY:
+        case RFL_RESULT_BUSY:
             break;
-        case RFL_ERR_NONE:
+        case RFL_RESULT_OK:
             break;
         default:
             RFLiFree(loader->headerBuf1);
@@ -166,14 +166,14 @@ static void loadResGetlengthcallback_(void) {
 static void loadResOpencallback_(void) {
     RFLLoader* loader;
 
-    if (RFLGetAsyncStatus() == RFL_ERR_NONE) {
+    if (RFLGetAsyncStatus() == RFL_RESULT_OK) {
         loader = RFLiGetLoader();
         loader->cacheSize = 0;
         switch (RFLiGetLengthAsync(RFL_ACCESS_RES, &loader->cacheSize,
                                    loadResGetlengthcallback_)) {
-        case RFL_ERR_BUSY:
+        case RFL_RESULT_BUSY:
             break;
-        case RFL_ERR_NONE:
+        case RFL_RESULT_OK:
             break;
         default:
             RFLiCloseAsync(RFL_ACCESS_RES, NULL);
@@ -183,19 +183,19 @@ static void loadResOpencallback_(void) {
     }
 }
 
-RFLError RFLiLoadResourceHeaderAsync(void) {
+RFLResult RFLiLoadResourceHeaderAsync(void) {
     RFLLoader* loader;
 
     loader = RFLiGetLoader();
     if (loader == NULL) {
-        RFLiEndWorking(RFL_ERR_CRITICAL);
-        return RFL_ERR_CRITICAL;
+        RFLiEndWorking(RFL_RESULT_CRITICAL);
+        return RFL_RESULT_CRITICAL;
     }
 
     if (RFLIsResourceCached()) {
         parseOnmemoryRes_();
-        RFLiEndWorking(RFL_ERR_NONE);
-        return RFL_ERR_BUSY;
+        RFLiEndWorking(RFL_RESULT_OK);
+        return RFL_RESULT_BUSY;
     }
 
     return RFLiOpenAsync(RFL_ACCESS_RES, NAND_READ, loadResOpencallback_);
