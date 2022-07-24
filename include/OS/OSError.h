@@ -6,6 +6,8 @@
 extern "C" {
 #endif
 
+#define OSError(...) OSPanic(__FILE__, __LINE__, __VA_ARGS__)
+
 typedef enum {
     OS_ERR_SYSTEM_RESET,
     OS_ERR_MACHINE_CHECK,
