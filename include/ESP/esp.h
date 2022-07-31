@@ -10,8 +10,8 @@ typedef enum {
     ESP_SEEK_BEGIN,
 } ESP_SeekOrigin;
 
-s32 ESP_ReadContentFile(u32, void*, u32);
-s32 ESP_SeekContentFile(u32, s32, ESP_SeekOrigin);
+s32 ESP_ReadContentFile(UNKWORD, void*, u32);
+s32 ESP_SeekContentFile(UNKWORD, s32, ESP_SeekOrigin);
 
 #ifdef __cplusplus
 }

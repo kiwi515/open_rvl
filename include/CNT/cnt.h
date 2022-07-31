@@ -8,7 +8,7 @@ extern "C" {
 
 typedef struct CNTHandle {
     ARCHandle arcHandle; // at 0x0
-    u32 WORD_0x1C;
+    UNKWORD WORD_0x1C;
 } CNTHandle;
 
 typedef struct CNTFileInfo {
