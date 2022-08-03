@@ -1,5 +1,3 @@
-#pragma ipa file
-
 #include "RFL_NANDLoader.h"
 #include "RFL_NANDAccess.h"
 

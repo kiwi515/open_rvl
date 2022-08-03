@@ -1,5 +1,3 @@
-#pragma ipa file
-
 #define RFL_SYSTEM_HEAP_SIZE 0x24800
 #define RFL_WORK_SIZE 0x4B000
 #define RFL_DELUXE_WORK_SIZE 0x64000

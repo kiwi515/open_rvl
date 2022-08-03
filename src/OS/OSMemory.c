@@ -29,7 +29,7 @@ static BOOL OnShutdown(u32 arg0, u32 arg1) {
 }
 
 // Typo
-static void MEMIntrruptHandler(u32 error, OSContext* ctx) {
+static void MEMIntrruptHandler(u8 intr, OSContext* ctx) {
     u32 dsisr = OS_MI_CC00401E;
     u32 dar = (OS_MI_CC004024 & 0x3ff) << 0x10 | OS_MI_CC004022;
     OS_MI_CC004020 = 0;

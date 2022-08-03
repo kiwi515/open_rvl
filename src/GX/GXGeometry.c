@@ -1,5 +1,3 @@
-#pragma ipa file
-
 #include "GXGeometry.h"
 #include "GXAttr.h"
 #include "GXBump.h"
