@@ -1,24 +1,10 @@
 #ifndef RVL_SDK_EXI_BIOS_H
 #define RVL_SDK_EXI_BIOS_H
-#include <OS/OSContext.h>
+#include "EXICommon.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef enum {
-    EXI_STATE_DMA_ACCESS = (1 << 0),
-    EXI_STATE_IMM_ACCESS = (1 << 1),
-    EXI_STATE_SELECTED = (1 << 2),
-    EXI_STATE_ATTACHED = (1 << 3),
-    EXI_STATE_LOCKED = (1 << 4),
-
-    EXI_STATE_BUSY = EXI_STATE_DMA_ACCESS | EXI_STATE_IMM_ACCESS
-} EXIState;
-
-typedef enum { EXI_CHAN_0, EXI_CHAN_1, EXI_CHAN_2, EXI_MAX_CHAN } EXIChannel;
-
-typedef enum { EXI_READ, EXI_WRITE, EXI_TYPE_2, EXI_MAX_TYPE } EXIType;
 
 typedef struct EXIUnkStruct0 {
     u32 WORD_0x0;
@@ -30,8 +16,6 @@ typedef struct EXIUnkStruct0 {
 
 // Length is at least channel count
 volatile EXIUnkStruct0 EXI_CD006800[EXI_MAX_CHAN] : 0xCD006800;
-
-typedef void (*EXICallback)(EXIChannel, OSContext*);
 
 typedef struct EXIItem {
     u32 dev;              // at 0x0
