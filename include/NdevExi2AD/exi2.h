@@ -5,13 +5,11 @@
 extern "C" {
 #endif
 
-typedef enum { EXI_OP_READ, EXI_OP_WRITE, EXI_OP_OP2 } EXIOperation;
-
 void __DBEXIInit(void);
-BOOL __DBEXIReadReg(u32, void*, int);
-BOOL __DBEXIWriteReg(u32, const void*, int);
-BOOL __DBEXIReadRam(u32, void*, int);
-BOOL __DBEXIWriteRam(u32, const void*, int);
+BOOL __DBEXIReadReg(u32, void*, s32);
+BOOL __DBEXIWriteReg(u32, const void*, s32);
+BOOL __DBEXIReadRam(u32, void*, s32);
+BOOL __DBEXIWriteRam(u32, const void*, s32);
 
 #ifdef __cplusplus
 }

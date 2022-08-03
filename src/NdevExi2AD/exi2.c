@@ -22,10 +22,10 @@ static BOOL __EXI2Sync(void) {
     return TRUE;
 }
 
-BOOL __EXI2Imm(void* mem, int size, EXIOperation op) {
+BOOL __EXI2Imm(void* mem, int size, EXIType type) {
     int i;
 
-    if (op != EXI_OP_READ) {
+    if (type != EXI_READ) {
         u32 val = 0;
 
         for (i = 0; i < size; i++) {
@@ -36,10 +36,10 @@ BOOL __EXI2Imm(void* mem, int size, EXIOperation op) {
         EXI_CD006800[EXI_CHAN_2].WORD_0x10 = val;
     }
 
-    EXI_CD006800[EXI_CHAN_2].WORD_0xC = op << 2 | 1 | (size - 1) * 16;
+    EXI_CD006800[EXI_CHAN_2].WORD_0xC = type << 2 | 1 | (size - 1) * 16;
     __EXI2Sync();
 
-    if (op == EXI_OP_READ) {
+    if (type == EXI_READ) {
         u32 val = EXI_CD006800[EXI_CHAN_2].WORD_0x10;
 
         u8* bmem = (u8*)mem;
@@ -63,22 +63,22 @@ void __DBEXIInit(void) {
     val1 = 0xD4000000;
 
     __EXI2Select();
-    __EXI2Imm(&val0, 4, EXI_OP_WRITE);
+    __EXI2Imm(&val0, 4, EXI_WRITE);
     __EXI2Sync();
 
-    __EXI2Imm(&val1, 4, EXI_OP_WRITE);
+    __EXI2Imm(&val1, 4, EXI_WRITE);
     __EXI2Sync();
     __EXI2Deselect();
 }
 
-BOOL __DBEXIReadReg(u32 val, void* mem, int size) {
+BOOL __DBEXIReadReg(u32 val, void* mem, s32 size) {
     BOOL error = FALSE;
     u32 read_val = 0;
 
     error = error | !__EXI2Select();
-    error = error | !__EXI2Imm(&val, sizeof(val), EXI_OP_WRITE);
+    error = error | !__EXI2Imm(&val, sizeof(val), EXI_WRITE);
     error = error | !__EXI2Sync();
-    error = error | !__EXI2Imm(&read_val, sizeof(read_val), EXI_OP_READ);
+    error = error | !__EXI2Imm(&read_val, sizeof(read_val), EXI_READ);
     error = error | !__EXI2Sync();
     error = error | !__EXI2Deselect();
 
@@ -97,7 +97,7 @@ BOOL __DBEXIReadReg(u32 val, void* mem, int size) {
     return error == FALSE;
 }
 
-BOOL __DBEXIWriteReg(u32 val, const void* mem, int size) {
+BOOL __DBEXIWriteReg(u32 val, const void* mem, s32 size) {
     BOOL error = FALSE;
     u32 write_val = 0;
 
@@ -114,26 +114,26 @@ BOOL __DBEXIWriteReg(u32 val, const void* mem, int size) {
     }
 
     error = error | !__EXI2Select();
-    error = error | !__EXI2Imm(&val, sizeof(val), EXI_OP_WRITE);
+    error = error | !__EXI2Imm(&val, sizeof(val), EXI_WRITE);
     error = error | !__EXI2Sync();
-    error = error | !__EXI2Imm(&write_val, sizeof(write_val), EXI_OP_WRITE);
+    error = error | !__EXI2Imm(&write_val, sizeof(write_val), EXI_WRITE);
     error = error | !__EXI2Sync();
     error = error | !__EXI2Deselect();
 
     return error == FALSE;
 }
 
-BOOL __DBEXIReadRam(u32 val, void* mem, int size) {
+BOOL __DBEXIReadRam(u32 val, void* mem, s32 size) {
     BOOL error = FALSE;
     u32 read_val;
     u32* lmem = (u32*)mem;
 
     error = error | !__EXI2Select();
-    error = error | !__EXI2Imm(&val, sizeof(val), EXI_OP_WRITE);
+    error = error | !__EXI2Imm(&val, sizeof(val), EXI_WRITE);
     error = error | !__EXI2Sync();
 
     for (; size > 0; size -= 4) {
-        error = error | !__EXI2Imm(&read_val, sizeof(read_val), EXI_OP_READ);
+        error = error | !__EXI2Imm(&read_val, sizeof(read_val), EXI_READ);
         error = error | !__EXI2Sync();
         *lmem++ = read_val;
     }
@@ -143,17 +143,17 @@ BOOL __DBEXIReadRam(u32 val, void* mem, int size) {
     return error == FALSE;
 }
 
-BOOL __DBEXIWriteRam(u32 val, const void* mem, int size) {
+BOOL __DBEXIWriteRam(u32 val, const void* mem, s32 size) {
     BOOL error = FALSE;
     u32* lmem = (u32*)mem;
 
     error = error | !__EXI2Select();
-    error = error | !__EXI2Imm(&val, sizeof(val), EXI_OP_WRITE);
+    error = error | !__EXI2Imm(&val, sizeof(val), EXI_WRITE);
     error = error | !__EXI2Sync();
 
     for (; size > 0; size -= 4) {
         u32 write_val = *lmem++;
-        error = error | !__EXI2Imm(&write_val, sizeof(write_val), EXI_OP_WRITE);
+        error = error | !__EXI2Imm(&write_val, sizeof(write_val), EXI_WRITE);
         error = error | !__EXI2Sync();
     }
 
