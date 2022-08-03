@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_DB_EXI2_H
-#define RVL_SDK_DB_EXI2_H
+#ifndef RVL_SDK_NDEV_EXI2AD_EXI2_H
+#define RVL_SDK_NDEV_EXI2AD_EXI2_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

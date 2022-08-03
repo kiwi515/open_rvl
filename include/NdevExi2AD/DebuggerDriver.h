@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_DB_DEBUGGER_DRIVER_H
-#define RVL_SDK_DB_DEBUGGER_DRIVER_H
+#ifndef RVL_SDK_NDEV_EXI2AD_DEBUGGER_DRIVER_H
+#define RVL_SDK_NDEV_EXI2AD_DEBUGGER_DRIVER_H
 #include <OS/OSInterrupt.h>
 #include <types.h>
 #ifdef __cplusplus

@@ -1,7 +1,7 @@
 #include "OSCache.h"
 #include "OSInterrupt.h"
 
-#include <DB/db.h>
+#include <NdevExi2AD/db.h>
 #include <PPC/PPCArch.h>
 
 asm void DCEnable(void) {

@@ -3,7 +3,7 @@
 #include "OSError.h"
 #include "OSInterrupt.h"
 
-#include <DB/db.h>
+#include <NdevExi2AD/db.h>
 
 static asm void __OSLoadFPUContext(UNKWORD unused, register OSContext* ctx) {
     // clang-format off
