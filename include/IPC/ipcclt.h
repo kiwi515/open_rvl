@@ -14,6 +14,8 @@ extern "C" {
  */
 
 typedef enum {
+    IPC_RESULT_NO_PRIVATE_AUTH = -102,
+
     IPC_RESULT_ALLOC_FAIL = -22,
     IPC_RESULT_QUEUE_ERROR = -8,
     IPC_RESULT_NO_REQUEST = -4,
@@ -114,8 +116,8 @@ IPCResult IOS_CloseAsync(s32, IPCAsyncCallback, void*);
 IPCResult IOS_Close(s32);
 IPCResult IOS_ReadAsync(s32, void*, s32, IPCAsyncCallback, void*);
 IPCResult IOS_Read(s32, void*, s32);
-IPCResult IOS_WriteAsync(s32, void*, s32, IPCAsyncCallback, void*);
-IPCResult IOS_Write(s32, void*, s32);
+IPCResult IOS_WriteAsync(s32, const void*, s32, IPCAsyncCallback, void*);
+IPCResult IOS_Write(s32, const void*, s32);
 IPCResult IOS_SeekAsync(s32, s32, IPCSeekMode, IPCAsyncCallback, void*);
 IPCResult IOS_Seek(s32, s32, IPCSeekMode);
 IPCResult IOS_IoctlAsync(s32, IPCIoctlType, void*, s32, void*, s32,

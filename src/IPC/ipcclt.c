@@ -424,14 +424,14 @@ static IPCResult __ios_Write(IPCRequestEx* req, void* buf, s32 len) {
     } else {
         req->base.rw.data = (buf != NULL) ? OSCachedToPhysical(buf) : NULL;
         req->base.rw.length = len;
-        DCFlushRange(buf, len);
+        DCFlushRange((void*)buf, len);
     }
 
     return ret;
 }
 
-IPCResult IOS_WriteAsync(s32 fd, void* buf, s32 len, IPCAsyncCallback callback,
-                         void* callbackArg) {
+IPCResult IOS_WriteAsync(s32 fd, const void* buf, s32 len,
+                         IPCAsyncCallback callback, void* callbackArg) {
     IPCRequestEx* req;
     IPCResult ret = __ios_Ipc1(fd, IPC_REQ_WRITE, callback, callbackArg, &req);
     if (ret == IPC_RESULT_OK) {
@@ -444,7 +444,7 @@ IPCResult IOS_WriteAsync(s32 fd, void* buf, s32 len, IPCAsyncCallback callback,
     return ret;
 }
 
-IPCResult IOS_Write(s32 fd, void* buf, s32 len) {
+IPCResult IOS_Write(s32 fd, const void* buf, s32 len) {
     IPCRequestEx* req;
     IPCResult ret = __ios_Ipc1(fd, IPC_REQ_WRITE, NULL, NULL, &req);
     if (ret == IPC_RESULT_OK) {
