@@ -37,21 +37,33 @@ typedef enum {
 } NANDSeekMode;
 
 typedef enum {
-    NAND_ACCESS_0,
-    NAND_READ,
-    NAND_WRITE,
+    NAND_ACCESS_NONE,
+    NAND_ACCESS_READ,
+    NAND_ACCESS_WRITE,
     NAND_ACCESS_3 //!< RW?
 } NANDAccessType;
 
 typedef struct NANDCommandBlock;
 typedef void (*NANDAsyncCallback)(NANDResult, struct NANDCommandBlock*);
 
+typedef struct NANDFileInfo {
+    s32 fd; // at 0x0
+    s32 WORD_0x4;
+    char openPath[FS_MAX_PATH];   // at 0x8
+    char renamePath[FS_MAX_PATH]; // at 0x48
+    u8 access;                    // at 0x88
+    u8 BYTE_0x89;
+    u8 state; // at 0x8A
+    u8 BYTE_0x8B;
+} NANDFileInfo;
+
 typedef struct NANDCommandBlock {
     void* userData;             // at 0x0
     NANDAsyncCallback callback; // at 0x4
-    char UNK_0x8[0x14 - 0x8];
-    FSFileAttr* attr; // at 0x14
-    char UNK_0x18[0x20 - 0x18];
+    NANDFileInfo* info;         // at 0x8
+    char UNK_0xC[0x14 - 0xC];
+    FSFileAttr* attr;   // at 0x14
+    FSFileAttr attrObj; // at 0x18
     u32 WORD_0x20;
     u32 perm0; // at 0x24
     u32 perm1; // at 0x28
@@ -60,12 +72,14 @@ typedef struct NANDCommandBlock {
     char UNK_0x34[0x74 - 0x34];
     u32* pLength; // at 0x74
     u32* PTR_0x78;
+    s32 WORD_0x7C;
+    void* buffer;   // at 0x80
+    u32 bufferSize; // at 0x84
+    char UNK_0x88[0x8C - 0x88];
+    u32 tempDirId; // at 0x8C
+    char UNK_0x90[0xB8 - 0x90];
+    BOOL BOOL_0xB8;
 } NANDCommandBlock;
-
-typedef struct NANDFileInfo {
-    s32 fd; // at 0x0
-    char UNK_0x4[0x8C - 0x4];
-} NANDFileInfo;
 
 NANDResult NANDCreate(const char*, u8, u8);
 NANDResult NANDPrivateCreate(const char*, u8, u8);

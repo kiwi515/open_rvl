@@ -40,8 +40,10 @@ typedef enum {
 } IPCIoctlType;
 
 typedef enum {
-    IPC_OPEN_READ = (1 << 0),
-    IPC_OPEN_WRITE = (1 << 1)
+    IPC_OPEN_NONE,
+    IPC_OPEN_READ,
+    IPC_OPEN_WRITE,
+    IPC_OPEN_3
 } IPCOpenMode;
 
 typedef enum {

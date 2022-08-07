@@ -6,6 +6,8 @@
 extern "C" {
 #endif
 
+#define FS_MAX_PATH 64
+
 typedef void (*FSAsyncCallback)(IPCResult, void*);
 
 // Could be more fields, but not larger than 32B
@@ -39,8 +41,8 @@ IPCResult ISFS_DeleteAsync(const char*, FSAsyncCallback, void*);
 IPCResult ISFS_Rename(const char*, const char*);
 IPCResult ISFS_RenameAsync(const char*, const char*, FSAsyncCallback, void*);
 IPCResult ISFS_GetUsage(const char*, s32*, s32*);
-IPCResult ISFS_CreateFile(const char*, u8, u32, u32, u32);
-IPCResult ISFS_CreateFileAsync(const char*, u8, u32, u32, u32, FSAsyncCallback,
+IPCResult ISFS_CreateFile(const char*, u32, u32, u32, u32);
+IPCResult ISFS_CreateFileAsync(const char*, u32, u32, u32, u32, FSAsyncCallback,
                                void*);
 IPCResult ISFS_Open(const char*, IPCOpenMode);
 IPCResult ISFS_OpenAsync(const char*, IPCOpenMode, FSAsyncCallback, void*);

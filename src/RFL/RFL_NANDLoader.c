@@ -196,7 +196,8 @@ RFLResult RFLiLoadResourceHeaderAsync(void) {
         return RFL_RESULT_BUSY;
     }
 
-    return RFLiOpenAsync(RFL_ACCESS_RES, NAND_READ, loadResOpencallback_);
+    return RFLiOpenAsync(RFL_ACCESS_RES, NAND_ACCESS_READ,
+                         loadResOpencallback_);
 }
 
 static u32 getCachedLength_(RFLLoader* loader, u32 resIdx, u16 fileIdx) {
@@ -216,7 +217,7 @@ static u32 getNANDLength_(RFLLoader* loader, u32 resIdx, u16 fileIdx) {
     tmpBuf = RFLiAlloc32(scTmpSize);
     res = &loader->resources[resIdx];
 
-    if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_READ) == 0) {
+    if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) == 0) {
         const u32 readSize = ROUND_UP(res->numFiles * 4 + 4, 32);
         NANDSeek(&file, res->offset, NAND_SEEK_BEGIN);
 
@@ -279,7 +280,7 @@ static void* getNANDFile_(void* dst, RFLLoader* loader, u32 resIdx,
     res = &loader->resources[resIdx];
     tmpBuf = RFLiAlloc32(scTmpSize);
 
-    if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_READ) == 0) {
+    if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) == 0) {
         u32 resBufSize;
         s32 seekOffset;
         readSize = ROUND_UP(res->numFiles * 4 + 4, 32);

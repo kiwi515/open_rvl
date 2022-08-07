@@ -24,7 +24,7 @@ BOOL __OSWriteStateFlags(const OSStateFlags* newState) {
     StateFlags.chksum = CheckSum(&StateFlags);
 
     if (NANDOpen("/title/00000001/00000002/data/state.dat", &file,
-                 NAND_WRITE) == 0) {
+                 NAND_ACCESS_WRITE) == 0) {
         if (NANDWrite(&file, &StateFlags, sizeof(OSStateFlags)) !=
             sizeof(OSStateFlags)) {
             NANDClose(&file);
@@ -43,8 +43,8 @@ BOOL __OSWriteStateFlags(const OSStateFlags* newState) {
 BOOL __OSReadStateFlags(OSStateFlags* stateOut) {
     NANDFileInfo file;
 
-    if (NANDOpen("/title/00000001/00000002/data/state.dat", &file, NAND_READ) ==
-        0) {
+    if (NANDOpen("/title/00000001/00000002/data/state.dat", &file,
+                 NAND_ACCESS_READ) == 0) {
 
         const int bytesRead =
             NANDRead(&file, &StateFlags, sizeof(OSStateFlags));

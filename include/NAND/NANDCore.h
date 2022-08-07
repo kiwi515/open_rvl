@@ -16,6 +16,7 @@ BOOL nandIsInitialized(void);
 
 NANDResult nandConvertErrorCode(s32);
 void nandGenerateAbsPath(char*, const char*);
+void nandGetParentDirectory(char*, const char*);
 
 void nandCallback(IPCResult, void*);
 
