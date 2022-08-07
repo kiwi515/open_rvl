@@ -1,7 +1,6 @@
 #ifndef RVL_SDK_NAND_CORE_H
 #define RVL_SDK_NAND_CORE_H
 #include "nand.h"
-#include <FS/fs.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
@@ -19,6 +18,8 @@ void nandGenerateAbsPath(char*, const char*);
 void nandGetParentDirectory(char*, const char*);
 
 void nandCallback(IPCResult, void*);
+
+const char* nandGetHomeDir(void);
 
 #ifdef __cplusplus
 }
