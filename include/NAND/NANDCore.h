@@ -6,20 +6,32 @@
 extern "C" {
 #endif
 
-void nandGetRelativeName(char*, const char*);
+typedef enum {
+    NAND_LIB_UNINITIALIZED,
+    NAND_LIB_INITIALIZING,
+    NAND_LIB_INITIALIZED
+} NANDLibState;
 
+void nandRemoveTailToken(char*, const char*);
+void nandGetHeadToken(char*, char*, const char*);
+void nandGetRelativeName(char*, const char*);
+void nandConvertPath(char*, const char*, const char*);
 BOOL nandIsPrivatePath(const char*);
 BOOL nandIsUnderPrivatePath(const char*);
-
 BOOL nandIsInitialized(void);
-
-NANDResult nandConvertErrorCode(s32);
+void nandReportErrorCode(IPCResult) __attribute__((never_inline));
+NANDResult nandConvertErrorCode(IPCResult);
 void nandGenerateAbsPath(char*, const char*);
 void nandGetParentDirectory(char*, const char*);
-
+NANDResult NANDInit(void);
+NANDResult NANDGetCurrentDir(char*);
+NANDResult NANDGetHomeDir(char*);
 void nandCallback(IPCResult, void*);
-
+NANDResult NANDGetType(const char*, u8*);
+NANDResult NANDPrivateGetTypeAsync(const char*, u8*, NANDAsyncCallback,
+                                   NANDCommandBlock*);
 const char* nandGetHomeDir(void);
+void NANDInitBanner(NANDBanner*, u32, const wchar_t*, const wchar_t*);
 
 #ifdef __cplusplus
 }

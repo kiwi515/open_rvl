@@ -53,7 +53,7 @@ static inline IPCResult __ipcQueueRequest(IPCRequestEx* req) {
             : (__responses.queued - __responses.sent) >= IPC_QUEUE_CAPACITY;
 
     if (waiting != 0) {
-        ret = IPC_RESULT_QUEUE_ERROR;
+        ret = IPC_RESULT_BUSY;
     } else {
         __responses.queue[__responses.back] = req;
         __responses.back = (__responses.back + 1) % IPC_QUEUE_CAPACITY;
@@ -76,7 +76,7 @@ static inline IPCResult __ipcSendRequest(void) {
                   : (__responses.queued - __responses.sent) == 0;
 
     if (waiting != 0) {
-        ret = IPC_RESULT_QUEUE_ERROR;
+        ret = IPC_RESULT_BUSY;
     } else {
         req = __responses.queue[__responses.front];
         if (req == NULL) {
@@ -249,11 +249,11 @@ static IPCResult __ios_Ipc1(s32 fd, IPCRequestType type,
     IPCResult ret = IPC_RESULT_OK;
 
     if (out == NULL) {
-        ret = IPC_RESULT_NO_REQUEST;
+        ret = IPC_RESULT_INVALID;
     } else {
         *out = ipcAllocReq();
         if (*out == NULL) {
-            ret = IPC_RESULT_ALLOC_FAIL;
+            ret = IPC_RESULT_ALLOC_FAILED;
         } else {
             req = &(*out)->base;
 
@@ -274,7 +274,7 @@ static IPCResult __ios_Ipc2(IPCRequestEx* req, IPCAsyncCallback callback) {
     u32 intr;
 
     if (req == NULL) {
-        ret = IPC_RESULT_NO_REQUEST;
+        ret = IPC_RESULT_INVALID;
     } else {
         if (callback == NULL) {
             OSInitThreadQueue(&req->queue);
@@ -318,7 +318,7 @@ static IPCResult __ios_Open(IPCRequestEx* req, const char* path,
     IPCResult ret = IPC_RESULT_OK;
 
     if (req == NULL) {
-        ret = IPC_RESULT_NO_REQUEST;
+        ret = IPC_RESULT_INVALID;
     } else {
         DCFlushRange((void*)path, strnlen(path, 64) + 1);
         req->base.open.path = (const char*)OSCachedToPhysical(path);
@@ -379,7 +379,7 @@ static IPCResult __ios_Read(IPCRequestEx* req, void* buf, s32 len) {
     IPCResult ret = IPC_RESULT_OK;
 
     if (req == NULL) {
-        ret = IPC_RESULT_NO_REQUEST;
+        ret = IPC_RESULT_INVALID;
     } else {
         DCInvalidateRange(buf, len);
         req->base.rw.data = (buf != NULL) ? OSCachedToPhysical(buf) : NULL;
@@ -420,7 +420,7 @@ static IPCResult __ios_Write(IPCRequestEx* req, void* buf, s32 len) {
     IPCResult ret = IPC_RESULT_OK;
 
     if (req == NULL) {
-        ret = IPC_RESULT_NO_REQUEST;
+        ret = IPC_RESULT_INVALID;
     } else {
         req->base.rw.data = (buf != NULL) ? OSCachedToPhysical(buf) : NULL;
         req->base.rw.length = len;
@@ -461,7 +461,7 @@ static IPCResult __ios_Seek(IPCRequestEx* req, s32 offset, IPCSeekMode mode) {
     IPCResult ret = IPC_RESULT_OK;
 
     if (req == NULL) {
-        ret = IPC_RESULT_NO_REQUEST;
+        ret = IPC_RESULT_INVALID;
     } else {
         req->base.seek.offset = offset;
         req->base.seek.mode = mode;
@@ -502,7 +502,7 @@ static IPCResult __ios_Ioctl(IPCRequestEx* req, IPCIoctlType type, void* in,
     IPCResult ret = IPC_RESULT_OK;
 
     if (req == NULL) {
-        ret = IPC_RESULT_NO_REQUEST;
+        ret = IPC_RESULT_INVALID;
     } else {
         req->base.ioctl.type = type;
         req->base.ioctl.out = (out != NULL) ? OSCachedToPhysical(out) : NULL;
@@ -552,7 +552,7 @@ static IPCResult __ios_Ioctlv(IPCRequestEx* req, IPCIoctlType type, s32 inCount,
     IPCResult ret = IPC_RESULT_OK;
 
     if (req == NULL) {
-        ret = IPC_RESULT_NO_REQUEST;
+        ret = IPC_RESULT_INVALID;
     } else {
         req->base.ioctlv.type = type;
         req->base.ioctlv.inCount = inCount;

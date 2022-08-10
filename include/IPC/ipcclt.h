@@ -16,9 +16,9 @@ extern "C" {
 typedef enum {
     IPC_RESULT_NO_PRIVATE_AUTH = -102,
 
-    IPC_RESULT_ALLOC_FAIL = -22,
-    IPC_RESULT_QUEUE_ERROR = -8,
-    IPC_RESULT_NO_REQUEST = -4,
+    IPC_RESULT_ALLOC_FAILED = -22,
+    IPC_RESULT_BUSY = -8,
+    IPC_RESULT_INVALID = -4,
 
     IPC_RESULT_OK = 0
 } IPCResult;
@@ -38,6 +38,11 @@ typedef enum {
     // TO-DO
     IPC_IOCTL_TYPE_0,
 } IPCIoctlType;
+
+typedef enum {
+    IPC_IOCTLV_GET_DATA_DIR = 29,
+    IPC_IOCTLV_GET_TITLE_ID = 32,
+} IPCIoctlvType;
 
 typedef enum {
     IPC_OPEN_NONE,

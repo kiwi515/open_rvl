@@ -72,8 +72,7 @@ s32 contentReadNAND(CNTFileInfo* info, void* dst, s32 len, s32 skip) {
     }
 
     if (ESP_SeekContentFile(info->handle->WORD_0x1C,
-                            info->offset + info->position + skip,
-                            ESP_SEEK_BEGIN) < 0) {
+                            info->offset + info->position + skip, 0) < 0) {
         return -0x138C;
     }
 

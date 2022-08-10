@@ -7,6 +7,10 @@
 
 typedef unsigned long size_t;
 
+#ifndef __cplusplus
+typedef unsigned short wchar_t;
+#endif
+
 #define offsetof(ST, M) ((size_t) & (((ST*)0)->M))
 
 #define va_start(ARG, VA_LIST) ((void)ARG, __builtin_va_info(&VA_LIST))

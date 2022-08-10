@@ -6,6 +6,8 @@
 extern "C" {
 #endif
 
+#define NAND_BANNER_TITLE_MAX 32
+
 typedef enum {
     NAND_RESULT_FATAL_ERROR = -128,
     NAND_RESULT_UNKNOWN = -64,
@@ -68,18 +70,26 @@ typedef struct NANDCommandBlock {
     u32 perm0; // at 0x24
     u32 perm1; // at 0x28
     u32 perm2; // at 0x2C
-    char UNK_0x30[0x4];
-    char UNK_0x34[0x74 - 0x34];
-    u32* pLength; // at 0x74
+    u32 WORD_0x30;
+    char path[FS_MAX_PATH]; // at 0x34
+    u32* pLength;           // at 0x74
     u32* PTR_0x78;
     s32 WORD_0x7C;
     void* buffer;   // at 0x80
     u32 bufferSize; // at 0x84
-    char UNK_0x88[0x8C - 0x88];
-    u32 tempDirId; // at 0x8C
+    u8* pType;      // at 0x88
+    u32 tempDirId;  // at 0x8C
     char UNK_0x90[0xB8 - 0x90];
-    BOOL BOOL_0xB8;
 } NANDCommandBlock;
+
+typedef struct NANDBanner {
+    u32 magic; // at 0x0
+    u32 flags; // at 0x4
+    char UNK_0x8[0x20 - 0x8];
+    wchar_t title[NAND_BANNER_TITLE_MAX];    // at 0x20
+    wchar_t subtitle[NAND_BANNER_TITLE_MAX]; // at 0x60
+    char UNK_0xA0[0xF0A0 - 0xA0];
+} NANDBanner;
 
 NANDResult NANDCreate(const char*, u8, u8);
 NANDResult NANDPrivateCreate(const char*, u8, u8);
