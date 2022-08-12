@@ -938,7 +938,7 @@ void OSSleepTicks(s64 ticks) {
 
     OSCreateAlarm(&alarm);
     OSSetAlarmTag(&alarm, (u32)thread);
-    OSSetAlarmUserData(&alarm, (u32)thread);
+    OSSetAlarmUserData(&alarm, thread);
     OSSetAlarm(&alarm, ticks, SleepAlarmHandler);
 
     OSSuspendThread(thread);

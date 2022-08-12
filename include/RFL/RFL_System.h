@@ -1,16 +1,12 @@
 #ifndef RVL_SDK_RFL_SYSTEM_H
 #define RVL_SDK_RFL_SYSTEM_H
 #include <MEM/mem_heapCommon.h>
+#include <NAND/NANDOpenClose.h>
 #include <OS/OSAlarm.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-// TO-DO
-typedef UNKTYPE (*RFLIconDrawDoneCallback)(UNKTYPE);
-typedef UNKTYPE (*RFLModelDrawDoneCallback)(UNKTYPE);
-typedef UNKTYPE (*RFLAccessCallback)(UNKTYPE);
 
 typedef enum {
     RFL_RESULT_OK,
@@ -21,10 +17,6 @@ typedef enum {
     RFL_RESULT_CRITICAL,
     RFL_RESULT_BUSY
 } RFLResult;
-
-typedef enum {
-    RFL_REASON_NONE,
-} RFLReason;
 
 typedef enum {
     RFL_BROKEN_NOT_FOUND,
@@ -104,6 +96,12 @@ typedef enum {
     RFL_ARC_MAX
 } RFLPartArc;
 
+// TO-DO
+typedef UNKTYPE (*RFLIconDrawDoneCallback)(UNKTYPE);
+typedef UNKTYPE (*RFLModelDrawDoneCallback)(UNKTYPE);
+typedef void (*RFLAccessCallback)(void);
+typedef void (*RFLAlarmCallback)(RFLAccessType);
+
 typedef struct RFLDBManager {
     void* database; // at 0x0
     char UNK_0x4[0xB0 - 0x4];
@@ -131,16 +129,43 @@ typedef struct RFLHDBManager {
     u8 temp;
 } RFLHDBManager;
 
-typedef struct RFLAccInfo {
+typedef struct RFLAccessUserData {
+    UNKWORD tag;        // at 0x0
+    RFLAccessType type; // at 0x4
+} RFLAccessUserData;
+
+typedef struct RFLAlarmUserData {
+    RFLAccessType type;        // at 0x0
+    RFLAlarmCallback callback; // at 0x4
+    u8 BYTE_0x8;
+} RFLAlarmUserData;
+
+typedef struct RFLAccessInfo {
     RFLAccessCallback callback; // at 0x0
-    char UNK_0x4[0x48 - 0x4];
-    NANDFileInfo file; // at 0x48
-    char UNK_0xD4[0x198 - 0xD4];
+    union {
+        // Read/write info is sometimes stored inside the path buffer
+        struct {
+            void* buffer; // at 0x4
+            u32 rwSize;   // at 0x8
+            s32 offset;   // at 0xC
+        };
+        char path[FS_MAX_PATH]; // at 0x4
+    };
+    u8 BYTE_0x44;
+    u8 access;                  // at 0x45
+    u8 perm;                    // at 0x46
+    u8 attr;                    // at 0x47
+    NANDFileInfo file;          // at 0x48
+    NANDCommandBlock block;     // at 0xD4
+    RFLAccessUserData userData; // at 0x18C
+    char UNK_0x194[0x4];
     OSAlarm alarm; // at 0x198
-    char UNK_0x1C4[0x1D4 - 0x1C4];
-    void* safeBuffer; // at 0x1D4
-    char UNK_0x1D8[0x1E0 - 0x1D8];
-} RFLAccInfo;
+    char UNK_0x1C4[0x4];
+    RFLAlarmUserData alarmData; // at 0x1C8
+    void* safeBuffer;           // at 0x1D4
+    u8 BYTE_0x1D8;
+    char UNK_0x1D9[0x1E0 - 0x1D9];
+} RFLAccessInfo;
 
 // TO-DO: Size
 typedef struct RFLCtrlBufManager {
@@ -158,14 +183,14 @@ typedef struct RFLManager {
     char UNK_0x16D[0x1AAC - 0x16D];
     RFLCtrlBufManager ctrlBufMgr; // at 0x1AAC
     char UNK_0x1AAD[0x1B34 - 0x1AAD];
-    BOOL working;     // at 0x1B34
-    BOOL deluxTex;    // at 0x1B38
-    u8 brokenType;    // at 0x1B3C
-    RFLResult status; // at 0x1B40
-    u32 WORD_0x1B44;
-    RFLReason reason; // at 0x1B48
-    u32 WORD_0x1B4C;
-    RFLAccInfo info[RFL_ACCESS_MAX]; // at 0x1B50
+    BOOL working;                       // at 0x1B34
+    BOOL deluxTex;                      // at 0x1B38
+    u8 brokenType;                      // at 0x1B3C
+    RFLResult status;                   // at 0x1B40
+    RFLResult lastStatus;               // at 0x1B44
+    NANDResult reason;                  // at 0x1B48
+    NANDResult lastReason;              // at 0x1B4C
+    RFLAccessInfo info[RFL_ACCESS_MAX]; // at 0x1B50
     char UNK_0x1F10[0x1F14 - 0x1F10];
     RFLIconDrawDoneCallback iconDrawDone;   // at 0x1F14
     RFLModelDrawDoneCallback modelDrawDone; // at 0x1F18
@@ -188,11 +213,11 @@ BOOL RFLiGetWorking(void);
 void RFLiSetWorking(BOOL);
 RFLManager* RFLiGetManager(void);
 RFLResult RFLGetAsyncStatus(void);
-RFLReason RFLGetLastReason(void);
+NANDResult RFLGetLastReason(void);
 RFLResult RFLWaitAsync(void);
-RFLAccInfo* RFLiGetAccInfo(RFLAccessType);
+RFLAccessInfo* RFLiGetAccInfo(RFLAccessType);
 RFLCtrlBufManager* RFLiGetCtrlBufManager(void);
-RFLReason RFLiGetLastReason(void);
+NANDResult RFLiGetLastReason(void);
 void RFLiSetFileBroken(RFLBrokenType);
 BOOL RFLiNotFoundError(void);
 BOOL RFLiNeedRepairError(void);

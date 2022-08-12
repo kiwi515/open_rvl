@@ -25,7 +25,7 @@ static const RFLCoordinateData scCoordinate = {0x01200000, 0x00000000,
 static RFLManager* sRFLManager = NULL;
 static RFLResult sRFLLastErrCode = RFL_RESULT_1;
 static u8 sRFLBrokenType;
-static RFLReason sRFLLastReason;
+static NANDResult sRFLLastReason;
 
 u32 RFLGetWorkSize(BOOL deluxTex) {
     return deluxTex ? RFL_DELUXE_WORK_SIZE + sizeof(RFLManager)
@@ -51,7 +51,7 @@ RFLResult RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
 
         sRFLManager = (RFLManager*)workBuffer;
         sRFLLastErrCode = RFL_RESULT_1;
-        sRFLLastReason = RFL_REASON_NONE;
+        sRFLLastReason = NAND_RESULT_OK;
         sRFLBrokenType = 0;
         sRFLManager->workBuffer = (u8*)workBuffer + sizeof(RFLManager);
 
@@ -73,9 +73,9 @@ RFLResult RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
             MEMCreateExpHeapEx(heapBuffer, heapSize, 0x1);
 
         RFLiGetManager()->status = RFL_RESULT_OK;
-        RFLiGetManager()->WORD_0x1B44 = 0;
-        RFLiGetManager()->reason = RFL_REASON_NONE;
-        RFLiGetManager()->WORD_0x1B4C = 0;
+        RFLiGetManager()->lastStatus = RFL_RESULT_OK;
+        RFLiGetManager()->reason = NAND_RESULT_OK;
+        RFLiGetManager()->lastReason = NAND_RESULT_OK;
         RFLiGetManager()->deluxTex = deluxTex;
         RFLiGetManager()->brokenType = 0;
         RFLSetIconDrawDoneCallback(NULL);
@@ -120,7 +120,7 @@ void RFLExit(void) {
     RFLWaitAsync();
     sRFLLastErrCode = RFLGetAsyncStatus();
     sRFLLastReason = RFLAvailable() ? (RFLAvailable() ? RFLiGetManager()->reason
-                                                      : RFL_REASON_NONE)
+                                                      : NAND_RESULT_OK)
                                     : sRFLLastReason;
     sRFLBrokenType = RFLiGetManager()->brokenType;
 
@@ -201,10 +201,10 @@ RFLResult RFLGetAsyncStatus(void) {
     return RFLiGetManager()->status;
 }
 
-RFLReason RFLGetLastReason(void) {
+NANDResult RFLGetLastReason(void) {
     return !RFLAvailable()
                ? sRFLLastReason
-               : (RFLAvailable() ? RFLiGetManager()->reason : RFL_REASON_NONE);
+               : (RFLAvailable() ? RFLiGetManager()->reason : NAND_RESULT_OK);
 }
 
 RFLResult RFLWaitAsync(void) {
@@ -217,7 +217,7 @@ RFLResult RFLWaitAsync(void) {
     return status;
 }
 
-RFLAccInfo* RFLiGetAccInfo(RFLAccessType type) {
+RFLAccessInfo* RFLiGetAccInfo(RFLAccessType type) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->info[type];
 }
 
@@ -225,8 +225,8 @@ RFLCtrlBufManager* RFLiGetCtrlBufManager(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->ctrlBufMgr;
 }
 
-RFLReason RFLiGetLastReason(void) {
-    return !RFLAvailable() ? RFL_REASON_NONE : RFLiGetManager()->reason;
+NANDResult RFLiGetLastReason(void) {
+    return !RFLAvailable() ? NAND_RESULT_OK : RFLiGetManager()->reason;
 }
 
 void RFLiSetFileBroken(RFLBrokenType type) {

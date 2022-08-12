@@ -14,7 +14,7 @@ typedef struct OSAlarm {
     OSAlarmHandler handler; // at 0x0
     u32 tag;                // at 0x4
     char UNK_0x8[0x28 - 0x8];
-    u32 userData; // at 0x28
+    void* userData; // at 0x28
 } OSAlarm;
 
 typedef struct OSAlarmQueue {
@@ -26,8 +26,8 @@ void OSCreateAlarm(OSAlarm*);
 void OSSetAlarm(OSAlarm*, s64, OSAlarmHandler);
 void OSCancelAlarm(OSAlarm*);
 void OSSetAlarmTag(OSAlarm*, u32);
-void OSSetAlarmUserData(OSAlarm*, u32);
-u32 OSGetAlarmUserData(OSAlarm*);
+void OSSetAlarmUserData(OSAlarm*, void*);
+void* OSGetAlarmUserData(OSAlarm*);
 
 #ifdef __cplusplus
 }

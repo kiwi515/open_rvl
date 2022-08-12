@@ -10,6 +10,10 @@ extern "C" {
 #define OS_TIME_TO_MILLI_SEC(x) ((x) / ((OS_BUS_SPEED >> 2) / 1000))
 #define OS_TIME_TO_SEC(x) (x) / ((OS_BUS_SPEED >> 2) / 1000000))
 
+#define OS_MICRO_SEC_TO_TIME(x) ((x) * ((OS_BUS_SPEED >> 2)))
+#define OS_MILLI_SEC_TO_TIME(x) ((x) * ((OS_BUS_SPEED >> 2) / 1000))
+#define OS_SEC_TO_TIME(x) ((x) * ((OS_BUS_SPEED >> 2) / 1000000))
+
 s64 OSGetTime(void);
 s32 OSGetTick(void);
 

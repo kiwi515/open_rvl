@@ -10,7 +10,7 @@ static void nandGetStatusCallback(IPCResult, void*);
 static void nandGetFileStatusAsyncCallback(IPCResult, void*);
 static BOOL nandInspectPermission(u8);
 
-static IPCResult nandCreate(const char* path, u8 perm, u8 r5,
+static IPCResult nandCreate(const char* path, u8 perm, u8 attr,
                             NANDCommandBlock* block, BOOL async, BOOL priv) {
     char absPath[64];
     u32 perm0, perm1, perm2;
@@ -34,30 +34,32 @@ static IPCResult nandCreate(const char* path, u8 perm, u8 r5,
     nandSplitPerm(perm, &perm0, &perm1, &perm2);
 
     if (async) {
-        return ISFS_CreateFileAsync(absPath, r5, perm0, perm1, perm2,
+        return ISFS_CreateFileAsync(absPath, attr, perm0, perm1, perm2,
                                     nandCallback, block);
     } else {
-        return ISFS_CreateFile(absPath, r5, perm0, perm1, perm2);
+        return ISFS_CreateFile(absPath, attr, perm0, perm1, perm2);
     }
 }
 
-NANDResult NANDCreate(const char* path, u8 perm, u8 r5) {
+NANDResult NANDCreate(const char* path, u8 perm, u8 attr) {
     if (!nandIsInitialized()) {
         return NAND_RESULT_FATAL_ERROR;
     }
 
-    return nandConvertErrorCode(nandCreate(path, perm, r5, NULL, FALSE, FALSE));
+    return nandConvertErrorCode(
+        nandCreate(path, perm, attr, NULL, FALSE, FALSE));
 }
 
-NANDResult NANDPrivateCreate(const char* path, u8 perm, u8 r5) {
+NANDResult NANDPrivateCreate(const char* path, u8 perm, u8 attr) {
     if (!nandIsInitialized()) {
         return NAND_RESULT_FATAL_ERROR;
     }
 
-    return nandConvertErrorCode(nandCreate(path, perm, r5, NULL, FALSE, TRUE));
+    return nandConvertErrorCode(
+        nandCreate(path, perm, attr, NULL, FALSE, TRUE));
 }
 
-NANDResult NANDPrivateCreateAsync(const char* path, u8 perm, u8 r5,
+NANDResult NANDPrivateCreateAsync(const char* path, u8 perm, u8 attr,
                                   NANDAsyncCallback callback,
                                   NANDCommandBlock* block) {
     if (!nandIsInitialized()) {
@@ -65,7 +67,8 @@ NANDResult NANDPrivateCreateAsync(const char* path, u8 perm, u8 r5,
     }
 
     block->callback = callback;
-    return nandConvertErrorCode(nandCreate(path, perm, r5, block, TRUE, TRUE));
+    return nandConvertErrorCode(
+        nandCreate(path, perm, attr, block, TRUE, TRUE));
 }
 
 static IPCResult nandDelete(const char* path, NANDCommandBlock* block,
@@ -194,7 +197,7 @@ NANDResult NANDSeekAsync(NANDFileInfo* info, s32 offset, NANDSeekMode whence,
         nandSeek(info->fd, offset, whence, block, TRUE));
 }
 
-static IPCResult nandCreateDir(const char* path, u8 perm, u8 r5,
+static IPCResult nandCreateDir(const char* path, u8 perm, u8 attr,
                                NANDCommandBlock* block, BOOL async, BOOL priv) {
     char absPath[64];
     u32 perm0, perm1, perm2;
@@ -217,23 +220,23 @@ static IPCResult nandCreateDir(const char* path, u8 perm, u8 r5,
     nandSplitPerm(perm, &perm0, &perm1, &perm2);
 
     if (async) {
-        return ISFS_CreateDirAsync(absPath, r5, perm0, perm1, perm2,
+        return ISFS_CreateDirAsync(absPath, attr, perm0, perm1, perm2,
                                    nandCallback, block);
     } else {
-        return ISFS_CreateDir(absPath, r5, perm0, perm1, perm2);
+        return ISFS_CreateDir(absPath, attr, perm0, perm1, perm2);
     }
 }
 
-NANDResult NANDPrivateCreateDir(const char* path, u8 perm, u8 r5) {
+NANDResult NANDPrivateCreateDir(const char* path, u8 perm, u8 attr) {
     if (!nandIsInitialized()) {
         return NAND_RESULT_FATAL_ERROR;
     }
 
     return nandConvertErrorCode(
-        nandCreateDir(path, perm, r5, NULL, FALSE, TRUE));
+        nandCreateDir(path, perm, attr, NULL, FALSE, TRUE));
 }
 
-NANDResult NANDPrivateCreateDirAsync(const char* path, u8 perm, u8 r5,
+NANDResult NANDPrivateCreateDirAsync(const char* path, u8 perm, u8 attr,
                                      NANDAsyncCallback callback,
                                      NANDCommandBlock* block) {
     if (!nandIsInitialized()) {
@@ -242,7 +245,7 @@ NANDResult NANDPrivateCreateDirAsync(const char* path, u8 perm, u8 r5,
 
     block->callback = callback;
     return nandConvertErrorCode(
-        nandCreateDir(path, perm, r5, block, TRUE, TRUE));
+        nandCreateDir(path, perm, attr, block, TRUE, TRUE));
 }
 
 static IPCResult nandMove(const char* from, const char* to,

@@ -219,7 +219,7 @@ static u32 getNANDLength_(RFLLoader* loader, u32 resIdx, u16 fileIdx) {
 
     if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) == 0) {
         const u32 readSize = ROUND_UP(res->numFiles * 4 + 4, 32);
-        NANDSeek(&file, res->offset, NAND_SEEK_BEGIN);
+        NANDSeek(&file, res->offset, NAND_SEEK_BEG);
 
         if (NANDRead(&file, tmpBuf, readSize) == readSize) {
             const u32 self = ((u32*)tmpBuf)[fileIdx];
@@ -287,7 +287,7 @@ static void* getNANDFile_(void* dst, RFLLoader* loader, u32 resIdx,
         u32 resSize = 0;
         u32 resOffset = 0;
 
-        NANDSeek(&file, res->offset, NAND_SEEK_BEGIN);
+        NANDSeek(&file, res->offset, NAND_SEEK_BEG);
 
         if (NANDRead(&file, tmpBuf, readSize) == readSize) {
             const u32 next = ((u32*)tmpBuf)[fileIdx + 1];
@@ -304,7 +304,7 @@ static void* getNANDFile_(void* dst, RFLLoader* loader, u32 resIdx,
         resBufSize = ROUND_UP(resSize, 32);
 
         resBuf = RFLiAlloc32(resBufSize);
-        NANDSeek(&file, seekOffset, NAND_SEEK_BEGIN);
+        NANDSeek(&file, seekOffset, NAND_SEEK_BEG);
 
         if (NANDRead(&file, resBuf, resBufSize) == resBufSize) {
             memcpy(dst, resBuf, resSize);
