@@ -126,8 +126,7 @@ void RFLiEndWorking(RFLResult result) {
     RFLiEndWorkingReason(result, NAND_RESULT_OK);
 }
 
-// Force inline
-inline NANDCommandBlock* RFLiSetCommandBlock(RFLAccessType type, UNKWORD tag) {
+NANDCommandBlock* RFLiSetCommandBlock(RFLAccessType type, UNKWORD tag) {
     NANDCommandBlock* block = &RFLiGetAccInfo(type)->block;
     RFLAccessInfo* info = RFLiGetAccInfo(type);
     RFLAccessUserData* data = &info->userData;
@@ -138,8 +137,7 @@ inline NANDCommandBlock* RFLiSetCommandBlock(RFLAccessType type, UNKWORD tag) {
     return block;
 }
 
-// Force inline
-inline RFLAccessType RFLiGetType(NANDCommandBlock* block) {
+RFLAccessType RFLiGetType(NANDCommandBlock* block) {
     RFLAccessUserData* data = (RFLAccessUserData*)NANDGetUserData(block);
     return data->type;
 }

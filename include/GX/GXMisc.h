@@ -6,6 +6,7 @@
 extern "C" {
 #endif
 
+void GXSetMisc(UNKWORD token, UNKWORD val);
 void GXFlush(void);
 void GXResetWriteGatherPipe(void);
 
