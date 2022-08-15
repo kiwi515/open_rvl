@@ -25,7 +25,7 @@ static inline void GXPosition3u8(u8 x, u8 y, u8 z) {
     WGPIPE.c = z;
 }
 
-static inline void GXPosition3s8(u8 x, u8 y, u8 z) {
+static inline void GXPosition3s8(s8 x, s8 y, s8 z) {
     WGPIPE.c = x;
     WGPIPE.c = y;
     WGPIPE.c = z;
