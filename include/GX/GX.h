@@ -1,5 +1,6 @@
 #ifndef RVL_SDK_GX_H
 #define RVL_SDK_GX_H
+#include "GXTypes.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
@@ -18,10 +19,6 @@ extern volatile union {
     void* p;
     float f;
 } WGPIPE : 0xcc008000;
-
-typedef struct _GXColor {
-    u8 r, g, b, a;
-} GXColor;
 
 #ifdef __cplusplus
 }

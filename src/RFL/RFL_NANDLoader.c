@@ -26,7 +26,10 @@ void RFLiInitLoader(void) {
     loader->headerBuf2 = NULL;
 }
 
-// Documentation from https://wiki.tockdom.com/wiki/RFL_Res.dat_(File_Format)
+/**
+ * RFL_Res.dat documentation from:
+ * https://wiki.tockdom.com/wiki/RFL_Res.dat_(File_Format)
+ */
 static void parseOnmemoryRes_(void) __attribute__((never_inline)) {
     RFLLoader* loader;
     int i;
@@ -356,11 +359,11 @@ u32 RFLiGetTexSize(RFLPartTex part, u16 file) {
     return getLength_(scParts2Arc[part], file);
 }
 
-void* RFLiLoadTexture(RFLPartTex part, u16 file, void* dst) {
+RFLTexHeader* RFLiLoadTexture(RFLPartTex part, u16 file, void* dst) {
     static const u32 scParts2Arc[] = {
         RFL_ARC_TEX_EYE, RFL_ARC_TEX_EYEBROW, RFL_ARC_TEX_MOUTH,
         RFL_ARC_TEX_FACIAL_HAIR, RFL_ARC_TEX_MOLE};
-    return getFile_(dst, scParts2Arc[part], file);
+    return (RFLTexHeader*)getFile_(dst, scParts2Arc[part], file);
 }
 
 u32 RFLiGetShpTexSize(RFLPartShpTex part, u16 file) {
@@ -369,10 +372,10 @@ u32 RFLiGetShpTexSize(RFLPartShpTex part, u16 file) {
     return getLength_(scParts2Arc[part], file);
 }
 
-void* RFLiLoadShpTexture(RFLPartShpTex part, u16 file, void* dst) {
+RFLTexHeader* RFLiLoadShpTexture(RFLPartShpTex part, u16 file, void* dst) {
     static const u32 scParts2Arc[] = {RFL_ARC_TEX_MASCARA, RFL_ARC_TEX_CAP,
                                       RFL_ARC_TEX_NOSE, RFL_ARC_TEX_GLASSES};
-    return getFile_(dst, scParts2Arc[part], file);
+    return (RFLTexHeader*)getFile_(dst, scParts2Arc[part], file);
 }
 
 u32 RFLiGetShapeSize(RFLPartShp part, u16 file) {

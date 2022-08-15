@@ -6,51 +6,26 @@
 extern "C" {
 #endif
 
-typedef enum _GXIndTexAlphaSel {
-    GX_IND_TEX_ALPHA_SEL_0,
-} GXIndTexAlphaSel;
+void GXSetTevColorIn(GXTevStageID, GXTevColorArg, GXTevColorArg, GXTevColorArg,
+                     GXTevColorArg);
+void GXSetTevAlphaIn(GXTevStageID, GXTevAlphaArg, GXTevAlphaArg, GXTevAlphaArg,
+                     GXTevAlphaArg);
+void GXSetTevColorOp(GXTevStageID, GXTevOp, GXTevBias, GXTevScale, u8,
+                     GXTevRegID);
+void GXSetTevAlphaOp(GXTevStageID, GXTevOp, GXTevBias, GXTevScale, u8,
+                     GXTevRegID);
 
-typedef enum _GXIndTexBiasSel {
-    GX_IND_TEX_BIAS_SEL_0,
-} GXIndTexBiasSel;
+void GXSetTevKColor(GXTevKColorID, GXColor);
+void GXSetTevKColorSel(GXTevStageID, GXTevKColorSel);
+void GXSetTevKAlphaSel(GXTevStageID, GXTevKAlphaSel);
+void GXSetTevSwapMode(GXTevStageID, GXTevSwapSel, GXTevSwapSel);
+void GXSetTevSwapModeTable(GXTevSwapSel, GXTevColorChan, GXTevColorChan,
+                           GXTevColorChan, GXTevColorChan);
 
-typedef enum _GXIndTexFormat {
-    GX_IND_TEX_FMT_0,
-} GXIndTexFormat;
+void GXSetAlphaCompare(GXCompare, u8, GXAlphaOp, GXCompare, u8);
 
-typedef enum _GXIndTexMtxID {
-    GX_IND_TEX_MTX_ID_0,
-    GX_IND_TEX_MTX_ID_1,
-    GX_IND_TEX_MTX_ID_2,
-    GX_IND_TEX_MTX_ID_3,
-    GX_IND_TEX_MTX_ID_4,
-    GX_IND_TEX_MTX_ID_5,
-    GX_IND_TEX_MTX_ID_6,
-    GX_IND_TEX_MTX_ID_7,
-    GX_IND_TEX_MTX_ID_8,
-    GX_IND_TEX_MTX_ID_9,
-    GX_IND_TEX_MTX_ID_10,
-    GX_IND_TEX_MTX_ID_11,
-} GXIndTexMtxID;
-
-typedef enum _GXIndTexScale {
-    GX_IND_TEX_SCALE_0,
-} GXIndTexScale;
-
-typedef enum _GXIndTexStageID {
-    GX_IND_TEX_STAGE_ID_0,
-    GX_IND_TEX_STAGE_ID_1,
-    GX_IND_TEX_STAGE_ID_2,
-    GX_IND_TEX_STAGE_ID_3
-} GXIndTexStageID;
-
-typedef enum _GXIndTexWrap {
-    GX_IND_TEX_WRAP_0,
-} GXIndTexWrap;
-
-typedef enum _GXTevStageID {
-    GX_TEV_STAGE_ID_0,
-} GXTevStageID;
+void GXSetTevOrder(GXTevStageID, GXTexCoordID, GXTexMapID, GXChannelID);
+void GXSetNumTevStages(u8);
 
 #ifdef __cplusplus
 }

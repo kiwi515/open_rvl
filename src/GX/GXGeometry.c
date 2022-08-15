@@ -5,7 +5,7 @@
 #include "GXTexture.h"
 #include "GXTransform.h"
 
-#ifdef __DECOMP_NON_MATCHING
+#ifdef NON_MATCHING
 inline void __GXSetAmbMat(u32 flags) {
     if (flags & GX_DIRTY_AMB_COLOR0) {
         WGPIPE.c = 0x10;
