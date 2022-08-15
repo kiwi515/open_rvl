@@ -1,5 +1,6 @@
 #ifndef RVL_SDK_RFL_SYSTEM_H
 #define RVL_SDK_RFL_SYSTEM_H
+#include "RFL_Icon.h"
 #include <MEM/mem_heapCommon.h>
 #include <NAND/NANDOpenClose.h>
 #include <OS/OSAlarm.h>
@@ -97,7 +98,6 @@ typedef enum {
 } RFLPartArc;
 
 // TO-DO
-typedef UNKTYPE (*RFLIconDrawDoneCallback)(UNKTYPE);
 typedef UNKTYPE (*RFLModelDrawDoneCallback)(UNKTYPE);
 typedef void (*RFLAccessCallback)(void);
 typedef void (*RFLAlarmCallback)(RFLAccessType);
