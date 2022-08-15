@@ -116,13 +116,14 @@ void GXSetIndTexCoordScale(GXIndTexStageID stage, GXIndTexScale scaleS,
     __GXData->SHORTS_0x0[1] = 0;
 }
 
-void GXSetIndTexOrder(GXIndTexStageID stage, GXTexCoord coord, GXTexMapID map) {
+void GXSetIndTexOrder(GXIndTexStageID stage, GXTexCoordID coord,
+                      GXTexMapID map) {
     if (map == 0xFF) {
         map = GX_TEXMAP_0;
     }
 
     if (coord == 0xFF) {
-        coord = GX_TEX_COORD_0;
+        coord = GX_TEXCOORD0;
     }
 
     switch (stage) {

@@ -9,6 +9,11 @@
 extern "C" {
 #endif
 
+/**
+ * RFL_Res.dat documentation from:
+ * https://wiki.tockdom.com/wiki/RFL_Res.dat_(File_Format)
+ */
+
 typedef enum {
     RFL_RESULT_OK,
     RFL_RESULT_1,
@@ -62,6 +67,8 @@ typedef enum {
     RFL_PART_SHP_NOSELINE,
     RFL_PART_SHP_MASK,
     RFL_PART_SHP_GLASSES,
+
+    RFL_PART_SHP_MAX
 } RFLPartShp;
 
 /**
@@ -96,6 +103,17 @@ typedef enum {
 
     RFL_ARC_MAX
 } RFLPartArc;
+
+typedef enum {
+    RFL_SOURCE_NONE,
+    RFL_SOURCE_SECRET_DB,
+    RFL_SOURCE_CONTROLLER_1,
+    RFL_SOURCE_CONTROLLER_2,
+    RFL_SOURCE_CONTROLLER_3,
+    RFL_SOURCE_CONTROLLER_4,
+    RFL_SOURCE_DEFAULT_DB,
+    RFL_SOURCE_MIDDLE_DB
+} RFLDataSource;
 
 // TO-DO
 typedef UNKTYPE (*RFLModelDrawDoneCallback)(UNKTYPE);

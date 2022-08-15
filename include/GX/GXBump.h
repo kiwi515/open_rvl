@@ -13,7 +13,7 @@ void GXSetTevIndirect(GXTevStageID, GXIndTexStageID, GXIndTexFormat,
                       GXIndTexWrap, u8, u8, GXIndTexAlphaSel);
 void GXSetIndTexMtx(GXIndTexMtxID, const f32[6], s8);
 void GXSetIndTexCoordScale(GXIndTexStageID, GXIndTexScale, GXIndTexScale);
-void GXSetIndTexOrder(GXIndTexStageID, GXTexCoord, GXTexMapID);
+void GXSetIndTexOrder(GXIndTexStageID, GXTexCoordID, GXTexMapID);
 void GXSetNumIndStages(u8);
 void GXSetTevDirect(GXTevStageID);
 void __GXUpdateBPMask();
