@@ -115,8 +115,6 @@ u8 OSUTF32toANSI(u32 utf) {
 }
 
 wchar_t OSUTF32toSJIS(u32 utf) {
-    const wchar_t* ucs;
-
     if (utf >= 0x10000) {
         return 0;
     }
