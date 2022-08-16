@@ -7,9 +7,9 @@ extern "C" {
 #endif
 
 const u8* OSUTF8to32(const u8*, u32*);
-const u16* OSUTF16to32(const u16*, u32*);
+const wchar_t* OSUTF16to32(const wchar_t*, u32*);
 u8 OSUTF32toANSI(u32);
-u16 OSUTF32toSJIS(u32);
+wchar_t OSUTF32toSJIS(u32);
 
 #ifdef __cplusplus
 }
