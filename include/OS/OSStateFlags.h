@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 typedef struct OSStateFlags {
-    u32 chksum; // at 0x0
+    u32 checksum; // at 0x0
     u32 WORD_0x4;
     u32 WORD_0x8;
     u32 WORD_0xC;
