@@ -1,10 +1,10 @@
 #include "OSSync.h"
+#include "OSAddress.h"
 #include "OSCache.h"
 
 #include <TRK/__mem.h>
 
-#define OS_SYS_CALL_HANDLER ((void*)0x80000C00)
-#define OS_HANDLER_SLOT_SIZE 0x100
+#define OS_INTR_SLOT_SIZE 0x100
 
 static asm void SystemCallVector(void) {
     // clang-format off
@@ -25,10 +25,12 @@ static asm void SystemCallVector(void) {
 }
 
 void __OSInitSystemCall(void) {
-    memcpy(OS_SYS_CALL_HANDLER, __OSSystemCallVectorStart,
+    memcpy(OSPhysicalToCached(OS_PHYS_SYSCALL_INTR), __OSSystemCallVectorStart,
            (u32)__OSSystemCallVectorEnd - (u32)__OSSystemCallVectorStart);
 
-    DCFlushRangeNoSync(OS_SYS_CALL_HANDLER, OS_HANDLER_SLOT_SIZE);
-    asm {sync}
-    ICInvalidateRange(OS_SYS_CALL_HANDLER, OS_HANDLER_SLOT_SIZE);
+    DCFlushRangeNoSync(OSPhysicalToCached(OS_PHYS_SYSCALL_INTR),
+                       OS_INTR_SLOT_SIZE);
+    __sync();
+    ICInvalidateRange(OSPhysicalToCached(OS_PHYS_SYSCALL_INTR),
+                      OS_INTR_SLOT_SIZE);
 }

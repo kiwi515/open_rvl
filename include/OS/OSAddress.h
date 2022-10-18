@@ -7,6 +7,11 @@
 extern "C" {
 #endif
 
+#define OS_PHYS_PREV_INTR_MASK 0x000000C4
+#define OS_PHYS_CURR_INTR_MASK 0x000000C8
+#define OS_PHYS_SYSCALL_INTR 0x00000C00
+#define OS_PHYS_INTR_TABLE 0x00003040
+
 static inline void* OSPhysicalToCached(u32 ofs) {
     return (void*)(ofs + 0x80000000);
 }

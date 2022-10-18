@@ -91,7 +91,7 @@ exit:
     // clang-format on
 }
 
-asm static void __OSSaveFPUContext(UNKWORD unused, UNKWORD unused1,
+static asm void __OSSaveFPUContext(UNKWORD unused, UNKWORD unused1,
                                    register OSContext* ctx) {
     // clang-format off
     nofralloc
