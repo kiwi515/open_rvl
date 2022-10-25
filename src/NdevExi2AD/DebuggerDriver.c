@@ -23,7 +23,7 @@ void __DBMtrHandler(u32 type, OSContext* ctx) {
 }
 
 void __DBIntrHandler(u32 type, OSContext* ctx) {
-    OS_PI_REG = 0x1000;
+    OS_PI_INTR_CAUSE = 0x1000;
     if (__DBDbgCallback != NULL)
         __DBDbgCallback(type, ctx);
 }
@@ -57,13 +57,13 @@ void DBInitComm(u8** flagOut, OSInterruptHandler mtrCb) {
     OSRestoreInterrupts(msr);
 }
 
-#ifdef NONMATCHING
+#ifdef NON_MATCHING
 // https://decomp.me/scratch/YjmTr
 void DBInitInterrupts(void) {
     __OSMaskInterrupts(0x18000);
     __OSMaskInterrupts(0x40);
     __DBDbgCallback = __DBMtrHandler;
-    __OSSetInterruptHandler(0x19, __DBIntrHandler);
+    __OSSetInterruptHandler(OS_INTR_PI_DEBUG, __DBIntrHandler);
     __OSUnmaskInterrupts(0x40);
 }
 #else

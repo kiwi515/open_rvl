@@ -5,7 +5,7 @@
 #include "OSInterrupt.h"
 #include "OSReset.h"
 
-#define MEM_MB_TO_B(mb) ((mb)*1024 * 1024)
+#define OS_MEM_MB_TO_B(mb) ((mb)*1024 * 1024)
 
 static BOOL OnShutdown(u32, u32);
 static OSShutdownFunctionInfo ShutdownFunctionInfo = {OnShutdown, 127, NULL,
@@ -464,27 +464,27 @@ static void BATConfig(void) {
     mem1sim = OSGetConsoleSimulatedMem1Size();
     mem1phys = OSGetPhysicalMem1Size();
     if (OSGetConsoleSimulatedMem1Size() < mem1phys &&
-        mem1sim == MEM_MB_TO_B(24)) {
-        DCInvalidateRange((void*)0x81800000, MEM_MB_TO_B(24));
+        mem1sim == OS_MEM_MB_TO_B(24)) {
+        DCInvalidateRange((void*)0x81800000, OS_MEM_MB_TO_B(24));
         OS_MI_CC004028 = 2;
     }
 
-    if (mem1sim <= MEM_MB_TO_B(24)) {
+    if (mem1sim <= OS_MEM_MB_TO_B(24)) {
         RealMode(ConfigMEM1_24MB);
-    } else if (mem1sim <= MEM_MB_TO_B(48)) {
+    } else if (mem1sim <= OS_MEM_MB_TO_B(48)) {
         RealMode(ConfigMEM1_48MB);
     }
 
     mem2end = OS_MEM2_END;
-    if (OSGetConsoleSimulatedMem2Size() <= MEM_MB_TO_B(64)) {
+    if (OSGetConsoleSimulatedMem2Size() <= OS_MEM_MB_TO_B(64)) {
         if (mem2end <= (void*)0x93400000) {
             RealMode(ConfigMEM2_52MB);
-        } else if (mem2end <= (char*)0x93400000 + MEM_MB_TO_B(4)) {
+        } else if (mem2end <= (char*)0x93400000 + OS_MEM_MB_TO_B(4)) {
             RealMode(ConfigMEM2_56MB);
         } else {
             RealMode(ConfigMEM2_64MB);
         }
-    } else if (OSGetConsoleSimulatedMem2Size() <= MEM_MB_TO_B(128)) {
+    } else if (OSGetConsoleSimulatedMem2Size() <= OS_MEM_MB_TO_B(128)) {
         if (mem2end <= (void*)0x97000000) {
             RealMode(ConfigMEM2_112MB);
         } else {
@@ -500,11 +500,11 @@ void __OSInitMemoryProtection(void) {
     OS_MI_CC004010 = 0xFF;
 
     __OSMaskInterrupts(0xF0000000);
-    __OSSetInterruptHandler(OS_ERR_SYSTEM_RESET, MEMIntrruptHandler);
-    __OSSetInterruptHandler(OS_ERR_MACHINE_CHECK, MEMIntrruptHandler);
-    __OSSetInterruptHandler(OS_ERR_DSI, MEMIntrruptHandler);
-    __OSSetInterruptHandler(OS_ERR_ISI, MEMIntrruptHandler);
-    __OSSetInterruptHandler(OS_ERR_EXT_INTERRUPT, MEMIntrruptHandler);
+    __OSSetInterruptHandler(OS_INTR_MEM_0, MEMIntrruptHandler);
+    __OSSetInterruptHandler(OS_INTR_MEM_1, MEMIntrruptHandler);
+    __OSSetInterruptHandler(OS_INTR_MEM_2, MEMIntrruptHandler);
+    __OSSetInterruptHandler(OS_INTR_MEM_3, MEMIntrruptHandler);
+    __OSSetInterruptHandler(OS_INTR_MEM_ADDRESS, MEMIntrruptHandler);
     OSRegisterShutdownFunction(&ShutdownFunctionInfo);
 
     BATConfig();
