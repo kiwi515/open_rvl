@@ -1,11 +1,15 @@
 #include "OSTime.h"
 
+#define OS_TIME_MONTH_MAX 12
+#define OS_TIME_WEEK_DAY_MAX 7
+#define OS_TIME_YEAR_DAY_MAX 365
+
 // End of each month in standard year
-static s32 YearDays[12] = {0,   31,  59,  90,  120, 151,
-                           181, 212, 243, 273, 304, 334};
+static s32 YearDays[OS_TIME_MONTH_MAX] = {0,   31,  59,  90,  120, 151,
+                                          181, 212, 243, 273, 304, 334};
 // End of each month in leap year
-static s32 LeapYearDays[12] = {0,   31,  60,  91,  121, 152,
-                               182, 213, 244, 274, 305, 335};
+static s32 LeapYearDays[OS_TIME_MONTH_MAX] = {0,   31,  60,  91,  121, 152,
+                                              182, 213, 244, 274, 305, 335};
 
 asm s64 OSGetTime(void) {
     // clang-format off
@@ -33,37 +37,51 @@ asm s32 OSGetTick(void){
 }
 
 s64 __OSGetSystemTime(void) {
-    ;
-    ;
+    const BOOL intr = OSDisableInterrupts();
+    const s64 time = OSGetTime() + OS_SYSTEM_TIME;
+    OSRestoreInterrupts(intr);
+    return time;
 }
 
-s64 __OSTimeToSystemTime(void) {
-    ;
-    ;
+s64 __OSTimeToSystemTime(s64 time) {
+    const BOOL intr = OSDisableInterrupts();
+    const s64 sysTime = OS_SYSTEM_TIME + time;
+    OSRestoreInterrupts(intr);
+    return sysTime;
 }
 
 static BOOL IsLeapYear(s32 year) {
-    ;
-    ;
+    BOOL leapYear = TRUE;
+    BOOL mul_4_100 = FALSE;
+
+    if (year % 4 == 0 && year % 100 != 0) {
+        mul_4_100 = TRUE;
+    }
+
+    if (!mul_4_100 && year % 400 != 0) {
+        leapYear = FALSE;
+    }
+
+    return leapYear;
 }
 
 static s32 GetYearDays(s32 year, s32 mon) {
-    // TO-DO: Try ternary
-    s32* days = NULL;
-    if (IsLeapYear(year)) {
-        days = LeapYearDays;
-    } else {
-        days = YearDays;
+    return (IsLeapYear(year) ? LeapYearDays : YearDays)[mon];
+}
+
+// https://decomp.me/scratch/172JC
+static s32 GetLeapDays(s32 year) {
+    if (year < 1) {
+        return 0;
     }
 
-    return days[mon];
+    s32 div_400 = (year + -1) / 400;
+    s32 div_100 = (year + -1) / 100;
+    s32 div_4 = (year + 3) / 4;
+    return div_4 - div_100 + div_400;
 }
 
-static s32 GetLeapDays(s32 year) {
-    ;
-    ;
-}
-
+// https://decomp.me/scratch/aN7AD
 static s32 GetDates(s32 days, OSCalendarTime* cal) {
     ;
     ;
