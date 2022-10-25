@@ -51,34 +51,18 @@ s64 __OSTimeToSystemTime(s64 time) {
 }
 
 static BOOL IsLeapYear(s32 year) {
-    BOOL leapYear = TRUE;
-    BOOL mul_4_100 = FALSE;
-
-    if (year % 4 == 0 && year % 100 != 0) {
-        mul_4_100 = TRUE;
-    }
-
-    if (!mul_4_100 && year % 400 != 0) {
-        leapYear = FALSE;
-    }
-
-    return leapYear;
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
 static s32 GetYearDays(s32 year, s32 mon) {
     return (IsLeapYear(year) ? LeapYearDays : YearDays)[mon];
 }
 
-// https://decomp.me/scratch/172JC
 static s32 GetLeapDays(s32 year) {
     if (year < 1) {
         return 0;
     }
-
-    s32 div_400 = (year + -1) / 400;
-    s32 div_100 = (year + -1) / 100;
-    s32 div_4 = (year + 3) / 4;
-    return div_4 - div_100 + div_400;
+    return (year + 3) / 4 - (year - 1) / 100 + (year - 1) / 400;
 }
 
 // https://decomp.me/scratch/aN7AD
