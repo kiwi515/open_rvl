@@ -91,8 +91,8 @@ static void GetDates(s32 days, OSCalendarTime* cal)
     for (month = OS_TIME_MONTH_MAX; days < p_days[--month];) {
         ;
     }
-    cal->mon = month;
-    cal->mon_day = days - p_days[month] + 1;
+    cal->month = month;
+    cal->month_day = days - p_days[month] + 1;
 }
 
 void OSTicksToCalendarTime(s64 ticks, OSCalendarTime* cal) {
