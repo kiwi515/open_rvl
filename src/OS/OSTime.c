@@ -65,10 +65,28 @@ static s32 GetLeapDays(s32 year) {
     return (year + 3) / 4 - (year - 1) / 100 + (year - 1) / 400;
 }
 
-// https://decomp.me/scratch/aN7AD
-static s32 GetDates(s32 days, OSCalendarTime* cal) {
-    ;
-    ;
+static void GetDates(s32 days, OSCalendarTime* cal) {
+    cal->week_day = (days + 6) % OS_TIME_WEEK_DAY_MAX;
+
+    s32 year;
+    s32 totalDays;
+    // WTF??
+    for (year = days / OS_TIME_YEAR_DAY_MAX;
+         days < (totalDays = year * OS_TIME_YEAR_DAY_MAX + GetLeapDays(year));
+         year--) {
+        ;
+    }
+    days -= totalDays;
+    cal->year = year;
+    cal->year_day = days;
+
+    s32* p_days = IsLeapYear(year) ? LeapYearDays : YearDays;
+    s32 month = OS_TIME_MONTH_MAX;
+    while (days < p_days[--month]) {
+        ;
+    }
+    cal->mon = month;
+    cal->mon_day = days - p_days[month] + 1;
 }
 
 void OSTicksToCalendarTime(s64 time, OSCalendarTime* cal) {

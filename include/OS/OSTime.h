@@ -9,7 +9,7 @@ extern "C" {
 // OS time -> Real time
 #define OS_TIME_TO_MICRO_SEC(x) ((x) / (OS_BUS_SPEED >> 2))
 #define OS_TIME_TO_MILLI_SEC(x) ((x) / ((OS_BUS_SPEED >> 2) / 1000))
-#define OS_TIME_TO_SEC(x) (x) / ((OS_BUS_SPEED >> 2) / 1000000))
+#define OS_TIME_TO_SEC(x) ((x) / ((OS_BUS_SPEED >> 2) / 1000000))
 
 // Real time -> OS time
 #define OS_MICRO_SEC_TO_TIME(x) ((x) * ((OS_BUS_SPEED >> 2)))
