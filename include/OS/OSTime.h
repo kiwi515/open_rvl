@@ -6,15 +6,17 @@
 extern "C" {
 #endif
 
+// Time base frequency = 1/4 bus clock
+#define OS_TIME_SPEED (OS_BUS_SPEED / 4)
+
 // OS time -> Real time
-#define OS_TIME_TO_MICRO_SEC(x) ((x) / (OS_BUS_SPEED >> 2))
-#define OS_TIME_TO_MILLI_SEC(x) ((x) / ((OS_BUS_SPEED >> 2) / 1000))
-#define OS_TIME_TO_SEC(x) ((x) / ((OS_BUS_SPEED >> 2) / 1000000))
+#define OS_TICKS_TO_SEC(x) ((x) / (OS_TIME_SPEED))
+#define OS_TICKS_TO_MSEC(x) ((x) / (OS_TIME_SPEED / 1000))
+#define OS_TICKS_TO_USEC(x) ((x << 3) / (OS_TIME_SPEED / 125000))
 
 // Real time -> OS time
-#define OS_MICRO_SEC_TO_TIME(x) ((x) * ((OS_BUS_SPEED >> 2)))
-#define OS_MILLI_SEC_TO_TIME(x) ((x) * ((OS_BUS_SPEED >> 2) / 1000))
-#define OS_SEC_TO_TIME(x) ((x) * ((OS_BUS_SPEED >> 2) / 1000000))
+#define OS_SEC_TO_TICKS(x) ((x) * (OS_TIME_SPEED))
+#define OS_MSEC_TO_TICKS(x) ((x) * (OS_TIME_SPEED / 1000))
 
 s64 OS_SYSTEM_TIME : 0x800030D8;
 

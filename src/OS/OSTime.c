@@ -1,8 +1,12 @@
 #include "OSTime.h"
 
+#define OS_TIME_USEC_MAX 1000
+#define OS_TIME_MSEC_MAX 1000
 #define OS_TIME_MONTH_MAX 12
 #define OS_TIME_WEEK_DAY_MAX 7
 #define OS_TIME_YEAR_DAY_MAX 365
+
+#define BIAS 0xB2575
 
 // End of each month in standard year
 static s32 YearDays[OS_TIME_MONTH_MAX] = {0,   31,  59,  90,  120, 151,
@@ -65,7 +69,8 @@ static s32 GetLeapDays(s32 year) {
     return (year + 3) / 4 - (year - 1) / 100 + (year - 1) / 400;
 }
 
-static void GetDates(s32 days, OSCalendarTime* cal) {
+static void GetDates(s32 days, OSCalendarTime* cal)
+    __attribute__((never_inline)) {
     cal->week_day = (days + 6) % OS_TIME_WEEK_DAY_MAX;
 
     s32 year;
@@ -81,19 +86,42 @@ static void GetDates(s32 days, OSCalendarTime* cal) {
     cal->year_day = days;
 
     s32* p_days = IsLeapYear(year) ? LeapYearDays : YearDays;
-    s32 month = OS_TIME_MONTH_MAX;
-    while (days < p_days[--month]) {
+
+    s32 month;
+    for (month = OS_TIME_MONTH_MAX; days < p_days[--month];) {
         ;
     }
     cal->mon = month;
     cal->mon_day = days - p_days[month] + 1;
 }
 
-void OSTicksToCalendarTime(s64 time, OSCalendarTime* cal) {
-    ;
-    ;
+void OSTicksToCalendarTime(s64 ticks, OSCalendarTime* cal) {
+    s32 days, secs;
+    s64 d;
+
+    d = ticks % OS_SEC_TO_TICKS(1);
+    if (d < 0) {
+        d += OS_SEC_TO_TICKS(1);
+    }
+
+    cal->usec = OS_TICKS_TO_USEC(d) % OS_TIME_USEC_MAX;
+    cal->msec = OS_TICKS_TO_MSEC(d) % OS_TIME_MSEC_MAX;
+    ticks -= d;
+
+    days = (OS_TICKS_TO_SEC(ticks) / OS_TIME_SECS_IN_DAY) + BIAS;
+    secs = OS_TICKS_TO_SEC(ticks) % OS_TIME_SECS_IN_DAY;
+    if (secs < 0) {
+        days -= 1;
+        secs += OS_TIME_SECS_IN_DAY;
+    }
+
+    GetDates(days, cal);
+    cal->hour = secs / 60 / 60;
+    cal->min = (secs / 60) % 60;
+    cal->sec = secs % 60;
 }
 
+// https://decomp.me/scratch/fAlfM
 s64 OSCalendarTimeToTicks(const OSCalendarTime* cal) {
     ;
     ;
