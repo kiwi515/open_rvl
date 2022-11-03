@@ -6,6 +6,9 @@
 #define OS_TIME_WEEK_DAY_MAX 7
 #define OS_TIME_YEAR_DAY_MAX 365
 
+#define OS_TIME_SECS_IN_HOUR (60 * 60)
+#define OS_TIME_SECS_IN_DAY (OS_TIME_SECS_IN_HOUR * 24)
+
 #define BIAS 0xB2575
 
 // End of each month in standard year
@@ -71,10 +74,13 @@ static s32 GetLeapDays(s32 year) {
 
 static void GetDates(s32 days, OSCalendarTime* cal)
     __attribute__((never_inline)) {
-    cal->week_day = (days + 6) % OS_TIME_WEEK_DAY_MAX;
-
     s32 year;
     s32 totalDays;
+    s32* p_days;
+    s32 month;
+
+    cal->week_day = (days + 6) % OS_TIME_WEEK_DAY_MAX;
+
     // WTF??
     for (year = days / OS_TIME_YEAR_DAY_MAX;
          days < (totalDays = year * OS_TIME_YEAR_DAY_MAX + GetLeapDays(year));
@@ -85,9 +91,7 @@ static void GetDates(s32 days, OSCalendarTime* cal)
     cal->year = year;
     cal->year_day = days;
 
-    s32* p_days = IsLeapYear(year) ? LeapYearDays : YearDays;
-
-    s32 month;
+    p_days = IsLeapYear(year) ? LeapYearDays : YearDays;
     for (month = OS_TIME_MONTH_MAX; days < p_days[--month];) {
         ;
     }
