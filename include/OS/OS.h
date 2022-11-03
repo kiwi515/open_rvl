@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-volatile u32 OS_BUS_SPEED : 0x800000F8;
+u32 OS_BUS_SPEED : 0x800000F8;
 
 volatile s32 OS_GLOBAL_800030C0[] : 0x800030C0;
 
