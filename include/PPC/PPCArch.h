@@ -14,6 +14,8 @@ void PPCMthid0(u32);
 u32 PPCMfl2cr(void);
 void PPCMtl2cr(u32);
 
+void PPCMtdec(u32);
+
 u32 PPCMffpscr(void);
 void PPCMtfpscr(u32);
 
