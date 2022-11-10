@@ -6,8 +6,7 @@ from elf import ELFFile
 from input_stream import InputStream
 
 # REMOVE LATER
-argv = ["gen_test.py",
-        "G:/Windows.old/Desktop/ogws/kiwi515/master/ogws/build/asm/RevoSDK/OS/OSReset.o"]
+argv = ["gen_test.py", "tools/tester/OSReset.o"]
 # REMOVE LATER
 
 
