@@ -2,7 +2,6 @@
     """
 
 from input_stream import InputStream
-from dataclasses import dataclass
 
 """
 1. Validate file header [X]
@@ -14,12 +13,12 @@ from dataclasses import dataclass
 """
 
 
-@dataclass
 class ELFFile():
     def __init__(self, strm: InputStream):
         """Parse ELF file
         """
         self.__sh_list = list()
+        self.__st_dict = dict()
         self.__shstrtab = None
         self.__strtab = None
         self.__shoff = -1
@@ -29,14 +28,16 @@ class ELFFile():
 
         assert not strm.eof()
 
+        # Parse header + extract section names
         self.__parse_file_header(strm)
         self.__extract_shstrtab(strm)
 
+        # Parse sections
         self.__parse_section_headers(strm)
+
+        # Extract string table + parse symbols
         self.__extract_strtab(strm)
         self.__parse_symbols(strm)
-
-        pass
 
     def __parse_file_header(self, strm: InputStream):
         """Parse required info from the ELF header
@@ -143,8 +144,46 @@ class ELFFile():
         for i in range(symtab_count):
             # Seek to symtab entry
             strm.seek(symtab_off + (i * symtab_entsz), strm.SEEK_BEGIN)
-            #
-            pass
+
+            # Symbol name
+            st_name = strm.get_u32()
+            st_name = self.__get_sym_name(st_name)
+
+            # Symbol value (or addr)
+            st_value = strm.get_u32()
+            # Symbol size
+            st_size = strm.get_u32()
+            # Symbol type/bind
+            st_info = strm.get_u8()
+            # Symbol visibility
+            st_other = strm.get_u8()
+            # Symbol parent section index
+            st_shndx = strm.get_u16()
+
+            # No name symbol
+            if st_name == "":
+                st_name = self.__sh_list[st_shndx]
+
+            # Read symbol data (if it is not in a special section, or is UNDEF)
+            if st_shndx > 0 and st_shndx < self.__shnum:
+                # Extract symbol data/code
+                strm.seek(self.__shoff + (st_shndx *
+                          self.__shentsize), strm.SEEK_BEGIN)
+                strm.seek(0x10, strm.SEEK_CURRENT)
+                # Offset of parent section
+                sect_off = strm.get_u32()
+                # Offset of symbol data
+                sym_off = sect_off + st_value
+                strm.seek(sym_off, strm.SEEK_BEGIN)
+                sym_data = strm.read(st_size)
+
+                # Add symbol to dict
+                sect_name = self.__sh_list[st_shndx]
+                if not sect_name in self.__st_dict:
+                    self.__st_dict[sect_name] = list()
+
+                self.__st_dict[sect_name].append(
+                    ELFSymbol(st_name, st_value, st_size, st_info, st_other, self.__sh_list[st_shndx], sym_data))
 
     def __get_section_idx(self, name: str):
         """Get index of section by name
@@ -167,7 +206,7 @@ class ELFFile():
         return name
 
     def __get_sym_name(self, off: int):
-        """Get section name, given an offset into strtab
+        """Get symbol name, given an offset into strtab
         """
         name = ""
         c = self.__strtab[off]
@@ -177,3 +216,15 @@ class ELFFile():
             c = self.__strtab[off]
             off += 1
         return name
+
+
+class ELFSymbol():
+    def __init__(self, st_name: str, st_value: int, st_size: int, st_info: int,
+                 st_other: int, section: str, data: bytes):
+        self.__name = st_name
+        self.__value = st_value
+        self.__size = st_size
+        self.__info = st_info
+        self.__other = st_other
+        self.__section = section
+        self.__data = data

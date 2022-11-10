@@ -7,7 +7,7 @@ from input_stream import InputStream
 
 # REMOVE LATER
 argv = ["gen_test.py",
-        "G:/Windows.old/Desktop/ogws/kiwi515/master/ogws/build/asm/RevoSDK/OS/OSLink.o"]
+        "G:/Windows.old/Desktop/ogws/kiwi515/master/ogws/build/asm/RevoSDK/OS/OSReset.o"]
 # REMOVE LATER
 
 
