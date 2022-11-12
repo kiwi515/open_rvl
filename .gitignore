@@ -1,6 +1,11 @@
+*.pyc
+__pycache__/
+
 tools/*.exe
 tools/*.dll
 tools/old/*.exe
 tools/old/*.dll
+
+tools/*.o
 
 .vscode/
