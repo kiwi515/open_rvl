@@ -70,7 +70,7 @@ def run_test(test_file: str) -> bool:
 
     # Compile source file
     src_file = test_file.replace(".json", "")
-    src_file = src_file.replace("tests/", "src/")
+    src_file = src_file.replace("tests", "src")
     cmd = f"{CC} {CFLAGS} -c -o temp.o {src_file}"
 
     result = run(cmd, shell=True, stdout=PIPE,

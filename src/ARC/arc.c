@@ -129,7 +129,10 @@ BOOL ARCFastOpen(ARCHandle* handle, s32 entrynum, ARCFileInfo* info) {
 }
 
 s32 ARCConvertPathToEntrynum(ARCHandle* handle, const char* path) {
+    const char* name_end;
+    int name_delimited_by_slash;
     s32 name_length;
+    u32 anchor;
     u32 it = handle->entrynum;
     ARCNode* nodes = handle->nodes;
 
@@ -176,17 +179,17 @@ s32 ARCConvertPathToEntrynum(ARCHandle* handle, const char* path) {
     compare:
         // We've ensured the directory is not special.
         // Isolate the name of the current item in the path string.
-        const char* name_end = path;
+        name_end = path;
         while (name_end[0] != '\0' && name_end[0] != '/')
             ++name_end;
 
         // If the name was delimited by a '/' rather than truncated.
         // This must be expressed as a ternary, and an enum cannot be used..
-        int name_delimited_by_slash = (name_end[0] != '\0') ? 1 : 0;
+        name_delimited_by_slash = (name_end[0] != '\0') ? 1 : 0;
         name_length = name_end - path;
 
         // Traverse all children of the parent.
-        const u32 anchor = it;
+        anchor = it;
         ++it;
         while (it < nodes[anchor].folder.sibling_next) {
             while (TRUE) {
@@ -229,7 +232,6 @@ s32 ARCConvertPathToEntrynum(ARCHandle* handle, const char* path) {
         path += name_length + 1;
     }
 }
-
 static u32 entryToPath(ARCHandle* handle, u32 entrynum, char* string,
                        u32 maxlen) {
     char* name;

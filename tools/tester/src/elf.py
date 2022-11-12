@@ -29,7 +29,7 @@ class ELFSection():
                      ".rodata", ".data", ".bss", ".sdata", ".sbss", ".sdata2", ".sbss2"]
     BSS_SECTIONS = [".bss", ".sbss", ".sbss2"]
     ALL_SECTIONS = [".init", ".text", ".ctors", ".dtors",
-                     ".rodata", ".data", ".bss", ".sdata", ".sbss", ".sdata2", ".sbss2"]
+                    ".rodata", ".data", ".bss", ".sdata", ".sbss", ".sdata2", ".sbss2"]
 
     def __init__(self, strm: InputStream):
         """Parse ELF section header from stream
@@ -198,6 +198,14 @@ class ELFHeader():
         return self.e_shnum > 0
 
 
+def sym_sort_key_func(sym: ELFSymbol):
+    """Sort key for symbol list.
+    Because we dynamically calculate the size of GAS symbols,
+    we first need to sort the symbols by their offset.
+    """
+    return sym.st_value
+
+
 @dataclass
 class ELFFile():
     header: ELFHeader
@@ -248,6 +256,10 @@ class ELFFile():
         #   2. Calculate size of symbols where size=0
         #   3. Read symbol data from stream
         for sect in self.section_list:
+            # Sort symbol list by offset to ensure
+            # sizes calculated later are correct
+            sect.symbol_list.sort(key=sym_sort_key_func)
+
             for i, sym in enumerate(sect.symbol_list):
                 # Apply symbol name
                 sym.name = self.__get_strtab_name(sym.st_name)
