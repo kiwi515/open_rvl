@@ -1,7 +1,10 @@
 """Input file stream with configurable endianness (byteorder).
     """
 
+from dataclasses import dataclass
 
+
+@dataclass
 class InputStream():
     endian: int
     pos: int
