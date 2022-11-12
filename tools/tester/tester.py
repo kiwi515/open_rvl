@@ -134,7 +134,7 @@ def show_usage():
     print("Valid usage:")
     print(
         "    tester.py create {known good obj file} {test case path (optional)}")
-    print("    tester.py run {source file} {test case file (json)}")
+    print("    tester.py run {test case file (json)}")
 
 
 def main():
