@@ -1,6 +1,3 @@
-// TU was compiled with -O3
-#pragma optimization_level 3
-
 #include "EXIBios.h"
 
 #include <OS/OS.h>
@@ -48,9 +45,13 @@ static void CompleteTransfer(EXIChannel chan) {
 
     if (exi->state & EXI_STATE_BUSY) {
         if (exi->state & EXI_STATE_IMM_ACCESS && (len = exi->bytesRead) != 0) {
-            u8* buf = (u8*)exi->buffer;
-            u32 data = EXI_CD006800[chan].WORD_0x10;
-            for (int i = 0; i < len; i++) {
+            u8* buf;
+            u32 data;
+            int i;
+
+            buf = (u8*)exi->buffer;
+            data = EXI_CD006800[chan].WORD_0x10;
+            for (i = 0; i < len; i++) {
                 *buf++ = data >> (3 - i) * 8;
             }
         }
@@ -241,7 +242,7 @@ static BOOL __EXIProbe(EXIChannel chan) {
         }
 
         if (flag & 0x1000) {
-            s32 time = (s32)(OS_TIME_TO_MILLI_SEC(OSGetTime()) / 100) + 1;
+            s32 time = (s32)(OS_TICKS_TO_MSEC(OSGetTime()) / 100) + 1;
             if (OS_GLOBAL_800030C0[chan] == 0) {
                 OS_GLOBAL_800030C0[chan] = time;
             }
@@ -409,7 +410,7 @@ BOOL EXIDeselect(EXIChannel chan) {
     return TRUE;
 }
 
-static void EXIIntrruptHandler(u8 intr, OSContext* ctx) {
+static void EXIIntrruptHandler(s16 intr, OSContext* ctx) {
     EXIData* exi;
     EXIChannel chan;
     EXICallback callback;
@@ -430,7 +431,7 @@ static void EXIIntrruptHandler(u8 intr, OSContext* ctx) {
     }
 }
 
-static void TCIntrruptHandler(u8 intr, OSContext* ctx) {
+static void TCIntrruptHandler(s16 intr, OSContext* ctx) {
     EXIData* exi;
     EXIChannel chan;
     EXICallback callback;
@@ -454,7 +455,7 @@ static void TCIntrruptHandler(u8 intr, OSContext* ctx) {
     }
 }
 
-static void EXTIntrruptHandler(u8 intr, OSContext* ctx) {
+static void EXTIntrruptHandler(s16 intr, OSContext* ctx) {
     EXIChannel chan;
     EXIData* exi;
     EXICallback callback;
@@ -591,6 +592,8 @@ static void UnlockedHandler(EXIChannel chan, OSContext* ctx) {
     EXIGetID(chan, 0, &id);
 }
 
+#ifdef NON_MATCHING
+// EXIUnlock isn't inlining when it needs to be.
 s32 EXIGetID(EXIChannel chan, u32 dev, u32* out) {
     EXIData* exi = &Ecb[chan];
     u32 imm;
@@ -653,3 +656,4 @@ s32 EXIGetID(EXIChannel chan, u32 dev, u32* out) {
 
     return ret == 0;
 }
+#endif

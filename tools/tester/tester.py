@@ -12,10 +12,13 @@ from src.elf import ELFFile, ELFSection
 from src.stream import InputStream
 from src.hasher import Hasher
 
-# Compiler + flags
-# Can be overridden per test case with the CC/CFLAGS keys
+# Can be overridden per test case
 CC = "tools\\mwcceppc.exe"
-CFLAGS = "-msgstyle gcc -lang c -enum int -O4,p -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults"
+CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults"
+OPT = "O4,p"
+
+# argv = ["a", "create", "C:/Users/schif/Desktop/dev/ogws/a.out"]
+# argv = ["a", "run", "tests/EXI/EXIBios.c.json"]
 
 
 def make_test(obj_file: str) -> str:
@@ -49,7 +52,7 @@ def run_test(test_file: str) -> bool:
     """Run test case file
     Only returns True if ALL cases pass
     """
-    global CC, CFLAGS
+    global CC, CFLAGS, OPT
 
     # Open test case file
     try:
@@ -64,14 +67,16 @@ def run_test(test_file: str) -> bool:
 
     # TU-specific compiler/flags overrides
     if "CC" in test_json:
-        CC = test_json[CC]
+        CC = test_json["CC"]
     if "CFLAGS" in test_json:
-        CFLAGS = test_json[CFLAGS]
+        CFLAGS = test_json["CFLAGS"]
+    if "OPT" in test_json:
+        OPT = test_json["OPT"]
 
     # Compile source file
     src_file = test_file.replace(".json", "")
     src_file = src_file.replace("tests", "src")
-    cmd = f"{CC} {CFLAGS} -c -o temp.o {src_file}"
+    cmd = f"{CC} {CFLAGS} {OPT} -c -o temp.o {src_file}"
 
     result = run(cmd, shell=True, stdout=PIPE,
                  stderr=PIPE, universal_newlines=True)
@@ -88,7 +93,7 @@ def run_test(test_file: str) -> bool:
         print("[FATAL] Temporary object file could not be opened")
 
     # Validate section-by-section
-    print(f"Test case: {test_file}")
+    print(f"Unit test: {test_file}")
     any_fail = False
     for name in ELFSection.ALL_SECTIONS:
         # Test cases for this section

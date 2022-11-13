@@ -26,7 +26,7 @@ typedef struct EXIData {
     EXICallback exiCallback; // at 0x0
     EXICallback tcCallback;  // at 0x4
     EXICallback extCallback; // at 0x8
-    s32 state;               // at 0xC
+    volatile s32 state;      // at 0xC
     s32 bytesRead;           // at 0x10
     void* buffer;            // at 0x14
     u32 dev;                 // at 0x18
