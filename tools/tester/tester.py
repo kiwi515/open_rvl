@@ -173,8 +173,12 @@ def run_test(test_file: str) -> bool:
 
 def show_usage():
     print("Valid usage:")
+    print("Create unit test:")
     print(
-        "    tester.py create {known good obj file} {test case path (optional)}")
+        "    tester.py make_obj {known good object file} {test case path (optional)}")
+    print(
+        "    tester.py make_asm {known good assembly file (doldisasm format)} {test case path (optional)}")
+    print("Run unit test:")
     print("    tester.py run {test case file (json)}")
 
 
