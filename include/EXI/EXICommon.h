@@ -22,7 +22,7 @@ typedef enum { EXI_READ, EXI_WRITE, EXI_TYPE_2, EXI_MAX_TYPE } EXIType;
 
 typedef void (*EXICallback)(EXIChannel, OSContext*);
 
-extern u32 __EXIFreq;
+extern const u32 __EXIFreq;
 
 static inline u32 __EXISwap32(u32 val) {
     return val >> 24 & 0x000000FF | val >> 8 & 0x0000FF00 |

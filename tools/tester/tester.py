@@ -15,10 +15,7 @@ from src.hasher import Hasher
 # Can be overridden per test case
 CC = "tools\\mwcceppc.exe"
 CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults"
-OPT = "O4,p"
-
-# argv = ["a", "create", "C:/Users/schif/Desktop/dev/ogws/a.out"]
-# argv = ["a", "run", "tests/EXI/EXIBios.c.json"]
+OPT = "-O4,p"
 
 
 def make_test(obj_file: str) -> str:
@@ -103,6 +100,10 @@ def run_test(test_file: str) -> bool:
 
         # Compare hashes
         for case in cases:
+            if my_sect == None:
+                print(f"    [WARN] Missing section {name}")
+                break
+
             # Expected
             test_name = case[0]
             test_hash = case[1]

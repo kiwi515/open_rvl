@@ -1,7 +1,7 @@
 #include "EXICommon.h"
 #include "EXIBios.h"
 
-u32 __EXIFreq = 4;
+const u32 __EXIFreq = 4;
 
 BOOL EXIWriteReg(EXIChannel chan, u32 dev, UNKWORD r5, const void* buf,
                  s32 len) {
