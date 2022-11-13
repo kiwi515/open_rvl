@@ -32,13 +32,13 @@ static IPCResult nandOpen(const char* path, u8 mode, NANDCommandBlock* block,
 
     switch (mode) {
     case NAND_ACCESS_3:
-        mode = IPC_OPEN_3;
+        ipcMode = IPC_OPEN_3;
         break;
     case NAND_ACCESS_READ:
-        mode = IPC_OPEN_READ;
+        ipcMode = IPC_OPEN_READ;
         break;
     case NAND_ACCESS_WRITE:
-        mode = IPC_OPEN_WRITE;
+        ipcMode = IPC_OPEN_WRITE;
         break;
     }
 
