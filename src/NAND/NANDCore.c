@@ -151,6 +151,9 @@ BOOL nandIsInitialized(void) {
 // Stubbed for release
 void nandReportErrorCode(IPCResult result) {}
 
+// Padding for the string table in order to match NANDInit
+const char* PADDING_NANDCore_c() { return "ABCDEFGH"; }
+
 NANDResult nandConvertErrorCode(IPCResult result) {
     int i;
 
@@ -304,14 +307,16 @@ NANDResult NANDInit(void) {
 }
 
 static BOOL nandOnShutdown(u32 r3, u32 r4) {
-    if (r3 == 0 && r4 == 2) {
-        volatile BOOL shutdown = FALSE;
-        s64 start = OSGetTime();
-        ISFS_ShutdownAsync(nandShutdownCallback, (void*)&shutdown);
+    if (r3 == 0) {
+        if (r4 == 2) {
+            volatile BOOL shutdown = FALSE;
+            s64 start = OSGetTime();
+            ISFS_ShutdownAsync(nandShutdownCallback, (void*)&shutdown);
 
-        while (OS_TIME_TO_MILLI_SEC(OSGetTime() - start) < 500) {
-            if (shutdown) {
-                break;
+            while (OS_TICKS_TO_MSEC(OSGetTime() - start) < 500) {
+                if (shutdown) {
+                    break;
+                }
             }
         }
 
@@ -326,11 +331,13 @@ static void nandShutdownCallback(IPCResult result, void* arg) {
 }
 
 NANDResult NANDGetCurrentDir(char* out) {
+    BOOL intr;
+
     if (!nandIsInitialized()) {
         return NAND_RESULT_FATAL_ERROR;
     }
 
-    u32 intr = OSDisableInterrupts();
+    intr = OSDisableInterrupts();
     strcpy(out, s_currentDir);
     OSRestoreInterrupts(intr);
     return NAND_RESULT_OK;
@@ -449,8 +456,10 @@ void NANDInitBanner(NANDBanner* banner, u32 flags, const wchar_t* title,
  */
 
 static IPCResult _ES_InitLib(s32* fd) {
+    IPCResult result;
+
     *fd = -1;
-    IPCResult result = IPC_RESULT_OK;
+    result = IPC_RESULT_OK;
 
     *fd = IOS_Open("/dev/es", IPC_OPEN_NONE);
     if (*fd < 0) {
@@ -487,6 +496,7 @@ static IPCResult _ES_GetDataDir(s32* fd, u64 titleid, char* out) {
 
 static IPCResult _ES_GetTitleId(s32* fd, u64* out) {
     IPCResult result;
+    u64* pTitleid;
     // TO-DO: Hacky solution
     u8 titleidWork[256] __attribute__((aligned(32)));
     u8 vectorWork[32] __attribute__((aligned(32)));
@@ -497,7 +507,7 @@ static IPCResult _ES_GetTitleId(s32* fd, u64* out) {
         return -0x3F9;
     }
 
-    u64* pTitleid = (u64*)titleidWork;
+    pTitleid = (u64*)titleidWork;
     pVectors[0].base = pTitleid;
     pVectors[0].length = sizeof(u64);
 
