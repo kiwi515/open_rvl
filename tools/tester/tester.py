@@ -1,8 +1,8 @@
 """tester.py
-Create or run test cases:
-    tester.py make_obj {known good object file} {test case path (optional)}
-    tester.py make_asm {known good assembly file (doldisasm format)} {test case path (optional)}
-    tester.py run {test case file (json)}
+Create or run unit tests:
+    tester.py make_obj {known good object file} {unit test path (optional)}
+    tester.py make_asm {known good assembly file (doldisasm format)} {unit test path (optional)}
+    tester.py run {unit test file (json)}
 """
 from sys import argv
 from os import remove
@@ -15,7 +15,7 @@ from src.stream import InputStream
 from src.hasher import Hasher
 from src.fix_asm import fix
 
-# Can be overridden per test case
+# Can be overridden per unit test
 CC = "tools\\mwcceppc.exe"
 CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults"
 OPT = "-O4,p"
@@ -25,7 +25,7 @@ ASFLAGS = "-mgekko -I tools/tester/include"
 
 
 def make_obj(obj_file: str) -> str:
-    """Generate test case file from a given object file
+    """Generate unit test from a given object file
     """
     # Parse object file
     try:
@@ -84,17 +84,17 @@ def make_asm(asm_file: str) -> str:
 
 
 def run_test(test_file: str) -> bool:
-    """Run test case file
+    """Run unit test file
     Only returns True if ALL cases pass
     """
     global CC, CFLAGS, OPT
 
-    # Open test case file
+    # Open unit test file
     try:
         with open(test_file, "rb") as f:
             test_json = loads(f.read())
     except FileNotFoundError:
-        print(f"[FATAL] Test case could not be opened: {test_file}")
+        print(f"[FATAL] Unit test could not be opened: {test_file}")
         return
     except UnicodeDecodeError:
         print(f"[FATAL] JSON data could not be decoded. {test_file}")
@@ -136,6 +136,9 @@ def run_test(test_file: str) -> bool:
         # Compiled data for this section
         my_sect = elf.section(name)
 
+        if len(cases) > 0:
+            print(f"{name} section:")
+
         # Compare hashes
         for case in cases:
             if my_sect == None:
@@ -175,11 +178,11 @@ def show_usage():
     print("Valid usage:")
     print("Create unit test:")
     print(
-        "    tester.py make_obj {known good object file} {test case path (optional)}")
+        "    tester.py make_obj {known good object file} {unit test path (optional)}")
     print(
-        "    tester.py make_asm {known good assembly file (doldisasm format)} {test case path (optional)}")
+        "    tester.py make_asm {known good assembly file (doldisasm format)} {unit test path (optional)}")
     print("Run unit test:")
-    print("    tester.py run {test case file (json)}")
+    print("    tester.py run {unit test file (json)}")
 
 
 def main():
@@ -210,7 +213,7 @@ def main():
         # Print data to console
         print(test_data)
 
-    # Run test case
+    # Run unit test
     elif argv[1].casefold() == "run":
         # Return 1 if any test fails (for automation purposes)
         if run_test(argv[2]):

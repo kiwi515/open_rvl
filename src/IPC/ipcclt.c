@@ -100,7 +100,7 @@ exit:
     return ret;
 }
 
-static void IpcReplyHandler(u8 intr, OSContext* ctx) {
+static void IpcReplyHandler(s16 intr, OSContext* ctx) {
     IPCRequestEx* req;
     IPCIoctlvArgs* args;
     u32 reg;
@@ -137,7 +137,7 @@ static void IpcReplyHandler(u8 intr, OSContext* ctx) {
             DCInvalidateRange(req->base.ioctl.out, req->base.ioctl.outSize);
             break;
         case IPC_REQ_IOCTLV:
-            IPCIoctlvArgs* args = &req->base.ioctlv;
+            args = &req->base.ioctlv;
 
             req->base.ioctlv.vectors =
                 (req->base.ioctlv.vectors != NULL)
@@ -206,7 +206,7 @@ static void IpcAckHandler(u8 intr, OSContext* ctx) {
     }
 }
 
-static void IPCInterruptHandler(u8 intr, OSContext* ctx) {
+static void IPCInterruptHandler(s16 intr, OSContext* ctx) {
     if ((IPCReadReg(1) & 0x14) == 0x14) {
         IpcReplyHandler(intr, ctx);
     }
@@ -416,7 +416,7 @@ IPCResult IOS_Read(s32 fd, void* buf, s32 len) {
     return ret;
 }
 
-static IPCResult __ios_Write(IPCRequestEx* req, void* buf, s32 len) {
+static IPCResult __ios_Write(IPCRequestEx* req, const void* buf, s32 len) {
     IPCResult ret = IPC_RESULT_OK;
 
     if (req == NULL) {
