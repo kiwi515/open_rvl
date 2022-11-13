@@ -7,5 +7,6 @@ tools/old/*.exe
 tools/old/*.dll
 
 tools/*.o
+tools/tester/include/baserom.dol
 
 .vscode/

@@ -25,16 +25,9 @@ SECTION_REGEX = r"^\s*.section\s+(?P<Name>.[a-zA-Z0-9_$]+)"
 LABEL_REGEX = r"^\s*(?P<Name>lbl_[0-9A-F]{8})\s*:"
 
 
-def main():
-    if len(argv) < 2:
-        print("Invalid arguments.")
-        print("Valid usage:")
-        print("    fix_asm.py myFile.s")
-
-    # Read input file
-    with open(argv[1], "r") as f:
-        asm = f.readlines()
-
+def fix(asm: list[str]) -> list[str]:
+    """Fixup assembly file to work with the tester
+    """
     # First pass:
     # Find all function-local labels (.text)
     labels = []
@@ -66,6 +59,7 @@ def main():
 
         # r13 reloc
         line = line.replace("@sda21(r13)", "@sda21(0)")
+        line = line.replace("@sda21(r2)", "@sda21(0)")
 
         # !!! Assumes doldisasm format !!!
         if line.startswith("/*"):
@@ -77,9 +71,4 @@ def main():
                 line = line[:37] + f"li {insn[1]} {insn[3]}\n"
 
         asm[i] = line
-
-    with open("temp.s", "w+") as f:
-        f.writelines(asm)
-
-
-main()
+    return asm

@@ -1,24 +1,30 @@
 """tester.py
 Create or run test cases:
-    tester.py create {known good obj file} {test case path (optional)}
+    tester.py make_obj {known good object file} {test case path (optional)}
+    tester.py make_asm {known good assembly file (doldisasm format)} {test case path (optional)}
     tester.py run {test case file (json)}
 """
 from sys import argv
 from os import remove
+from os.path import exists
 from json import loads, dumps
 from subprocess import run, PIPE
 
 from src.elf import ELFFile, ELFSection
 from src.stream import InputStream
 from src.hasher import Hasher
+from src.fix_asm import fix
 
 # Can be overridden per test case
 CC = "tools\\mwcceppc.exe"
 CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults"
 OPT = "-O4,p"
 
+AS = "tools\\powerpc-eabi-as.exe"
+ASFLAGS = "-mgekko -I tools/tester/include"
 
-def make_test(obj_file: str) -> str:
+
+def make_obj(obj_file: str) -> str:
     """Generate test case file from a given object file
     """
     # Parse object file
@@ -43,6 +49,38 @@ def make_test(obj_file: str) -> str:
                 test[sect.name].append([sym.name, digest.hex()])
 
     return dumps(test, indent=4)
+
+
+def make_asm(asm_file: str) -> str:
+    """Generate unit test from a given assembly file
+    """
+    # Fixup assembly for tester
+    with open(asm_file, "r") as f:
+        asm = f.readlines()
+    asm = fix(asm)
+    # Write to temp file
+    with open("temp_asm.s", "w+") as f:
+        f.writelines(asm)
+
+    # Assemble temp file
+    cmd = f"{AS} {ASFLAGS} -o temp_asm.o temp_asm.s"
+    result = run(cmd, shell=True, stdout=PIPE,
+                 stderr=PIPE, universal_newlines=True)
+    if result.returncode != 0:
+        print("[FATAL] Assembler threw an error:")
+        print(result.returncode, result.stdout, result.stderr)
+        return
+
+    # Hand off object to make_obj
+    test_data = make_obj("temp_asm.o")
+
+    # Delete temp files
+    if exists("temp_asm.s"):
+        remove("temp_asm.s")
+    if exists("temp_asm.o"):
+        remove("temp_asm.o")
+
+    return test_data
 
 
 def run_test(test_file: str) -> bool:
@@ -125,11 +163,8 @@ def run_test(test_file: str) -> bool:
                     any_fail = True
 
     # Delete temp object file
-    try:
+    if exists("temp.o"):
         remove("temp.o")
-    # It is okay if the file is already gone
-    except Exception:
-        pass
 
     # The program must know if any case failed,
     # so it can return the proper error code
@@ -149,15 +184,25 @@ def main():
         show_usage()
         return
 
-    # Create test case
-    if argv[1].casefold() == "create":
-        test_data = make_test(argv[2])
-
+    # Create unit test from object file
+    if argv[1].casefold() == "make_obj":
+        # Create unit test
+        test_data = make_obj(argv[2])
         # Optionally write data to file
         if len(argv) >= 4:
             with open(argv[3], "w+") as f:
                 f.write(test_data)
+        # Print data to console
+        print(test_data)
 
+    # Create unit test from assembly file
+    elif argv[1].casefold() == "make_asm":
+        # Create unit test
+        test_data = make_asm(argv[2])
+        # Optionally write data to file
+        if len(argv) >= 4:
+            with open(argv[3], "w+") as f:
+                f.write(test_data)
         # Print data to console
         print(test_data)
 
