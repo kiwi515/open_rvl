@@ -18,14 +18,17 @@ static void SetFirstObject_(MEMList* list, void* object) {
 }
 
 void MEMAppendListObject(MEMList* list, void* object) {
+    MEMNode* node;
+    MEMNode* tail;
+
     if (list->head == NULL) {
         SetFirstObject_(list, object);
     } else {
-        MEMNode* node = MEMGetObjectNode(list, object);
+        node = MEMGetObjectNode(list, object);
         node->prev = list->tail;
         node->next = NULL;
 
-        MEMNode* tail = MEMGetObjectNode(list, list->tail);
+        tail = MEMGetObjectNode(list, list->tail);
         tail->next = object;
 
         list->tail = object;
