@@ -319,16 +319,16 @@ NANDResult NANDGetLength(NANDFileInfo* info, u32* length) {
 
 static IPCResult nandGetFileStatusAsync(s32 fd, NANDCommandBlock* block) {
     // Work buffer???
-    return ISFS_GetFileStatsAsync(
-        fd, (FSFileStats*)ROUND_UP_PTR(block->UNK_0x34, 32),
-        nandGetFileStatusAsyncCallback, block);
+    return ISFS_GetFileStatsAsync(fd,
+                                  (FSFileStats*)ROUND_UP_PTR(block->path, 32),
+                                  nandGetFileStatusAsyncCallback, block);
 }
 
 static void nandGetFileStatusAsyncCallback(IPCResult result, void* arg) {
     // Implicit cast required
     NANDCommandBlock* block = arg;
     // Work buffer???
-    FSFileStats* stats = (FSFileStats*)ROUND_UP_PTR(block->UNK_0x34, 32);
+    FSFileStats* stats = (FSFileStats*)ROUND_UP_PTR(block->path, 32);
 
     if (result == IPC_RESULT_OK) {
         if (block->pLength != NULL) {
