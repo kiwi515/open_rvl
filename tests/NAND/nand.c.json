@@ -2,19 +2,19 @@
     ".text": [
         [
             "nandCreate",
-            "2857034d8936c0e08b4b124c67b6b669ab3b102c34b3dd2ac0f8f59c5f501ab5"
+            "744279dc262cbed5186f52a16ef3846176eebf932c8840f2308b992209260a15"
         ],
         [
             "NANDCreate",
-            "825bceea5fa09598fb272e31ae1d0c7afd4f7e3e2efe830c682deca3004609c3"
+            "a575042e3207943ec1cffbb53b833fed5a8114d5c6a1f0ea2c3b9eefbdf51c26"
         ],
         [
             "NANDPrivateCreate",
-            "2a615b081e83415b55a9923ce084f8c26fc147e60b55097581780cf0d91e36d6"
+            "31937d39cf252ce1373db2b4edd591601f11a638ad125eee05e0ac9a50f6800c"
         ],
         [
             "NANDPrivateCreateAsync",
-            "9d43a1150345d8a941fd4aca5a3f5645b5178b110a4688b16cb41d170e90e21a"
+            "ed27bb60ef6eca5ace9c34b90e100c489a9a4f7ccbd121d0b0a3dc8627893ed5"
         ],
         [
             "NANDDelete",
@@ -54,15 +54,15 @@
         ],
         [
             "nandCreateDir",
-            "2fba03b0921691f97ddfa435e3dd9f54801cdcb03ac722f0cca2f62f64f7812f"
+            "85ea6beccda19d9a660b82c698968ee6076f76499dcacc2df6bfc9296780a51a"
         ],
         [
             "NANDPrivateCreateDir",
-            "eafac26b4c6ff655530ed3ea1afbaba9fb55cb50557b5fd12c1d6b6198cb814a"
+            "31937d39cf252ce1373db2b4edd591601f11a638ad125eee05e0ac9a50f6800c"
         ],
         [
             "NANDPrivateCreateDirAsync",
-            "9b462822eca6583b29cfa68c3cfc7dd6fc4848692e347c1b076ff8041622803e"
+            "ed27bb60ef6eca5ace9c34b90e100c489a9a4f7ccbd121d0b0a3dc8627893ed5"
         ],
         [
             "nandMove",
@@ -70,7 +70,7 @@
         ],
         [
             "NANDMove",
-            "9701aec272d492ab95d646e99af824e2d4d4dabfaa7cf327e18ce63d40723f55"
+            "dee98d3db21d0bd8a25ce021211c000a1d64f1ff3180f6932608a0d633edf8cc"
         ],
         [
             "NANDGetLength",
@@ -94,19 +94,19 @@
         ],
         [
             "nandGetStatus",
-            "62e74f75e08e22b5f7180d0b81218dd314e84e3798fcad02c4e44fe0938c495d"
+            "29fedc8952cff5093175eec311e2f6015f532ea07c0cba0434610698fbdcd476"
         ],
         [
             "nandGetStatusCallback",
-            "ca51a1eba23b22a271214810300200c720e0d93ccf6a78a7902a63bbc1d85d9a"
+            "f5b1a9995bc23f750cd018882eacea597be4d159ae6a15b47aab7fa7b84bdcf6"
         ],
         [
             "NANDGetStatus",
-            "a06663ab604d9af0d97f3a3a0fd37c3b4a2b0ac3a20ca70307ab7ba99cf77137"
+            "dee98d3db21d0bd8a25ce021211c000a1d64f1ff3180f6932608a0d633edf8cc"
         ],
         [
             "NANDPrivateGetStatusAsync",
-            "448225097e6fdf153345645cb09f3edea7599369a10683a101c279a5c96fb027"
+            "fdb8aa78539e356307b9088352c85ac0ffdfa2c01ddfdaef122f11647cf309f0"
         ],
         [
             "NANDSetUserData",
