@@ -3,10 +3,11 @@ Create or run unit tests:
     tester.py make_obj {known good object file} {unit test path (optional)}
     tester.py make_asm {known good assembly file (doldisasm format)} {unit test path (optional)}
     tester.py run {unit test file (json)}
+    tester.py run all
 """
 from sys import argv
-from os import remove
-from os.path import exists
+from os import remove, walk
+from os.path import exists, join
 from json import loads, dumps
 from subprocess import run, PIPE
 
@@ -16,12 +17,14 @@ from src.hasher import Hasher
 from src.fix_asm import fix
 
 # Can be overridden per unit test
-CC = "tools\\mwcceppc.exe"
-CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults -w unused,missingreturn"
-OPT = "-O4,p"
+DEFAULT_CC = "tools\\mwcceppc.exe"
+DEFAULT_CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults -w unused,missingreturn"
+DEFAULT_OPT = "-O4,p"
 
 AS = "tools\\powerpc-eabi-as.exe"
 ASFLAGS = "-mgekko -I tools/tester/include"
+
+TESTS_DIR = "tests/"
 
 
 def make_obj(obj_file: str) -> str:
@@ -87,7 +90,6 @@ def run_test(test_file: str) -> bool:
     """Run unit test file
     Only returns True if ALL cases pass
     """
-    global CC, CFLAGS, OPT
 
     # Open unit test file
     try:
@@ -101,17 +103,20 @@ def run_test(test_file: str) -> bool:
         return
 
     # TU-specific compiler/flags overrides
+    cc = DEFAULT_CC
+    cflags = DEFAULT_CFLAGS
+    opt = DEFAULT_OPT
     if "CC" in test_json:
-        CC = test_json["CC"]
+        cc = test_json["CC"]
     if "CFLAGS" in test_json:
-        CFLAGS = test_json["CFLAGS"]
+        cflags = test_json["CFLAGS"]
     if "OPT" in test_json:
-        OPT = test_json["OPT"]
+        opt = test_json["OPT"]
 
     # Compile source file
     src_file = test_file.replace(".json", "")
     src_file = src_file.replace("tests", "src")
-    cmd = f"{CC} {CFLAGS} {OPT} -c -o temp.o {src_file}"
+    cmd = f"{cc} {cflags} {opt} -c -o temp.o {src_file}"
 
     result = run(cmd, shell=True, stdout=PIPE,
                  stderr=PIPE, universal_newlines=True)
@@ -171,7 +176,7 @@ def run_test(test_file: str) -> bool:
 
     # The program must know if any case failed,
     # so it can return the proper error code
-    return any_fail
+    return not any_fail
 
 
 def show_usage():
@@ -183,6 +188,7 @@ def show_usage():
         "    tester.py make_asm {known good assembly file (doldisasm format)} {unit test path (optional)}")
     print("Run unit test:")
     print("    tester.py run {unit test file (json)}")
+    print("    tester.py run all")
 
 
 def main():
@@ -215,9 +221,23 @@ def main():
 
     # Run unit test
     elif argv[1].casefold() == "run":
-        # Return 1 if any test fails (for automation purposes)
-        if run_test(argv[2]):
+        # Run all tests?
+        if argv[2].casefold() == "all":
+            # Scan tests root directory
+            for _path, _dir, _files, in walk(TESTS_DIR, topdown=True):
+                for file in _files:
+                    if file.endswith(".json"):
+                        test_path = join(_path, file)
+                        if not run_test(test_path):
+                            print(f"[FAIL] {test_path}")
+                            exit(1)
+
+        # Run single test
+        elif not run_test(argv[2]):
+            print(f"[FAIL] {argv[2]}")
             exit(1)
+
+        print("[OK] All tests OK")
 
 
 main()
