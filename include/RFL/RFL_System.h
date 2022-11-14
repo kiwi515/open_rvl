@@ -182,7 +182,6 @@ typedef struct RFLAccessInfo {
     RFLAlarmUserData alarmData; // at 0x1C8
     void* safeBuffer;           // at 0x1D4
     u8 BYTE_0x1D8;
-    char UNK_0x1D9[0x1E0 - 0x1D9];
 } RFLAccessInfo;
 
 // TO-DO: Size
@@ -209,7 +208,7 @@ typedef struct RFLManager {
     NANDResult reason;                  // at 0x1B48
     NANDResult lastReason;              // at 0x1B4C
     RFLAccessInfo info[RFL_ACCESS_MAX]; // at 0x1B50
-    char UNK_0x1F10[0x1F14 - 0x1F10];
+    char UNK_0x1F10[0x4];
     RFLIconDrawDoneCallback iconDrawDone;   // at 0x1F14
     RFLModelDrawDoneCallback modelDrawDone; // at 0x1F18
     char UNK_0x1F1C[0x4];
