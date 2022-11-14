@@ -20,6 +20,8 @@ u32 OSGetConsoleSimulatedMem1Size(void) { return OS_SIMULATED_MEM1_SIZE; }
 u32 OSGetConsoleSimulatedMem2Size(void) { return OS_SIMULATED_MEM2_SIZE; }
 
 static BOOL OnShutdown(u32 arg0, u32 arg1) {
+#pragma unused(arg1)
+
     if (arg0 != 0) {
         OS_MI_CC004010 = 0xFF;
         __OSMaskInterrupts(0xF0000000);
@@ -29,7 +31,9 @@ static BOOL OnShutdown(u32 arg0, u32 arg1) {
 }
 
 // Typo
-static void MEMIntrruptHandler(u8 intr, OSContext* ctx) {
+static void MEMIntrruptHandler(s16 intr, OSContext* ctx) {
+#pragma unused(intr)
+
     u32 dsisr = OS_MI_CC00401E;
     u32 dar = (OS_MI_CC004024 & 0x3ff) << 0x10 | OS_MI_CC004022;
     OS_MI_CC004020 = 0;
@@ -453,7 +457,7 @@ static void BATConfig(void) {
     u32 mem1phys;
     void* mem2end;
 
-    if (OS_HOLLYWOOD_VER == 0) {
+    if (OS_HOLLYWOOD_REV == 0) {
         // Did they mean to call the function?
         if (&OSGetPhysicalMem1Size == NULL) {
             RealMode(ConfigMEM_ES1_0);
