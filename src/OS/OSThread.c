@@ -183,11 +183,11 @@ static void SetRun(OSThread* thread) {
     thread->next = NULL;
     thread->queue->tail = thread;
 
-    RunQueueBits |= (1 << 31 - thread->priority);
+    RunQueueBits |= (1 << OS_PRIORITY_MAX - thread->priority);
     RunQueueHint = TRUE;
 }
 
-static void UnsetRun(OSThread* thread) {
+static void UnsetRun(OSThread* thread) __attribute__((never_inline)) {
     OSThreadQueue* queue;
     OSThread* next;
     OSThread* prev;
