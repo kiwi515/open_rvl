@@ -7,6 +7,7 @@
 #include "OSThread.h"
 #include "OSTime.h"
 
+#include <DVD/dvd.h>
 #include <PPC/PPCArch.h>
 
 static BOOL OnReset(u32, u32);

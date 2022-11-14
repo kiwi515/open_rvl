@@ -17,7 +17,7 @@ from src.fix_asm import fix
 
 # Can be overridden per unit test
 CC = "tools\\mwcceppc.exe"
-CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults"
+CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults -w unused,missingreturn"
 OPT = "-O4,p"
 
 AS = "tools\\powerpc-eabi-as.exe"
