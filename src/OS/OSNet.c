@@ -7,12 +7,12 @@
 #include <NWC24/NWC24Time.h>
 
 void __OSInitNet(void) {
-    int error;
-
+    s32 error;
     OSIOSRev rev;
+
     __OSGetIOSRev(&rev);
 
-    if (rev.verMajor <= 4 || rev.verMajor == 9) {
+    if (rev.idLo <= 4 || rev.idLo == 9) {
         return;
     }
 

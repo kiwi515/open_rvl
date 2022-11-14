@@ -152,7 +152,7 @@ BOOL nandIsInitialized(void) {
 void nandReportErrorCode(IPCResult result) {}
 
 // Padding for the string table in order to match NANDInit
-const char* PADDING_NANDCore_c() { return "ABCDEFGH"; }
+const char* NANDCore_c_PADDING() { return "ABCDEFGH"; }
 
 NANDResult nandConvertErrorCode(IPCResult result) {
     int i;
