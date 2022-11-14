@@ -104,110 +104,116 @@ void __OSInterruptInit(void) {
     __OSSetExceptionHandler(OS_ERR_EXT_INTERRUPT, ExternalInterruptHandler);
 }
 
-static u32 SetInterruptMask(u32 type, u32 mask) {
+u32 SetInterruptMask(u32 type, u32 mask) {
+    u32 miIntr;
+    u32 dspIntr;
+    u32 aiIntr;
+    u32 exi0Intr, exi1Intr, exi2Intr;
+    u32 piIntr;
+
     switch (__cntlzw(type)) {
     case OS_INTR_MEM_0:
     case OS_INTR_MEM_1:
     case OS_INTR_MEM_2:
     case OS_INTR_MEM_3:
     case OS_INTR_MEM_ADDRESS:
-        u32 mi_intr = 0;
+        miIntr = 0;
 
         if (!(mask & 0x80000000)) {
-            mi_intr |= 0x1;
+            miIntr |= 0x1;
         }
         if (!(mask & 0x40000000)) {
-            mi_intr |= 0x2;
+            miIntr |= 0x2;
         }
         if (!(mask & 0x20000000)) {
-            mi_intr |= 0x4;
+            miIntr |= 0x4;
         }
         if (!(mask & 0x10000000)) {
-            mi_intr |= 0x8;
+            miIntr |= 0x8;
         }
         if (!(mask & 0x8000000)) {
-            mi_intr |= 0x10;
+            miIntr |= 0x10;
         }
 
-        OS_MI_INTR_MASK = mi_intr;
+        OS_MI_INTR_MASK = miIntr;
         return type & 0x7FFFFFF;
     case OS_INTR_DSP_AI:
     case OS_INTR_DSP_ARAM:
     case OS_INTR_DSP_DSP:
-        u32 dsp_intr = OS_DSP_INTR_MASK;
-        dsp_intr &= ~0x1F8;
+        dspIntr = OS_DSP_INTR_MASK;
+        dspIntr &= ~0x1F8;
 
         if (!(mask & 0x4000000)) {
-            dsp_intr |= 0x10;
+            dspIntr |= 0x10;
         }
         if (!(mask & 0x2000000)) {
-            dsp_intr |= 0x40;
+            dspIntr |= 0x40;
         }
         if (!(mask & 0x1000000)) {
-            dsp_intr |= 0x100;
+            dspIntr |= 0x100;
         }
 
-        OS_DSP_INTR_MASK = dsp_intr;
+        OS_DSP_INTR_MASK = dspIntr;
         return type & 0xF8FFFFFF;
     case OS_INTR_AI_AI:
-        u32 ai_intr = OS_AI_INTR_MASK;
-        ai_intr &= ~0x2C;
+        aiIntr = OS_AI_INTR_MASK;
+        aiIntr &= ~0x2C;
 
         if (!(mask & 0x800000)) {
-            ai_intr |= 0x4;
+            aiIntr |= 0x4;
         }
 
-        OS_AI_INTR_MASK = ai_intr;
+        OS_AI_INTR_MASK = aiIntr;
         return type & 0xFF7FFFFF;
     case OS_INTR_EXI_0_EXI:
     case OS_INTR_EXI_0_TC:
     case OS_INTR_EXI_0_EXT:
-        u32 exi0_intr = EXI_CD006800[EXI_CHAN_0].WORD_0x0;
-        exi0_intr &= ~0x2C0F;
+        exi0Intr = EXI_CD006800[EXI_CHAN_0].WORD_0x0;
+        exi0Intr &= ~0x2C0F;
 
         if (!(mask & 0x400000)) {
-            exi0_intr |= 0x1;
+            exi0Intr |= 0x1;
         }
         if (!(mask & 0x200000)) {
-            exi0_intr |= 0x4;
+            exi0Intr |= 0x4;
         }
         if (!(mask & 0x100000)) {
-            exi0_intr |= 0x400;
+            exi0Intr |= 0x400;
         }
 
-        EXI_CD006800[EXI_CHAN_0].WORD_0x0 = exi0_intr;
+        EXI_CD006800[EXI_CHAN_0].WORD_0x0 = exi0Intr;
         return type & 0xFF8FFFFF;
     case OS_INTR_EXI_1_EXI:
     case OS_INTR_EXI_1_TC:
     case OS_INTR_EXI_1_EXT:
-        u32 exi1_intr = EXI_CD006800[EXI_CHAN_1].WORD_0x0;
-        exi1_intr &= ~0xC0F;
+        exi1Intr = EXI_CD006800[EXI_CHAN_1].WORD_0x0;
+        exi1Intr &= ~0xC0F;
 
         if (!(mask & 0x80000)) {
-            exi1_intr |= 0x1;
+            exi1Intr |= 0x1;
         }
         if (!(mask & 0x40000)) {
-            exi1_intr |= 0x4;
+            exi1Intr |= 0x4;
         }
         if (!(mask & 0x20000)) {
-            exi1_intr |= 0x400;
+            exi1Intr |= 0x400;
         }
 
-        EXI_CD006800[EXI_CHAN_1].WORD_0x0 = exi1_intr;
+        EXI_CD006800[EXI_CHAN_1].WORD_0x0 = exi1Intr;
         return type & 0xFFF1FFFF;
     case OS_INTR_EXI_2_EXI:
     case OS_INTR_EXI_2_TC:
-        u32 exi2_intr = EXI_CD006800[EXI_CHAN_2].WORD_0x0;
-        exi2_intr &= ~0xF;
+        exi2Intr = EXI_CD006800[EXI_CHAN_2].WORD_0x0;
+        exi2Intr &= ~0xF;
 
         if (!(mask & 0x10000)) {
-            exi2_intr |= 0x1;
+            exi2Intr |= 0x1;
         }
         if (!(mask & 0x8000)) {
-            exi2_intr |= 0x4;
+            exi2Intr |= 0x4;
         }
 
-        EXI_CD006800[EXI_CHAN_2].WORD_0x0 = exi2_intr;
+        EXI_CD006800[EXI_CHAN_2].WORD_0x0 = exi2Intr;
         return type & 0xFFFE7FFF;
     case OS_INTR_PI_CP:
     case OS_INTR_PI_PE_TOKEN:
@@ -220,43 +226,43 @@ static u32 SetInterruptMask(u32 type, u32 mask) {
     case OS_INTR_PI_DEBUG:
     case OS_INTR_PI_HSP:
     case OS_INTR_PI_ACR:
-        u32 pi_intr = 0xF0;
+        piIntr = 0xF0;
 
         if (!(mask & 0x4000)) {
-            pi_intr |= 0x800;
+            piIntr |= 0x800;
         }
         if (!(mask & 0x800)) {
-            pi_intr |= 0x8;
+            piIntr |= 0x8;
         }
         if (!(mask & 0x400)) {
-            pi_intr |= 0x4;
+            piIntr |= 0x4;
         }
         if (!(mask & 0x200)) {
-            pi_intr |= 0x2;
+            piIntr |= 0x2;
         }
         if (!(mask & 0x100)) {
-            pi_intr |= 0x1;
+            piIntr |= 0x1;
         }
         if (!(mask & 0x80)) {
-            pi_intr |= 0x100;
+            piIntr |= 0x100;
         }
         if (!(mask & 0x40)) {
-            pi_intr |= 0x1000;
+            piIntr |= 0x1000;
         }
         if (!(mask & 0x2000)) {
-            pi_intr |= 0x200;
+            piIntr |= 0x200;
         }
         if (!(mask & 0x1000)) {
-            pi_intr |= 0x400;
+            piIntr |= 0x400;
         }
         if (!(mask & 0x20)) {
-            pi_intr |= 0x2000;
+            piIntr |= 0x2000;
         }
         if (!(mask & 0x10)) {
-            pi_intr |= 0x4000;
+            piIntr |= 0x4000;
         }
 
-        OS_PI_INTR_MASK = pi_intr;
+        OS_PI_INTR_MASK = piIntr;
         return type & 0xFFFF800F;
     default:
         return type;
@@ -298,45 +304,52 @@ u32 __OSUnmaskInterrupts(u32 userMask) {
 }
 
 void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
-    u32 intsr = OS_PI_INTR_CAUSE;
+    u32 intsr;
+    u32 cause, cause2;
+    u32 miMask;
+    u32 dspMask;
+    u32 exi0Mask, exi1Mask, exi2Mask;
+    u32 piMask;
+
+    intsr = OS_PI_INTR_CAUSE;
     intsr &= ~0x10000;
 
-    const u32 pi_mask = OS_PI_INTR_MASK;
-    if (intsr == 0 || !(intsr & pi_mask)) {
+    piMask = OS_PI_INTR_MASK;
+    if (intsr == 0 || !(intsr & piMask)) {
         OSLoadContext(ctx);
     }
 
-    u32 cause = 0;
-    u32 cause2 = 0;
+    cause = 0;
+    cause2 = 0;
 
     if (intsr & 0x80) {
-        const u32 mi_mask = OS_MI_CC00401E;
-        if (mi_mask & 0x1) {
+        miMask = OS_MI_CC00401E;
+        if (miMask & 0x1) {
             cause |= 0x80000000;
         }
-        if (mi_mask & 0x2) {
+        if (miMask & 0x2) {
             cause |= 0x40000000;
         }
-        if (mi_mask & 0x4) {
+        if (miMask & 0x4) {
             cause |= 0x20000000;
         }
-        if (mi_mask & 0x8) {
+        if (miMask & 0x8) {
             cause |= 0x10000000;
         }
-        if (mi_mask & 0x10) {
+        if (miMask & 0x10) {
             cause |= 0x8000000;
         }
     }
 
     if (intsr & 0x40) {
-        const u32 dsp_mask = OS_DSP_INTR_MASK;
-        if (dsp_mask & 0x8) {
+        dspMask = OS_DSP_INTR_MASK;
+        if (dspMask & 0x8) {
             cause |= 0x4000000;
         }
-        if (dsp_mask & 0x20) {
+        if (dspMask & 0x20) {
             cause |= 0x2000000;
         }
-        if (dsp_mask & 0x80) {
+        if (dspMask & 0x80) {
             cause |= 0x1000000;
         }
     }
@@ -346,33 +359,33 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
     }
 
     if (intsr & 0x10) {
-        const u32 exi0_mask = EXI_CD006800[EXI_CHAN_0].WORD_0x0;
-        if (exi0_mask & 0x2) {
+        exi0Mask = EXI_CD006800[EXI_CHAN_0].WORD_0x0;
+        if (exi0Mask & 0x2) {
             cause |= 0x400000;
         }
-        if (exi0_mask & 0x8) {
+        if (exi0Mask & 0x8) {
             cause |= 0x200000;
         }
-        if (exi0_mask & 0x800) {
+        if (exi0Mask & 0x800) {
             cause |= 0x100000;
         }
 
-        const u32 exi1_mask = EXI_CD006800[EXI_CHAN_1].WORD_0x0;
-        if (exi1_mask & 0x2) {
+        exi1Mask = EXI_CD006800[EXI_CHAN_1].WORD_0x0;
+        if (exi1Mask & 0x2) {
             cause |= 0x80000;
         }
-        if (exi1_mask & 0x8) {
+        if (exi1Mask & 0x8) {
             cause |= 0x40000;
         }
-        if (exi1_mask & 0x800) {
+        if (exi1Mask & 0x800) {
             cause |= 0x20000;
         }
 
-        const u32 exi2_mask = EXI_CD006800[EXI_CHAN_2].WORD_0x0;
-        if (exi2_mask & 0x2) {
+        exi2Mask = EXI_CD006800[EXI_CHAN_2].WORD_0x0;
+        if (exi2Mask & 0x2) {
             cause |= 0x10000;
         }
-        if (exi2_mask & 0x8) {
+        if (exi2Mask & 0x8) {
             cause |= 0x8000;
         }
     }
@@ -417,6 +430,7 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
     if (cause2 != 0) {
         s16 type;
         u32* pPrio;
+        OSInterruptHandler handler;
 
         for (pPrio = InterruptPrioTable; TRUE; pPrio++) {
             if (cause2 & *pPrio) {
@@ -425,7 +439,7 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
             }
         }
 
-        OSInterruptHandler handler = __OSGetInterruptHandler(type);
+        handler = __OSGetInterruptHandler(type);
         if (handler != NULL) {
             if (type > OS_INTR_MEM_ADDRESS) {
                 __OSLastInterrupt = type;
