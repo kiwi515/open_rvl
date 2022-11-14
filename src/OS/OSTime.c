@@ -125,8 +125,10 @@ void OSTicksToCalendarTime(s64 ticks, OSCalendarTime* cal) {
     cal->sec = secs % 60;
 }
 
+#ifdef NON_MATCHING
 // https://decomp.me/scratch/fAlfM
 s64 OSCalendarTimeToTicks(const OSCalendarTime* cal) {
     ;
     ;
 }
+#endif
