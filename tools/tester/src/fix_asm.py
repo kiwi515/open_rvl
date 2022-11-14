@@ -30,7 +30,7 @@ def fix(asm: list[str]) -> list[str]:
 
         if curr_sect == ".text":
             # Are we looking at a function-local label declaration?
-            if lbl_match != None:
+            if lbl_match != None and not asm[i - 1].startswith(".global lbl_"):
                 labels.append(lbl_match.group("Name"))
 
     # Second pass:

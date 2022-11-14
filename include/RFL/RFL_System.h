@@ -177,8 +177,7 @@ typedef struct RFLAccessInfo {
     NANDCommandBlock block;     // at 0xD4
     RFLAccessUserData userData; // at 0x18C
     char UNK_0x194[0x4];
-    OSAlarm alarm; // at 0x198
-    char UNK_0x1C4[0x4];
+    OSAlarm alarm;              // at 0x198
     RFLAlarmUserData alarmData; // at 0x1C8
     void* safeBuffer;           // at 0x1D4
     u8 BYTE_0x1D8;

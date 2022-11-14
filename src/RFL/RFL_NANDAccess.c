@@ -143,6 +143,7 @@ RFLAccessType RFLiGetType(NANDCommandBlock* block) {
 }
 
 static void alarmCallback_(OSAlarm* alarm, OSContext* ctx) {
+#pragma unused(ctx)
     RFLAlarmUserData* data = (RFLAlarmUserData*)OSGetAlarmUserData(alarm);
     if (RFLAvailable()) {
         RFLAlarmCallback alarmCallback =
@@ -160,7 +161,7 @@ static void retry_(RFLAccessType type, u8 val, RFLAlarmCallback callback) {
         alarmData->BYTE_0x8 = val;
         OSCancelAlarm(&info->alarm);
         OSSetAlarmUserData(&info->alarm, &info->alarmData);
-        OSSetAlarm(&info->alarm, OS_MILLI_SEC_TO_TIME(50), alarmCallback_);
+        OSSetAlarm(&info->alarm, OS_MSEC_TO_TICKS(50), alarmCallback_);
     } else {
         RFLiEndWorkingReason(RFL_RESULT_2, NAND_RESULT_BUSY);
     }
@@ -220,6 +221,8 @@ static void opencallback_(NANDResult result, NANDCommandBlock* block) {
 }
 
 static void createcallback_(NANDResult result, NANDCommandBlock* block) {
+    NANDResult reason;
+    NANDCommandBlock* openBlock;
     BOOL doCallback = TRUE;
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
@@ -227,8 +230,7 @@ static void createcallback_(NANDResult result, NANDCommandBlock* block) {
     switch (result) {
     case NAND_RESULT_OK:
     case NAND_RESULT_EXISTS:
-        NANDResult reason;
-        NANDCommandBlock* openBlock = RFLiSetCommandBlock(type, 11);
+        openBlock = RFLiSetCommandBlock(type, 11);
         memset(info->safeBuffer, 0, RFL_ACC_SAFE_BUFFER_SIZE);
         reason = NANDPrivateSafeOpenAsync(
             info->path, (RFLAvailable() ? &RFLiGetAccInfo(type)->file : NULL),
@@ -275,14 +277,15 @@ static void createcallback_(NANDResult result, NANDCommandBlock* block) {
 }
 
 static void close2opencallback_(NANDResult result, NANDCommandBlock* block) {
+    NANDResult reason;
+    NANDCommandBlock* openBlock;
     BOOL doCallback = TRUE;
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
 
     switch (result) {
     case NAND_RESULT_OK:
-        NANDResult reason;
-        NANDCommandBlock* openBlock = RFLiSetCommandBlock(type, 11);
+        openBlock = RFLiSetCommandBlock(type, 11);
         memset(info->safeBuffer, 0, RFL_ACC_SAFE_BUFFER_SIZE);
         reason = NANDPrivateSafeOpenAsync(
             info->path, (RFLAvailable() ? &RFLiGetAccInfo(type)->file : NULL),
@@ -662,7 +665,6 @@ static void writeseekcallback_inline(RFLAccessType type) {
 static void writeseekcallback_(NANDResult result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* rflInfo = RFLiGetAccInfo(type);
-    NANDCommandBlock* block2;
     BOOL doCallback = TRUE;
 
     if (result == rflInfo->offset) {
