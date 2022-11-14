@@ -19,8 +19,8 @@
 static const char* __RFLVersion =
     "<< RVL_SDK - RFL \trelease build: Jun  9 2007 17:25:33 (0x4199_60831) >>";
 
-static const RFLCoordinateData scCoordinate = {0x01200000, 0x00000000,
-                                               0x00000000, 0x00000000};
+static const RFLCoordinateData scCoordinate = {
+    0x01, 0x02, 0x00, 0x00, 0x00000000, 0x00000000, 0x00000000};
 
 static RFLManager* sRFLManager = NULL;
 static RFLResult sRFLLastErrCode = RFL_RESULT_1;
