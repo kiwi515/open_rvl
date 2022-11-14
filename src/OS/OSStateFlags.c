@@ -10,7 +10,7 @@ static u32 CheckSum(OSStateFlags* state) {
 
     u32 checksum = 0;
     const u32* ptr = &state->WORD_0x4;
-    for (i = 0; i < (sizeof(OSStateFlags) / 4) - 1; i++, ptr++) {
+    for (i = 0; i < (sizeof(OSStateFlags) / 0x4) - 1; i++, ptr++) {
         checksum += *ptr;
     }
 
