@@ -24,11 +24,9 @@ void OSPanic(const char* file, int line, const char* msg, ...) {
     OSReport(" in \"%s\" on line %d.\n", file, line);
 
     OSReport("\nAddress:      Back Chain    LR Save\n");
-    depth = 0;
-    sp = (u32*)OSGetStackPointer();
-    for (; sp != NULL && sp != (u32*)0xFFFFFFFF && depth++ < 16;
-         sp = (u32*)*sp) {
-        OSReport("0x%08x:   0x%08x    0x%08x\n", sp, *sp, sp[1]);
+    for (depth = 0, sp = (u32*)OSGetStackPointer();
+         sp != NULL && sp != (u32*)0xFFFFFFFF && depth++ < 16; sp = (u32*)*sp) {
+        OSReport("0x%08x:   0x%08x    0x%08x\n", sp, sp[0], sp[1]);
     }
 
     PPCHalt();
