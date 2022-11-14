@@ -286,9 +286,12 @@ static void* getNANDFile_(void* dst, RFLLoader* loader, u32 resIdx,
     if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) == 0) {
         u32 resBufSize;
         s32 seekOffset;
+        u32 resSize;
+        u32 resOffset;
+
         readSize = ROUND_UP(res->numFiles * 4 + 4, 32);
-        u32 resSize = 0;
-        u32 resOffset = 0;
+        resSize = 0;
+        resOffset = 0;
 
         NANDSeek(&file, res->offset, NAND_SEEK_BEG);
 
