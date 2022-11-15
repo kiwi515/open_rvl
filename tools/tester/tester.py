@@ -17,7 +17,8 @@ from src.hasher import Hasher
 from src.fix_asm import fix
 
 # Can be overridden per unit test
-DEFAULT_CC = "tools\\mwcceppc.exe"
+DEFAULT_CC_ARCH = "GC"
+DEFAULT_CC_VERSION = "3.0"
 DEFAULT_CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -volatileasm -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults -w unused,missingreturn"
 DEFAULT_OPT = "-O4,p"
 
@@ -25,6 +26,7 @@ AS = "tools\\powerpc-eabi-as.exe"
 ASFLAGS = "-mgekko -I tools/tester/include"
 
 TESTS_DIR = "tests/"
+CC_DIR = "tools\\GC_WII_COMPILERS"
 
 
 def make_obj(obj_file: str) -> str:
@@ -103,11 +105,14 @@ def run_test(test_file: str) -> bool:
         return
 
     # TU-specific compiler/flags overrides
-    cc = DEFAULT_CC
+    cc_arch = DEFAULT_CC_ARCH
+    cc_ver = DEFAULT_CC_VERSION
     cflags = DEFAULT_CFLAGS
     opt = DEFAULT_OPT
-    if "CC" in test_json:
-        cc = test_json["CC"]
+    if "CC_ARCH" in test_json:
+        cc_arch = test_json["CC_ARCH"]
+    if "CC_VERSION" in test_json:
+        cc_ver = test_json["CC_VERSION"]
     if "CFLAGS" in test_json:
         cflags = test_json["CFLAGS"]
     if "OPT" in test_json:
@@ -116,7 +121,8 @@ def run_test(test_file: str) -> bool:
     # Compile source file
     src_file = test_file.replace(".json", "")
     src_file = src_file.replace("tests", "src")
-    cmd = f"{cc} {cflags} {opt} -c -o temp.o {src_file}"
+    cc_path = f"{CC_DIR}\\{cc_arch}\\{cc_ver}\\mwcceppc.exe"
+    cmd = f"{cc_path} {cflags} {opt} -c -o temp.o {src_file}"
 
     result = run(cmd, shell=True, stdout=PIPE,
                  stderr=PIPE, universal_newlines=True)
