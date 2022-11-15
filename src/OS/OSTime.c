@@ -44,16 +44,16 @@ asm s32 OSGetTick(void){
 }
 
 s64 __OSGetSystemTime(void) {
-    const BOOL intr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
     const s64 time = OSGetTime() + OS_SYSTEM_TIME;
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
     return time;
 }
 
 s64 __OSTimeToSystemTime(s64 time) {
-    const BOOL intr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
     const s64 sysTime = OS_SYSTEM_TIME + time;
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
     return sysTime;
 }
 

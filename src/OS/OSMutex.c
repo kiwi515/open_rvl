@@ -8,7 +8,7 @@ void OSInitMutex(OSMutex* mutex) {
 }
 
 void OSLockMutex(OSMutex* mutex) {
-    u32 interrupt = OSDisableInterrupts();
+    BOOL enabled = OSDisableInterrupts();
     OSThread* currThread = OSGetCurrentThread();
 
     while (TRUE) {
@@ -40,11 +40,11 @@ void OSLockMutex(OSMutex* mutex) {
         }
     }
 
-    OSRestoreInterrupts(interrupt);
+    OSRestoreInterrupts(enabled);
 }
 
 void OSUnlockMutex(OSMutex* mutex) {
-    u32 interrupt = OSDisableInterrupts();
+    BOOL enabled = OSDisableInterrupts();
     OSThread* currThread = OSGetCurrentThread();
 
     if (mutex->thread == currThread) {
@@ -75,7 +75,7 @@ void OSUnlockMutex(OSMutex* mutex) {
         }
     }
 
-    OSRestoreInterrupts(interrupt);
+    OSRestoreInterrupts(enabled);
 }
 
 void __OSUnlockAllMutex(OSThread* thread) {
@@ -96,7 +96,7 @@ void __OSUnlockAllMutex(OSThread* thread) {
 };
 
 BOOL OSTryLockMutex(OSMutex* mutex) {
-    u32 interrupt = OSDisableInterrupts();
+    BOOL enabled = OSDisableInterrupts();
     OSThread* currThread = OSGetCurrentThread();
     BOOL lock = FALSE;
 
@@ -125,6 +125,6 @@ BOOL OSTryLockMutex(OSMutex* mutex) {
         lock = FALSE;
     }
 
-    OSRestoreInterrupts(interrupt);
+    OSRestoreInterrupts(enabled);
     return lock;
 }

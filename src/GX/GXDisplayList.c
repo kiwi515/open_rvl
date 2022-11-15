@@ -37,7 +37,7 @@ void GXBeginDisplayList(void* list, u32 size) {
 
 u32 GXEndDisplayList(void) {
     u8 wrap;
-    u32 intr;
+    BOOL enabled;
     UNKWORD bak;
 
     GXGetCPUFifo(&DisplayListFifo);
@@ -45,13 +45,13 @@ u32 GXEndDisplayList(void) {
     GXSetCPUFifo(&OldCPUFifo);
 
     if (__GXData->BYTE_0x5F9) {
-        intr = OSDisableInterrupts();
+        enabled = OSDisableInterrupts();
 
         bak = __GXData->WORD_0x8;
         memcpy(__GXData, &__savedGXdata, sizeof(GXData));
         __GXData->WORD_0x8 = bak;
 
-        OSRestoreInterrupts(intr);
+        OSRestoreInterrupts(enabled);
     }
 
     __GXData->dlistBegan = FALSE;

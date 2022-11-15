@@ -48,13 +48,13 @@ static u8 __DBReadUSB_CSR(void) {
 }
 
 void DBInitComm(u8** flagOut, OSInterruptHandler mtrCb) {
-    const u32 msr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     *flagOut = &__DBEXIInputFlag;
     __DBMtrCallback = mtrCb;
     __DBEXIInit();
 
-    OSRestoreInterrupts(msr);
+    OSRestoreInterrupts(enabled);
 }
 
 #ifdef NON_MATCHING
@@ -74,30 +74,30 @@ u32 DBQueryData(void) {
     __DBEXIInputFlag = FALSE;
 
     if (__DBRecvDataSize == 0) {
-        const u32 msr = OSDisableInterrupts();
+        const BOOL enabled = OSDisableInterrupts();
         __DBCheckMailBox();
-        OSRestoreInterrupts(msr);
+        OSRestoreInterrupts(enabled);
     }
 
     return __DBRecvDataSize;
 }
 
 BOOL DBRead(void* dest, u32 size) {
-    const u32 msr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     __DBRead(ODEMUGetPc2NngcOffset(__DBRecvMail) + 0x1000, dest,
              ROUND_UP(size, 4));
     __DBRecvDataSize = 0;
     __DBEXIInputFlag = FALSE;
 
-    OSRestoreInterrupts(msr);
+    OSRestoreInterrupts(enabled);
 
     return FALSE;
 }
 
 BOOL DBWrite(const void* src, u32 size) {
     static u8 l_byOffsetCounter = 128;
-    const u32 msr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     u32 ofs, mail;
 
@@ -121,7 +121,7 @@ BOOL DBWrite(const void* src, u32 size) {
 
     __DBWaitForSendMail();
 
-    OSRestoreInterrupts(msr);
+    OSRestoreInterrupts(enabled);
 
     return FALSE;
 }

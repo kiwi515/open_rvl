@@ -269,9 +269,9 @@ do_load:
 }
 
 void LCEnable(void) {
-    const u32 interrupt = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
     __LCEnable();
-    OSRestoreInterrupts(interrupt);
+    OSRestoreInterrupts(enabled);
 }
 
 asm void LCDisable(void) {

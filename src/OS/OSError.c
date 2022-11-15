@@ -34,7 +34,7 @@ void OSPanic(const char* file, int line, const char* msg, ...) {
 
 OSErrorHandler OSSetErrorHandler(u16 error, OSErrorHandler handler) {
     OSErrorHandler oldHandler;
-    u32 interrupt = OSDisableInterrupts();
+    BOOL enabled = OSDisableInterrupts();
 
     oldHandler = __OSErrorTable[error];
     __OSErrorTable[error] = handler;
@@ -86,7 +86,7 @@ OSErrorHandler OSSetErrorHandler(u16 error, OSErrorHandler handler) {
         PPCMtmsr(msr);
     }
 
-    OSRestoreInterrupts(interrupt);
+    OSRestoreInterrupts(enabled);
     return oldHandler;
 }
 

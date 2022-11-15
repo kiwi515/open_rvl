@@ -414,9 +414,9 @@ static void nandCloseCallback(IPCResult result, void* arg) {
 static u32 nandGetUniqueNumber(void) {
     static u32 s_counter = 0;
 
-    u32 intr = OSDisableInterrupts();
+    BOOL enabled = OSDisableInterrupts();
     u32 num = s_counter++;
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
 
     return num;
 }

@@ -498,7 +498,7 @@ static void BATConfig(void) {
 }
 
 void __OSInitMemoryProtection(void) {
-    u32 interrupt = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     OS_MI_CC004020 = 0;
     OS_MI_CC004010 = 0xFF;
@@ -514,5 +514,5 @@ void __OSInitMemoryProtection(void) {
     BATConfig();
     __OSUnmaskInterrupts(0x8000000);
 
-    OSRestoreInterrupts(interrupt);
+    OSRestoreInterrupts(enabled);
 }

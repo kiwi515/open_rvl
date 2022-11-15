@@ -255,19 +255,20 @@ NANDResult NANDInit(void) {
     IPCResult result;
     u64 titleid;
     s32 fd;
+    BOOL enabled;
 
-    u32 intr = OSDisableInterrupts();
+    enabled = OSDisableInterrupts();
 
     if (s_libState == NAND_LIB_INITIALIZING) {
-        OSRestoreInterrupts(intr);
+        OSRestoreInterrupts(enabled);
         return NAND_RESULT_BUSY;
     } else if (s_libState == NAND_LIB_INITIALIZED) {
-        OSRestoreInterrupts(intr);
+        OSRestoreInterrupts(enabled);
         return NAND_RESULT_OK;
     }
 
     s_libState = NAND_LIB_INITIALIZING;
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
 
     result = ISFS_OpenLib();
     if (result == IPC_RESULT_OK) {
@@ -293,15 +294,15 @@ NANDResult NANDInit(void) {
         }
 
         OSRegisterShutdownFunction(&s_shutdownFuncInfo);
-        intr = OSDisableInterrupts();
+        enabled = OSDisableInterrupts();
         s_libState = NAND_LIB_INITIALIZED;
-        OSRestoreInterrupts(intr);
+        OSRestoreInterrupts(enabled);
         OSRegisterVersion(__NANDVersion);
         return NAND_RESULT_OK;
     } else {
-        intr = OSDisableInterrupts();
+        enabled = OSDisableInterrupts();
         s_libState = NAND_LIB_UNINITIALIZED;
-        OSRestoreInterrupts(intr);
+        OSRestoreInterrupts(enabled);
         return nandConvertErrorCode(result);
     }
 }
@@ -331,15 +332,15 @@ static void nandShutdownCallback(IPCResult result, void* arg) {
 }
 
 NANDResult NANDGetCurrentDir(char* out) {
-    BOOL intr;
+    BOOL enabled;
 
     if (!nandIsInitialized()) {
         return NAND_RESULT_FATAL_ERROR;
     }
 
-    intr = OSDisableInterrupts();
+    enabled = OSDisableInterrupts();
     strcpy(out, s_currentDir);
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
     return NAND_RESULT_OK;
 }
 

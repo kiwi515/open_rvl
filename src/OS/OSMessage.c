@@ -13,13 +13,11 @@ void OSInitMessageQueue(OSMessageQueue* queue, OSMessage* buffer,
 
 BOOL OSSendMessage(OSMessageQueue* queue, OSMessage mesg, u32 flags) {
     s32 mesgId;
-    u32 interrupt;
-
-    interrupt = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     while (queue->capacity <= queue->size) {
         if (!(flags & OS_MSG_PERSISTENT)) {
-            OSRestoreInterrupts(interrupt);
+            OSRestoreInterrupts(enabled);
             return FALSE;
         }
 
@@ -31,18 +29,16 @@ BOOL OSSendMessage(OSMessageQueue* queue, OSMessage mesg, u32 flags) {
     queue->size++;
 
     OSWakeupThread(&queue->recvQueue);
-    OSRestoreInterrupts(interrupt);
+    OSRestoreInterrupts(enabled);
     return TRUE;
 }
 
 BOOL OSReceiveMessage(OSMessageQueue* queue, OSMessage* mesg, u32 flags) {
-    u32 interrupt;
-
-    interrupt = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     while (queue->size == 0) {
         if (!(flags & OS_MSG_PERSISTENT)) {
-            OSRestoreInterrupts(interrupt);
+            OSRestoreInterrupts(enabled);
             return FALSE;
         }
 
@@ -57,19 +53,17 @@ BOOL OSReceiveMessage(OSMessageQueue* queue, OSMessage* mesg, u32 flags) {
     queue->size--;
 
     OSWakeupThread(&queue->sendQueue);
-    OSRestoreInterrupts(interrupt);
+    OSRestoreInterrupts(enabled);
     return TRUE;
 }
 
 BOOL OSJamMessage(OSMessageQueue* queue, OSMessage mesg, u32 flags) {
     s32 lastMesg;
-    u32 interrupt;
-
-    interrupt = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     while (queue->capacity <= queue->size) {
         if (!(flags & OS_MSG_PERSISTENT)) {
-            OSRestoreInterrupts(interrupt);
+            OSRestoreInterrupts(enabled);
             return FALSE;
         }
 
@@ -83,6 +77,6 @@ BOOL OSJamMessage(OSMessageQueue* queue, OSMessage mesg, u32 flags) {
     queue->size++;
 
     OSWakeupThread(&queue->recvQueue);
-    OSRestoreInterrupts(interrupt);
+    OSRestoreInterrupts(enabled);
     return TRUE;
 }

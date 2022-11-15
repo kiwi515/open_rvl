@@ -98,32 +98,32 @@ static void InsertAlarm(OSAlarm* alarm, s64 end, OSAlarmHandler handler) {
 }
 
 void OSSetAlarm(OSAlarm* alarm, s64 tick, OSAlarmHandler handler) {
-    const BOOL intr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     alarm->period = 0;
     InsertAlarm(alarm, __OSGetSystemTime() + tick, handler);
 
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
 }
 
 void OSSetPeriodicAlarm(OSAlarm* alarm, s64 tick, s64 period,
                         OSAlarmHandler handler) {
-    const BOOL intr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     alarm->period = period;
     alarm->start = __OSTimeToSystemTime(tick);
     InsertAlarm(alarm, 0, handler);
 
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
 }
 
 void OSCancelAlarm(OSAlarm* alarm) {
     OSAlarm* next;
 
-    const BOOL intr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     if (alarm->handler == NULL) {
-        OSRestoreInterrupts(intr);
+        OSRestoreInterrupts(enabled);
         return;
     }
 
@@ -145,7 +145,7 @@ void OSCancelAlarm(OSAlarm* alarm) {
 
     alarm->handler = NULL;
 
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
 }
 
 static void DecrementerExceptionCallback(u8 type, OSContext* ctx) {

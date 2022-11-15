@@ -66,27 +66,27 @@ void RFLiExitAccessInfo(void) {
 BOOL RFLiIsWorking(void) { return RFLiGetWorking(); }
 
 void RFLiStartWorking(void) {
-    u32 intr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     RFLiSetWorking(TRUE);
     RFLiGetManager()->status = RFL_RESULT_BUSY;
 
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
 }
 
 static void startWorkingClose_(void) {
-    u32 intr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     RFLiSetWorking(TRUE);
     RFLiGetManager()->lastStatus = RFLiGetManager()->status;
     RFLiGetManager()->lastReason = RFLiGetManager()->reason;
     RFLiGetManager()->status = RFL_RESULT_BUSY;
 
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
 }
 
 static void endWorkingCloseReason_(RFLResult result, NANDResult reason) {
-    u32 intr = OSDisableInterrupts();
+    const BOOL enabled = OSDisableInterrupts();
 
     RFLiSetWorking(FALSE);
     if (result == RFL_RESULT_OK) {
@@ -98,7 +98,7 @@ static void endWorkingCloseReason_(RFLResult result, NANDResult reason) {
         RFLiGetManager()->reason = reason;
     }
 
-    OSRestoreInterrupts(intr);
+    OSRestoreInterrupts(enabled);
 }
 
 static void endWorkingClose_(RFLResult result) {
@@ -106,16 +106,16 @@ static void endWorkingClose_(RFLResult result) {
 }
 
 void RFLiEndWorkingReason(RFLResult result, NANDResult reason) {
-    u32 intr;
+    BOOL enabled;
 
     switch (RFLiGetManager()->status) {
     case RFL_RESULT_BUSY:
     case RFL_RESULT_OK:
-        intr = OSDisableInterrupts();
+        enabled = OSDisableInterrupts();
         RFLiSetWorking(FALSE);
         RFLiGetManager()->status = result;
         RFLiGetManager()->reason = reason;
-        OSRestoreInterrupts(intr);
+        OSRestoreInterrupts(enabled);
         break;
     default:
         break;

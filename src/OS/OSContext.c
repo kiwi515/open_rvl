@@ -482,7 +482,7 @@ void OSDumpContext(const OSContext* ctx) {
 
     if (ctx->SHORT_0x1A2 & 1) {
         OSContext tempCtx;
-        u32 interrupt = OSDisableInterrupts();
+        BOOL enabled = OSDisableInterrupts();
         OSContext* currCtx = OSGetCurrentContext();
 
         OSClearContext(&tempCtx);
@@ -502,7 +502,7 @@ void OSDumpContext(const OSContext* ctx) {
 
         OSClearContext(&tempCtx);
         OSSetCurrentContext(currCtx);
-        OSRestoreInterrupts(interrupt);
+        OSRestoreInterrupts(enabled);
     }
 
     OSReport("\nAddress:      Back Chain    LR Save\n");

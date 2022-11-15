@@ -271,7 +271,7 @@ static IPCResult __ios_Ipc1(s32 fd, IPCRequestType type,
 
 static IPCResult __ios_Ipc2(IPCRequestEx* req, IPCAsyncCallback callback) {
     IPCResult ret = IPC_RESULT_OK;
-    u32 intr;
+    BOOL enabled;
 
     if (req == NULL) {
         ret = IPC_RESULT_INVALID;
@@ -281,11 +281,11 @@ static IPCResult __ios_Ipc2(IPCRequestEx* req, IPCAsyncCallback callback) {
         }
         DCFlushRange(&req->base, sizeof(IPCRequest));
 
-        intr = OSDisableInterrupts();
+        enabled = OSDisableInterrupts();
 
         ret = __ipcQueueRequest(req);
         if (ret != IPC_RESULT_OK) {
-            OSRestoreInterrupts(intr);
+            OSRestoreInterrupts(enabled);
             if (callback != NULL) {
                 ipcFree(req);
             }
@@ -298,7 +298,7 @@ static IPCResult __ios_Ipc2(IPCRequestEx* req, IPCAsyncCallback callback) {
                 OSSleepThread(&req->queue);
             }
 
-            OSRestoreInterrupts(intr);
+            OSRestoreInterrupts(enabled);
 
             if (callback == NULL) {
                 ret = req->base.ret;
