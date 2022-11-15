@@ -2,6 +2,7 @@
 """
 
 from dataclasses import dataclass
+from typing import List, Dict
 
 from .stream import InputStream
 
@@ -10,8 +11,8 @@ from .stream import InputStream
 class ELFSection():
     name: str
     data: bytearray
-    symbol_list: "list[ELFSymbol]"
-    symbol_dict: "dict[str, ELFSymbol]"
+    symbol_list: "List[ELFSymbol]"
+    symbol_dict: "Dict[str, ELFSymbol]"
 
     sh_name: int
     sh_type: int
@@ -58,7 +59,7 @@ class ELFSection():
             strm.seek(self.sh_offset, InputStream.SEEK_BEGIN)
             self.data = strm.read(self.sh_size)
 
-    def all_symbols(self) -> "list[ELFSymbol]":
+    def all_symbols(self) -> "List[ELFSymbol]":
         """Access all ELF symbols in section
         """
         return self.symbol_list
@@ -209,8 +210,8 @@ def sym_sort_key_func(sym: ELFSymbol):
 @dataclass
 class ELFFile():
     header: ELFHeader
-    section_list: list[ELFSection]
-    section_dict: dict[str, ELFSection]
+    section_list: List[ELFSection]
+    section_dict: Dict[str, ELFSection]
 
     def __init__(self, strm: InputStream):
         """Parse ELF file
@@ -296,7 +297,7 @@ class ELFFile():
                             strm.seek(sym.st_value, InputStream.SEEK_CURRENT)
                             sym.data = strm.read(sym.st_size)
 
-    def all_sections(self) -> list[ELFSection]:
+    def all_sections(self) -> List[ELFSection]:
         """Access all ELF sections in file
         """
         # Skip UNDEF section
