@@ -20,16 +20,19 @@
  
  However, there are some caveats. The open_rvl code is not linked, so non-local symbol references will stay unresolved.
 
+ The tester is automatically run on push/pull request.
+
  **Only files that are fully matching should have a corresponding unit test.**
 
 ## Using the tester
- When using the tester, you can either create or run a unit test, as follows:
- - `tester.py make_asm {asm_file} {out_path}`
-   - Creates a unit test from the specified assembly file, and writes the JSON data to the provided filepath (OPTIONAL).
-   - Regardless if an output path is provided, the JSON data will be written to the console.
- - `tester.py make_obj {obj_file} {out_path}`
-   - Same as the previous usage, except the user provides an object file (`*.o`) to create the unit test from.
- - `tester.py run {unit_test}`
+ When using the tester, you can either create or run a unit test.  
+   
+ Configurable arguments:
+ - `--make_asm={ASM_FILE}`
+   - Creates a unit test from the specified assembly file, and writes the JSON data to the console.
+ - `--make_obj={OBJ_FILE}`
+   - Creates a unit test from the specified object file, and writes the JSON data to the console.
+ - `--run={UNIT_TEST}`
    - Runs the specified unit test, and displays whether each case passes or fails.
-   - Specify "`all`" as the unit test name to recursively run everything under `tests/`.  
+   - **Specify "`all`" as the unit test name to recursively run everything under `tests/`.**  
    - The program returns an exit code of zero if all test cases pass, otherwise 1.
