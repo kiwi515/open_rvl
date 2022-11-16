@@ -1,10 +1,3 @@
-"""tester.py
-Create or run unit tests:
-    tester.py make_obj {known good object file} {unit test path (optional)}
-    tester.py make_asm {known good assembly file (doldisasm format)} {unit test path (optional)}
-    tester.py run {unit test file (json)}
-    tester.py run all
-"""
 from sys import argv
 from os import remove, walk
 from os.path import exists, join
