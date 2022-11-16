@@ -375,19 +375,13 @@ asm void LCQueueWait(register u32 n) {
 }
 
 static void L2Init(void) {
-    // clang-format off
     const u32 msr = PPCMfmsr();
-    asm {
-        sync
-    }
+    __sync();
     PPCMtmsr(0x30);
-    asm {
-        sync
-    }
+    __sync();
     L2Disable();
     L2GlobalInvalidate();
     PPCMtmsr(msr);
-    // clang-format on
 }
 
 void L2Enable(void) {
@@ -396,17 +390,12 @@ void L2Enable(void) {
 }
 
 void L2Disable(void) {
-    // clang-format off
     u32 l2cr;
-    asm {
-        sync
-    }
+
+    __sync();
     l2cr = PPCMfl2cr();
     PPCMtl2cr(l2cr & ~0x80000000);
-    asm {
-        sync
-    }
-    // clang-format on
+    __sync();
 }
 
 void L2GlobalInvalidate(void) {
