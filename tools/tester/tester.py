@@ -10,6 +10,7 @@ from os import remove, walk
 from os.path import exists, join
 from json import loads, dumps
 from subprocess import run, PIPE
+from argparse import ArgumentParser
 
 from src.elf import ELFFile, ELFSection
 from src.stream import InputStream
@@ -27,6 +28,8 @@ ASFLAGS = "-mgekko -I tools/tester/include"
 
 TESTS_DIR = "tests/"
 CC_DIR = "tools\\GC_WII_COMPILERS"
+
+WIBO = ""
 
 
 def make_obj(obj_file: str) -> str:
@@ -121,7 +124,7 @@ def run_test(test_file: str) -> bool:
     # Compile source file
     src_file = test_file.replace(".json", "")
     src_file = src_file.replace("tests", "src")
-    cc_path = f"{CC_DIR}\\{cc_arch}\\{cc_ver}\\mwcceppc.exe"
+    cc_path = f"{WIBO} {CC_DIR}\\{cc_arch}\\{cc_ver}\\mwcceppc.exe"
     cmd = f"{cc_path} {cflags} {opt} -c -o temp.o {src_file}"
 
     result = run(cmd, shell=True, stdout=PIPE,
@@ -185,50 +188,42 @@ def run_test(test_file: str) -> bool:
     return not any_fail
 
 
-def show_usage():
-    print("Valid usage:")
-    print("Create unit test:")
-    print(
-        "    tester.py make_obj {known good object file} {unit test path (optional)}")
-    print(
-        "    tester.py make_asm {known good assembly file (doldisasm format)} {unit test path (optional)}")
-    print("Run unit test:")
-    print("    tester.py run {unit test file (json)}")
-    print("    tester.py run all")
-
-
 def main():
-    if len(argv) < 3:
-        print("[FATAL] Not enough arguments specified.")
-        show_usage()
-        return
+    global WIBO
+
+    parser = ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument("--make_asm", type=str, required=False,
+                       help="Assembly file (*.s) to create unit test from")
+    group.add_argument("--make_obj", type=str, required=False,
+                       help="Object file (*.o) to create unit test from")
+    parser.add_argument("--run", type=str, required=False, default="all",
+                        help="Unit test to run (specify \"all\" to run everything")
+    parser.add_argument("--wibo", type=str, required=False,
+                        help="Whether to use WiBo to run CodeWarrior")
+    args = parser.parse_args(argv[1:])
 
     # Create unit test from object file
-    if argv[1].casefold() == "make_obj":
+    if args.make_obj != None:
         # Create unit test
-        test_data = make_obj(argv[2])
-        # Optionally write data to file
-        if len(argv) >= 4:
-            with open(argv[3], "w+") as f:
-                f.write(test_data)
+        test_data = make_obj(args.make_obj)
         # Print data to console
         print(test_data)
 
     # Create unit test from assembly file
-    elif argv[1].casefold() == "make_asm":
+    elif args.make_asm != None:
         # Create unit test
-        test_data = make_asm(argv[2])
-        # Optionally write data to file
-        if len(argv) >= 4:
-            with open(argv[3], "w+") as f:
-                f.write(test_data)
+        test_data = make_asm(args.make_asm)
         # Print data to console
         print(test_data)
 
+    if args.wibo != None:
+        WIBO = args.wibo
+
     # Run unit test
-    elif argv[1].casefold() == "run":
+    elif args.run != None:
         # Run all tests?
-        if argv[2].casefold() == "all":
+        if args.run == "all":
             # Scan tests root directory
             for _path, _dir, _files, in walk(TESTS_DIR, topdown=True):
                 for file in _files:
@@ -239,11 +234,13 @@ def main():
                             exit(1)
 
         # Run single test
-        elif not run_test(argv[2]):
-            print(f"[FAIL] {argv[2]}")
+        elif not run_test(args.run):
+            print(f"[FAIL] {args.run}")
             exit(1)
 
         print("[OK] All tests OK")
+
+    exit(0)
 
 
 main()

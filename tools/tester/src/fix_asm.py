@@ -3,6 +3,7 @@
 
 from sys import argv
 from re import match
+from typing import List
 
 # Section declaration
 SECTION_REGEX = r"^\s*.section\s+(?P<Name>.[a-zA-Z0-9_$]+)"
@@ -12,7 +13,7 @@ LABEL_REGEX = r"^\s*(?P<Name>lbl_[0-9A-F]{8})\s*:"
 FUNC_REGEX = r"(?P<Name>^\w+):"
 
 
-def fix(asm: list[str]) -> list[str]:
+def fix(asm: List[str]) -> List[str]:
     """Fixup assembly file to work with the tester
     """
     # First pass:
