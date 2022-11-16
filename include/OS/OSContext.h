@@ -12,17 +12,19 @@ typedef struct OSContext {
     u32 ctr;      // at 0x88
     u32 xer;      // at 0x8C
     f64 fprs[32]; // at 0x90
-    u32 WORD_0x190;
-    u32 fpscr; // at 0x194
-    u32 srr0;  // at 0x198
-    u32 srr1;  // at 0x19C
+    // Bits 0-31 are undefined
+    u32 fpscr_tmp; // at 0x190
+    u32 fpscr;     // at 0x194
+    u32 srr0;      // at 0x198
+    u32 srr1;      // at 0x19C
     u16 SHORT_0x1A0;
     u16 SHORT_0x1A2;
     u32 gqrs[8]; // at 0x1A4
-    char UNK_0x1C4[0x1C8 - 0x1C4];
+    char UNK_0x1C4[0x4];
     f64 psfs[32]; // at 0x1C8
 } OSContext;
 
+OSContext* OS_CURRENT_CONTEXT_PHYS : 0x800000C0;
 OSContext* OS_CURRENT_CONTEXT : 0x800000D4;
 OSContext* OS_CURRENT_FPU_CONTEXT : 0x800000D8;
 

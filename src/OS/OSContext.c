@@ -9,82 +9,82 @@ static asm void __OSLoadFPUContext(UNKWORD unused, register OSContext* ctx) {
     // clang-format off
     nofralloc
 
-    lhz r5, 0x1a2(ctx)
-    clrlwi. r5, r5, 0x1f
+    lhz r5, ctx->SHORT_0x1A2
+    clrlwi. r5, r5, 31
     beq exit
     
-    lfd f0, 0x190(ctx)
-    mtfsf 0xff, f0
+    lfd f0, ctx->fpscr_tmp
+    mtfs f0
     mfspr r5, 0x398
-    rlwinm. r5, r5, 3, 0x1f, 0x1f
+    rlwinm. r5, r5, 3, 31, 31
     beq load_fprs
     
-    psq_l f0, 456(ctx), 0, 0
-    psq_l f1, 464(ctx), 0, 0
-    psq_l f2, 472(ctx), 0, 0
-    psq_l f3, 480(ctx), 0, 0
-    psq_l f4, 488(ctx), 0, 0
-    psq_l f5, 496(ctx), 0, 0
-    psq_l f6, 504(ctx), 0, 0
-    psq_l f7, 512(ctx), 0, 0
-    psq_l f8, 520(ctx), 0, 0
-    psq_l f9, 528(ctx), 0, 0
-    psq_l f10, 536(ctx), 0, 0
-    psq_l f11, 544(ctx), 0, 0
-    psq_l f12, 552(ctx), 0, 0
-    psq_l f13, 560(ctx), 0, 0
-    psq_l f14, 568(ctx), 0, 0
-    psq_l f15, 576(ctx), 0, 0
-    psq_l f16, 584(ctx), 0, 0
-    psq_l f17, 592(ctx), 0, 0
-    psq_l f18, 600(ctx), 0, 0
-    psq_l f19, 608(ctx), 0, 0
-    psq_l f20, 616(ctx), 0, 0
-    psq_l f21, 624(ctx), 0, 0
-    psq_l f22, 632(ctx), 0, 0
-    psq_l f23, 640(ctx), 0, 0
-    psq_l f24, 648(ctx), 0, 0
-    psq_l f25, 656(ctx), 0, 0
-    psq_l f26, 664(ctx), 0, 0
-    psq_l f27, 672(ctx), 0, 0
-    psq_l f28, 680(ctx), 0, 0
-    psq_l f29, 688(ctx), 0, 0
-    psq_l f30, 696(ctx), 0, 0
-    psq_l f31, 704(ctx), 0, 0
+    psq_l f0, 0x1C8(ctx), 0, 0
+    psq_l f1, 0x1D0(ctx), 0, 0
+    psq_l f2, 0x1D8(ctx), 0, 0
+    psq_l f3, 0x1E0(ctx), 0, 0
+    psq_l f4, 0x1E8(ctx), 0, 0
+    psq_l f5, 0x1F0(ctx), 0, 0
+    psq_l f6, 0x1F8(ctx), 0, 0
+    psq_l f7, 0x200(ctx), 0, 0
+    psq_l f8, 0x208(ctx), 0, 0
+    psq_l f9, 0x210(ctx), 0, 0
+    psq_l f10, 0x218(ctx), 0, 0
+    psq_l f11, 0x220(ctx), 0, 0
+    psq_l f12, 0x228(ctx), 0, 0
+    psq_l f13, 0x230(ctx), 0, 0
+    psq_l f14, 0x238(ctx), 0, 0
+    psq_l f15, 0x240(ctx), 0, 0
+    psq_l f16, 0x248(ctx), 0, 0
+    psq_l f17, 0x250(ctx), 0, 0
+    psq_l f18, 0x258(ctx), 0, 0
+    psq_l f19, 0x260(ctx), 0, 0
+    psq_l f20, 0x268(ctx), 0, 0
+    psq_l f21, 0x270(ctx), 0, 0
+    psq_l f22, 0x278(ctx), 0, 0
+    psq_l f23, 0x280(ctx), 0, 0
+    psq_l f24, 0x288(ctx), 0, 0
+    psq_l f25, 0x290(ctx), 0, 0
+    psq_l f26, 0x298(ctx), 0, 0
+    psq_l f27, 0x2A0(ctx), 0, 0
+    psq_l f28, 0x2A8(ctx), 0, 0
+    psq_l f29, 0x2B0(ctx), 0, 0
+    psq_l f30, 0x2B8(ctx), 0, 0
+    psq_l f31, 0x2C0(ctx), 0, 0
 
 load_fprs:
-    lfd f0, 0x90(ctx)
-    lfd f1, 0x98(ctx)
-    lfd f2, 0xa0(ctx)
-    lfd f3, 0xa8(ctx)
-    lfd f4, 0xb0(ctx)
-    lfd f5, 0xb8(ctx)
-    lfd f6, 0xc0(ctx)
-    lfd f7, 0xc8(ctx)
-    lfd f8, 0xd0(ctx)
-    lfd f9, 0xd8(ctx)
-    lfd f10, 0xe0(ctx)
-    lfd f11, 0xe8(ctx)
-    lfd f12, 0xf0(ctx)
-    lfd f13, 0xf8(ctx)
-    lfd f14, 0x100(ctx)
-    lfd f15, 0x108(ctx)
-    lfd f16, 0x110(ctx)
-    lfd f17, 0x118(ctx)
-    lfd f18, 0x120(ctx)
-    lfd f19, 0x128(ctx)
-    lfd f20, 0x130(ctx)
-    lfd f21, 0x138(ctx)
-    lfd f22, 0x140(ctx)
-    lfd f23, 0x148(ctx)
-    lfd f24, 0x150(ctx)
-    lfd f25, 0x158(ctx)
-    lfd f26, 0x160(ctx)
-    lfd f27, 0x168(ctx)
-    lfd f28, 0x170(ctx)
-    lfd f29, 0x178(ctx)
-    lfd f30, 0x180(ctx)
-    lfd f31, 0x188(ctx)
+    lfd f0, ctx->fprs[0]
+    lfd f1, ctx->fprs[1]
+    lfd f2, ctx->fprs[2]
+    lfd f3, ctx->fprs[3]
+    lfd f4, ctx->fprs[4]
+    lfd f5, ctx->fprs[5]
+    lfd f6, ctx->fprs[6]
+    lfd f7, ctx->fprs[7]
+    lfd f8, ctx->fprs[8]
+    lfd f9, ctx->fprs[9]
+    lfd f10, ctx->fprs[10]
+    lfd f11, ctx->fprs[11]
+    lfd f12, ctx->fprs[12]
+    lfd f13, ctx->fprs[13]
+    lfd f14, ctx->fprs[14]
+    lfd f15, ctx->fprs[15]
+    lfd f16, ctx->fprs[16]
+    lfd f17, ctx->fprs[17]
+    lfd f18, ctx->fprs[18]
+    lfd f19, ctx->fprs[19]
+    lfd f20, ctx->fprs[20]
+    lfd f21, ctx->fprs[21]
+    lfd f22, ctx->fprs[22]
+    lfd f23, ctx->fprs[23]
+    lfd f24, ctx->fprs[24]
+    lfd f25, ctx->fprs[25]
+    lfd f26, ctx->fprs[26]
+    lfd f27, ctx->fprs[27]
+    lfd f28, ctx->fprs[28]
+    lfd f29, ctx->fprs[29]
+    lfd f30, ctx->fprs[30]
+    lfd f31, ctx->fprs[31]
 
 exit:
     blr
@@ -96,82 +96,82 @@ static asm void __OSSaveFPUContext(UNKWORD unused, UNKWORD unused1,
     // clang-format off
     nofralloc
     
-    lhz r3, 0x1a2(ctx)
+    lhz r3, ctx->SHORT_0x1A2
     ori r3, r3, 1
-    sth r3, 0x1a2(ctx)
+    sth r3, ctx->SHORT_0x1A2
 
-    stfd f0, 0x90(ctx)
-    stfd f1, 0x98(ctx)
-    stfd f2, 0xa0(ctx)
-    stfd f3, 0xa8(ctx)
-    stfd f4, 0xb0(ctx)
-    stfd f5, 0xb8(ctx)
-    stfd f6, 0xc0(ctx)
-    stfd f7, 0xc8(ctx)
-    stfd f8, 0xd0(ctx)
-    stfd f9, 0xd8(ctx)
-    stfd f10, 0xe0(ctx)
-    stfd f11, 0xe8(ctx)
-    stfd f12, 0xf0(ctx)
-    stfd f13, 0xf8(ctx)
-    stfd f14, 0x100(ctx)
-    stfd f15, 0x108(ctx)
-    stfd f16, 0x110(ctx)
-    stfd f17, 0x118(ctx)
-    stfd f18, 0x120(ctx)
-    stfd f19, 0x128(ctx)
-    stfd f20, 0x130(ctx)
-    stfd f21, 0x138(ctx)
-    stfd f22, 0x140(ctx)
-    stfd f23, 0x148(ctx)
-    stfd f24, 0x150(ctx)
-    stfd f25, 0x158(ctx)
-    stfd f26, 0x160(ctx)
-    stfd f27, 0x168(ctx)
-    stfd f28, 0x170(ctx)
-    stfd f29, 0x178(ctx)
-    stfd f30, 0x180(ctx)
-    stfd f31, 0x188(ctx)
+    stfd f0, ctx->fprs[0]
+    stfd f1, ctx->fprs[1]
+    stfd f2, ctx->fprs[2]
+    stfd f3, ctx->fprs[3]
+    stfd f4, ctx->fprs[4]
+    stfd f5, ctx->fprs[5]
+    stfd f6, ctx->fprs[6]
+    stfd f7, ctx->fprs[7]
+    stfd f8, ctx->fprs[8]
+    stfd f9, ctx->fprs[9]
+    stfd f10, ctx->fprs[10]
+    stfd f11, ctx->fprs[11]
+    stfd f12, ctx->fprs[12]
+    stfd f13, ctx->fprs[13]
+    stfd f14, ctx->fprs[14]
+    stfd f15, ctx->fprs[15]
+    stfd f16, ctx->fprs[16]
+    stfd f17, ctx->fprs[17]
+    stfd f18, ctx->fprs[18]
+    stfd f19, ctx->fprs[19]
+    stfd f20, ctx->fprs[20]
+    stfd f21, ctx->fprs[21]
+    stfd f22, ctx->fprs[22]
+    stfd f23, ctx->fprs[23]
+    stfd f24, ctx->fprs[24]
+    stfd f25, ctx->fprs[25]
+    stfd f26, ctx->fprs[26]
+    stfd f27, ctx->fprs[27]
+    stfd f28, ctx->fprs[28]
+    stfd f29, ctx->fprs[29]
+    stfd f30, ctx->fprs[30]
+    stfd f31, ctx->fprs[31]
 
     mffs f0
-    stfd f0, 0x190(ctx)
-    lfd f0, 0x90(ctx)
+    stfd f0, ctx->fpscr_tmp
+    lfd f0, ctx->fprs[0]
     mfspr r3, 0x398
-    rlwinm. r3, r3, 3, 0x1f, 0x1f
+    rlwinm. r3, r3, 3, 31, 31
     beq exit
 
-    psq_st f0, 456(ctx), 0, 0
-    psq_st f1, 464(ctx), 0, 0
-    psq_st f2, 472(ctx), 0, 0
-    psq_st f3, 480(ctx), 0, 0
-    psq_st f4, 488(ctx), 0, 0
-    psq_st f5, 496(ctx), 0, 0
-    psq_st f6, 504(ctx), 0, 0
-    psq_st f7, 512(ctx), 0, 0
-    psq_st f8, 520(ctx), 0, 0
-    psq_st f9, 528(ctx), 0, 0
-    psq_st f10, 536(ctx), 0, 0
-    psq_st f11, 544(ctx), 0, 0
-    psq_st f12, 552(ctx), 0, 0
-    psq_st f13, 560(ctx), 0, 0
-    psq_st f14, 568(ctx), 0, 0
-    psq_st f15, 576(ctx), 0, 0
-    psq_st f16, 584(ctx), 0, 0
-    psq_st f17, 592(ctx), 0, 0
-    psq_st f18, 600(ctx), 0, 0
-    psq_st f19, 608(ctx), 0, 0
-    psq_st f20, 616(ctx), 0, 0
-    psq_st f21, 624(ctx), 0, 0
-    psq_st f22, 632(ctx), 0, 0
-    psq_st f23, 640(ctx), 0, 0
-    psq_st f24, 648(ctx), 0, 0
-    psq_st f25, 656(ctx), 0, 0
-    psq_st f26, 664(ctx), 0, 0
-    psq_st f27, 672(ctx), 0, 0
-    psq_st f28, 680(ctx), 0, 0
-    psq_st f29, 688(ctx), 0, 0
-    psq_st f30, 696(ctx), 0, 0
-    psq_st f31, 704(ctx), 0, 0
+    psq_st f0, 0x1C8(ctx), 0, 0
+    psq_st f1, 0x1D0(ctx), 0, 0
+    psq_st f2, 0x1D8(ctx), 0, 0
+    psq_st f3, 0x1E0(ctx), 0, 0
+    psq_st f4, 0x1E8(ctx), 0, 0
+    psq_st f5, 0x1F0(ctx), 0, 0
+    psq_st f6, 0x1F8(ctx), 0, 0
+    psq_st f7, 0x200(ctx), 0, 0
+    psq_st f8, 0x208(ctx), 0, 0
+    psq_st f9, 0x210(ctx), 0, 0
+    psq_st f10, 0x218(ctx), 0, 0
+    psq_st f11, 0x220(ctx), 0, 0
+    psq_st f12, 0x228(ctx), 0, 0
+    psq_st f13, 0x230(ctx), 0, 0
+    psq_st f14, 0x238(ctx), 0, 0
+    psq_st f15, 0x240(ctx), 0, 0
+    psq_st f16, 0x248(ctx), 0, 0
+    psq_st f17, 0x250(ctx), 0, 0
+    psq_st f18, 0x258(ctx), 0, 0
+    psq_st f19, 0x260(ctx), 0, 0
+    psq_st f20, 0x268(ctx), 0, 0
+    psq_st f21, 0x270(ctx), 0, 0
+    psq_st f22, 0x278(ctx), 0, 0
+    psq_st f23, 0x280(ctx), 0, 0
+    psq_st f24, 0x288(ctx), 0, 0
+    psq_st f25, 0x290(ctx), 0, 0
+    psq_st f26, 0x298(ctx), 0, 0
+    psq_st f27, 0x2A0(ctx), 0, 0
+    psq_st f28, 0x2A8(ctx), 0, 0
+    psq_st f29, 0x2B0(ctx), 0, 0
+    psq_st f30, 0x2B8(ctx), 0, 0
+    psq_st f31, 0x2C0(ctx), 0, 0
 
 exit:
     blr
@@ -191,29 +191,33 @@ asm void OSSetCurrentContext(register OSContext* ctx) {
     // clang-format off
     nofralloc
 
-    lis r4, OS_CURRENT_CONTEXT@ha
+    lis r4, 0x80000000@ha
     stw ctx, OS_CURRENT_CONTEXT@l(r4)
+
     clrlwi r5, ctx, 2
-    stw r5, 0xc0(r4)
-    lwz r5, 0xd8(r4)
+    stw r5, OS_CURRENT_CONTEXT_PHYS@l(r4)
+
+    lwz r5, OS_CURRENT_FPU_CONTEXT@l(r4)
     cmpw r5, ctx
-    bne lbl_800EE9AC
-    lwz r6, 0x19c(ctx)
+    bne not_current_fpu_ctx
+
+    lwz r6, ctx->srr1
     ori r6, r6, 0x2000
-    stw r6, 0x19c(ctx)
+    stw r6, ctx->srr1
     mfmsr r6
     ori r6, r6, 2
     mtmsr r6
     blr
 
-lbl_800EE9AC:
-    lwz r6, 0x19c(ctx)
-    rlwinm r6, r6, 0, 0x13, 0x11
-    stw r6, 0x19c(ctx)
+not_current_fpu_ctx:
+    lwz r6, ctx->srr1
+    rlwinm r6, r6, 0, 19, 17
+    stw r6, ctx->srr1
     mfmsr r6
-    rlwinm r6, r6, 0, 0x13, 0x11
+    rlwinm r6, r6, 0, 19, 17
     ori r6, r6, 2
     mtmsr r6
+
     isync
     blr
     // clang-format on
@@ -225,40 +229,44 @@ asm BOOL OSSaveContext(register OSContext* ctx) {
     // clang-format off
     nofralloc
 
-    stmw r13, 0x34(ctx)
+    stmw r13, ctx->gprs[13]
 
-    mfspr r0, GQR1
-    stw r0, 0x1a8(ctx)
-    mfspr r0, GQR2
-    stw r0, 0x1ac(ctx)
-    mfspr r0, GQR3
-    stw r0, 0x1b0(ctx)
-    mfspr r0, GQR4
-    stw r0, 0x1b4(ctx)
-    mfspr r0, GQR5
-    stw r0, 0x1b8(ctx)
-    mfspr r0, GQR6
-    stw r0, 0x1bc(ctx)
-    mfspr r0, GQR7
-    stw r0, 0x1c0(ctx)
+    mfgqr1 r0
+    stw r0, ctx->gqrs[1]
+    mfgqr2 r0
+    stw r0, ctx->gqrs[2]
+    mfgqr3 r0
+    stw r0, ctx->gqrs[3]
+    mfgqr4 r0
+    stw r0, ctx->gqrs[4]
+    mfgqr5 r0
+    stw r0, ctx->gqrs[5]
+    mfgqr6 r0
+    stw r0, ctx->gqrs[6]
+    mfgqr7 r0
+    stw r0, ctx->gqrs[7]
 
     mfcr r0
-    stw r0, 0x80(ctx)
-    mflr r0
-    stw r0, 0x84(ctx)
-    stw r0, 0x198(ctx)
-    mfmsr r0
-    stw r0, 0x19c(ctx)
-    mfctr r0
-    stw r0, 0x88(ctx)
-    mfxer r0
-    stw r0, 0x8c(ctx)
+    stw r0, ctx->cr
 
-    stw r1, 4(ctx)
-    stw r2, 8(ctx)
+    mflr r0
+    stw r0, ctx->lr
+    stw r0, ctx->srr0
+
+    mfmsr r0
+    stw r0, ctx->srr1
+
+    mfctr r0
+    stw r0, ctx->ctr
+
+    mfxer r0
+    stw r0, ctx->xer
+
+    stw r1, ctx->gprs[1]
+    stw r2, ctx->gprs[2]
 
     li r0, 1
-    stw r0, 0xc(ctx)
+    stw r0, ctx->gprs[3]
 
     li r3, 0
     blr
@@ -269,8 +277,10 @@ asm void OSLoadContext(register OSContext* ctx) {
     // clang-format off
     nofralloc
 
+    // If the context was in OSDisableInterrupts,
+    // jump back to the beginning of the function
     lis r4, __RAS_OSDisableInterrupts_begin@ha
-    lwz r6, 0x198(ctx)
+    lwz r6, ctx->srr0
     addi r5, r4, __RAS_OSDisableInterrupts_begin@l
     cmplw r6, r5
     ble srr0_not_in_disableintr
@@ -278,56 +288,63 @@ asm void OSLoadContext(register OSContext* ctx) {
     addi r0, r4, __RAS_OSDisableInterrupts_end@l
     cmplw r6, r0
     bge srr0_not_in_disableintr
-    stw r5, 0x198(ctx)
+    stw r5, ctx->srr0
         
 srr0_not_in_disableintr:
-    lwz r0, 0(ctx)
-    lwz r1, 4(ctx)
-    lwz r2, 8(ctx)
-    lhz r4, 0x1a2(ctx)
-    rlwinm. r5, r4, 0, 0x1e, 0x1e
+    lwz r0, ctx->gprs[0]
+    lwz r1, ctx->gprs[1]
+    lwz r2, ctx->gprs[2]
+    lhz r4, ctx->SHORT_0x1A2
+    rlwinm. r5, r4, 0, 30, 30
     beq load_saved_gprs
-    rlwinm r4, r4, 0, 0x1f, 0x1d
-    sth r4, 0x1a2(ctx)
-    lmw r5, 0x14(ctx)
+
+    rlwinm r4, r4, 0, 31, 29
+    sth r4, ctx->SHORT_0x1A2
+    lmw r5, ctx->gprs[5]
     b load_special_regs
     
 load_saved_gprs:
-    lmw r13, 0x34(ctx)
+    lmw r13, ctx->gprs[13]
     
 load_special_regs:
-    lwz r4, 0x1a8(ctx)
-    mtspr 0x391, r4
-    lwz r4, 0x1ac(ctx)
-    mtspr 0x392, r4
-    lwz r4, 0x1b0(ctx)
-    mtspr 0x393, r4
-    lwz r4, 0x1b4(ctx)
-    mtspr 0x394, r4
-    lwz r4, 0x1b8(ctx)
-    mtspr 0x395, r4
-    lwz r4, 0x1bc(ctx)
-    mtspr 0x396, r4
-    lwz r4, 0x1c0(ctx)
-    mtspr 0x397, r4
-    lwz r4, 0x80(ctx)
-    mtcrf 0xff, r4
-    lwz r4, 0x84(ctx)
+    lwz r4, ctx->gqrs[1]
+    mtgqr1 r4
+    lwz r4, ctx->gqrs[2]
+    mtgqr2 r4
+    lwz r4, ctx->gqrs[3]
+    mtgqr3 r4
+    lwz r4, ctx->gqrs[4]
+    mtgqr4 r4
+    lwz r4, ctx->gqrs[5]
+    mtgqr5 r4
+    lwz r4, ctx->gqrs[6]
+    mtgqr6 r4
+    lwz r4, ctx->gqrs[7]
+    mtgqr7 r4
+
+    lwz r4, ctx->cr
+    mtcr r4
+    lwz r4, ctx->lr
     mtlr r4
-    lwz r4, 0x88(ctx)
+    lwz r4, ctx->ctr
     mtctr r4
-    lwz r4, 0x8c(ctx)
+    lwz r4, ctx->xer
     mtxer r4
+
     mfmsr r4
-    rlwinm r4, r4, 0, 0x11, 0xf
-    rlwinm r4, r4, 0, 0x1f, 0x1d
+    rlwinm r4, r4, 0, 17, 15
+    rlwinm r4, r4, 0, 31, 29
     mtmsr r4
-    lwz r4, 0x198(ctx)
-    mtspr 0x1a, r4
-    lwz r4, 0x19c(ctx)
-    mtspr 0x1b, r4
-    lwz r4, 0x10(ctx)
-    lwz ctx, 0xc(ctx)
+
+    lwz r4, ctx->srr0
+    mtsrr0 r4
+
+    lwz r4, ctx->srr1
+    mtsrr1 r4
+
+    lwz r4, ctx->gprs[4]
+    lwz r3, ctx->gprs[3]
+
     rfi
     // clang-format on
 }
@@ -404,52 +421,57 @@ asm void OSInitContext(register OSContext* ctx, register void* srr0,
     // clang-format off
     nofralloc
     
-    stw srr0, 0x198(ctx)
-    stw stack, 4(ctx)
+    stw srr0, ctx->srr0
+    stw stack, ctx->gprs[1]
+
     li r11, 0
     ori r11, r11, 0x9032
-    stw r11, 0x19c(ctx)
+    stw r11, ctx->srr1
+
     li r0, 0
-    stw r0, 0x80(ctx)
-    stw r0, 0x8c(ctx)
-    stw r2, 8(ctx)
-    stw r13, 0x34(ctx)
-    stw r0, 0xc(ctx)
-    stw r0, 0x10(ctx)
-    stw r0, 0x14(ctx)
-    stw r0, 0x18(ctx)
-    stw r0, 0x1c(ctx)
-    stw r0, 0x20(ctx)
-    stw r0, 0x24(ctx)
-    stw r0, 0x28(ctx)
-    stw r0, 0x2c(ctx)
-    stw r0, 0x30(ctx)
-    stw r0, 0x38(ctx)
-    stw r0, 0x3c(ctx)
-    stw r0, 0x40(ctx)
-    stw r0, 0x44(ctx)
-    stw r0, 0x48(ctx)
-    stw r0, 0x4c(ctx)
-    stw r0, 0x50(ctx)
-    stw r0, 0x54(ctx)
-    stw r0, 0x58(ctx)
-    stw r0, 0x5c(ctx)
-    stw r0, 0x60(ctx)
-    stw r0, 0x64(ctx)
-    stw r0, 0x68(ctx)
-    stw r0, 0x6c(ctx)
-    stw r0, 0x70(ctx)
-    stw r0, 0x74(ctx)
-    stw r0, 0x78(ctx)
-    stw r0, 0x7c(ctx)
-    stw r0, 0x1a4(ctx)
-    stw r0, 0x1a8(ctx)
-    stw r0, 0x1ac(ctx)
-    stw r0, 0x1b0(ctx)
-    stw r0, 0x1b4(ctx)
-    stw r0, 0x1b8(ctx)
-    stw r0, 0x1bc(ctx)
-    stw r0, 0x1c0(ctx)
+    stw r0, ctx->cr
+    stw r0, ctx->xer
+
+    stw r2, ctx->gprs[2]
+    stw r13, ctx->gprs[13]
+
+    stw r0, ctx->gprs[3]
+    stw r0, ctx->gprs[4]
+    stw r0, ctx->gprs[5]
+    stw r0, ctx->gprs[6]
+    stw r0, ctx->gprs[7]
+    stw r0, ctx->gprs[8]
+    stw r0, ctx->gprs[9]
+    stw r0, ctx->gprs[10]
+    stw r0, ctx->gprs[11]
+    stw r0, ctx->gprs[12]
+    stw r0, ctx->gprs[14]
+    stw r0, ctx->gprs[15]
+    stw r0, ctx->gprs[16]
+    stw r0, ctx->gprs[17]
+    stw r0, ctx->gprs[18]
+    stw r0, ctx->gprs[19]
+    stw r0, ctx->gprs[20]
+    stw r0, ctx->gprs[21]
+    stw r0, ctx->gprs[22]
+    stw r0, ctx->gprs[23]
+    stw r0, ctx->gprs[24]
+    stw r0, ctx->gprs[25]
+    stw r0, ctx->gprs[26]
+    stw r0, ctx->gprs[27]
+    stw r0, ctx->gprs[28]
+    stw r0, ctx->gprs[29]
+    stw r0, ctx->gprs[30]
+    stw r0, ctx->gprs[31]
+
+    stw r0, ctx->gqrs[0]
+    stw r0, ctx->gqrs[1]
+    stw r0, ctx->gqrs[2]
+    stw r0, ctx->gqrs[3]
+    stw r0, ctx->gqrs[4]
+    stw r0, ctx->gqrs[5]
+    stw r0, ctx->gqrs[6]
+    stw r0, ctx->gqrs[7]
 
     b OSClearContext
     // clang-format on
@@ -520,13 +542,16 @@ static asm void OSSwitchFPUContext(register u8 err, register OSContext* ctx) {
     mfmsr r5
     ori r5, r5, 0x2000
     mtmsr r5
+    
     isync
-    lwz r5, 0x19c(ctx)
+    
+    lwz r5, ctx->srr1
     ori r5, r5, 0x2000
-    mtspr 0x1b, r5
+    mtsrr1 r5
+
     lis r3, OS_CURRENT_FPU_CONTEXT@ha
     lwz r5, OS_CURRENT_FPU_CONTEXT@l(r3)
-    stw ctx, 0xd8(r3)
+    stw ctx, OS_CURRENT_FPU_CONTEXT@l(r3)
     cmpw r5, ctx
     beq ctx_is_curr_fpu_ctx
     cmpwi r5, 0
@@ -537,22 +562,25 @@ ctx_is_null:
     bl __OSLoadFPUContext
 
 ctx_is_curr_fpu_ctx:
-    lwz r3, 0x80(ctx)
-    mtcrf 0xff, r3
-    lwz r3, 0x84(ctx)
+    lwz r3, ctx->cr
+    mtcr r3
+    lwz r3, ctx->lr
     mtlr r3
-    lwz r3, 0x198(ctx)
-    mtspr 0x1a, r3
-    lwz r3, 0x88(ctx)
+    lwz r3, ctx->srr0
+    mtsrr0 r3
+    lwz r3, ctx->ctr
     mtctr r3
-    lwz r3, 0x8c(ctx)
+    lwz r3, ctx->xer
     mtxer r3
-    lhz r3, 0x1a2(ctx)
-    rlwinm r3, r3, 0, 0x1f, 0x1d
-    sth r3, 0x1a2(ctx)
-    lwz r5, 0x14(ctx)
-    lwz r3, 0xc(ctx)
-    lwz ctx, 0x10(ctx)
+
+    lhz r3, ctx->SHORT_0x1A2
+    rlwinm r3, r3, 0, 31, 29
+    sth r3, ctx->SHORT_0x1A2
+
+    lwz r5, ctx->gprs[5]
+    lwz r3, ctx->gprs[3]
+    lwz r4, ctx->gprs[4]
+
     rfi
     // clang-format on
 }
