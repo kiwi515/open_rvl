@@ -7,8 +7,8 @@
 #include "OSThread.h"
 #include "OSTime.h"
 
+#include <BASE/PPCArch.h>
 #include <DVD/dvd.h>
-#include <PPC/PPCArch.h>
 
 static BOOL OnReset(u32, u32);
 static void DecrementerExceptionHandler(u8, OSContext*);

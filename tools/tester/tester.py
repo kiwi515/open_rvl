@@ -190,7 +190,7 @@ def main():
                        help="Assembly file (*.s) to create unit test from")
     group.add_argument("--make_obj", type=str, required=False,
                        help="Object file (*.o) to create unit test from")
-    parser.add_argument("--run", type=str, required=False, default="all",
+    parser.add_argument("--run", type=str, required=False,
                         help="Unit test to run (specify \"all\" to run everything")
     parser.add_argument("--wibo", type=str, required=False,
                         help="Whether to use WiBo to run CodeWarrior")

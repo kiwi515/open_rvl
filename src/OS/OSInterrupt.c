@@ -7,6 +7,7 @@
 #include "OSMemory.h"
 #include "OSTime.h"
 
+#include <BASE/PPCArch.h>
 #include <TRK/__mem.h>
 
 static OSInterruptHandler* InterruptHandlerTable;
@@ -45,7 +46,7 @@ asm BOOL OSEnableInterrupts(void) {
 
     mfmsr r3
     // Set external interrupts bit
-    ori r4, r3, (1 << 15)
+    ori r4, r3, MSR_EE
     mtmsr r4
 
     // Return old interrupt status
@@ -63,7 +64,7 @@ asm BOOL OSRestoreInterrupts(register BOOL status){
     beq disable
 
     // Set external interrupts bit
-    ori r5, r4, (1 << 15)
+    ori r5, r4, MSR_EE
     b set_msr
 
 disable:

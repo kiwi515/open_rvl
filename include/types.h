@@ -33,4 +33,8 @@ typedef void UNKTYPE;
 enum { FALSE, TRUE };
 typedef int BOOL;
 
+#ifdef __INTELLISENSE__
+#define asm
+#endif
+
 #endif

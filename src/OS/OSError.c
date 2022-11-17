@@ -5,11 +5,12 @@
 #include "OSThread.h"
 #include "OSTime.h"
 
-#include <PPC/PPCArch.h>
+#include <BASE/PPCArch.h>
 #include <TRK/printf.h>
 
 OSErrorHandler __OSErrorTable[OS_ERR_MAX];
-u32 __OSFpscrEnableBits = 0xF8;
+u32 __OSFpscrEnableBits =
+    (FPSCR_VE | FPSCR_OE | FPSCR_UE | FPSCR_ZE | FPSCR_XE);
 
 void OSPanic(const char* file, int line, const char* msg, ...) {
     u32 depth;
@@ -45,7 +46,7 @@ OSErrorHandler OSSetErrorHandler(u16 error, OSErrorHandler handler) {
         u32 fpscr;
 
         msr = PPCMfmsr();
-        PPCMtmsr(msr | 0x2000);
+        PPCMtmsr(msr | MSR_FP);
         fpscr = PPCMffpscr();
 
         if (handler != NULL) {
@@ -62,27 +63,39 @@ OSErrorHandler OSSetErrorHandler(u16 error, OSErrorHandler handler) {
                         *(u64*)&thread->context.psfs[i] = 0xFFFFFFFFFFFFFFFF;
                     }
 
-                    thread->context.fpscr = 0x4;
+                    thread->context.fpscr = FPSCR_NI;
                 }
-                thread->context.fpscr |= __OSFpscrEnableBits & 0xF8;
-                thread->context.fpscr &= 0x6005F8FF;
+                thread->context.fpscr |=
+                    __OSFpscrEnableBits &
+                    (FPSCR_VE | FPSCR_OE | FPSCR_UE | FPSCR_ZE | FPSCR_XE);
+                thread->context.fpscr &=
+                    (FPSCR_FEX | FPSCR_VX | FPSCR_FR | FPSCR_FPRF |
+                     FPSCR_UNK20 | FPSCR_VE | FPSCR_OE | FPSCR_UE | FPSCR_ZE |
+                     FPSCR_XE | FPSCR_NI | FPSCR_RN);
             }
 
-            fpscr |= __OSFpscrEnableBits & 0xF8;
-            msr |= 0x900;
+            fpscr |= __OSFpscrEnableBits &
+                     (FPSCR_VE | FPSCR_OE | FPSCR_UE | FPSCR_ZE | FPSCR_XE);
+            msr |= (MSR_FE0 | MSR_FE1);
         } else {
             for (thread = OS_THREAD_QUEUE.head; thread != NULL;
                  thread = thread->next2) {
                 thread->context.srr1 &= ~0x900;
-                thread->context.fpscr &= ~0xF8;
-                thread->context.fpscr &= 0x6005F8FF;
+                thread->context.fpscr &=
+                    ~(FPSCR_VE | FPSCR_OE | FPSCR_UE | FPSCR_ZE | FPSCR_XE);
+                thread->context.fpscr &=
+                    (FPSCR_FEX | FPSCR_VX | FPSCR_FR | FPSCR_FPRF |
+                     FPSCR_UNK20 | FPSCR_VE | FPSCR_OE | FPSCR_UE | FPSCR_ZE |
+                     FPSCR_XE | FPSCR_NI | FPSCR_RN);
             }
 
-            fpscr &= ~0xF8;
-            msr &= ~0x900;
+            fpscr &= ~(FPSCR_VE | FPSCR_OE | FPSCR_UE | FPSCR_ZE | FPSCR_XE);
+            msr &= ~(MSR_FE0 | MSR_FE1);
         }
 
-        PPCMtfpscr(fpscr & 0x6005F8FF);
+        PPCMtfpscr(fpscr & (FPSCR_FEX | FPSCR_VX | FPSCR_FR | FPSCR_FPRF |
+                            FPSCR_UNK20 | FPSCR_VE | FPSCR_OE | FPSCR_UE |
+                            FPSCR_ZE | FPSCR_XE | FPSCR_NI | FPSCR_RN));
         PPCMtmsr(msr);
     }
 
@@ -104,14 +117,16 @@ void __OSUnhandledException(u8 error, OSContext* ctx, u32 dsisr, u32 dar) {
             error = OS_ERR_FP_EXCEPTION;
 
             msr = PPCMfmsr();
-            PPCMtmsr(msr | 0x2000);
+            PPCMtmsr(msr | MSR_FP);
 
             if (OS_CURRENT_FPU_CONTEXT != NULL) {
                 OSSaveFPUContext(OS_CURRENT_FPU_CONTEXT);
             }
 
             fpscr = PPCMffpscr();
-            PPCMtfpscr(fpscr & 0x6005F8FF);
+            PPCMtfpscr(fpscr & (FPSCR_FEX | FPSCR_VX | FPSCR_FR | FPSCR_FPRF |
+                                FPSCR_UNK20 | FPSCR_VE | FPSCR_OE | FPSCR_UE |
+                                FPSCR_ZE | FPSCR_XE | FPSCR_NI | FPSCR_RN));
             PPCMtmsr(msr);
 
             if (OS_CURRENT_FPU_CONTEXT == ctx) {
@@ -119,7 +134,9 @@ void __OSUnhandledException(u8 error, OSContext* ctx, u32 dsisr, u32 dar) {
                 __OSErrorTable[error](error, ctx, dsisr, dar);
                 ctx->srr1 &= ~0x2000;
                 OS_CURRENT_FPU_CONTEXT = NULL;
-                ctx->fpscr &= 0x6005F8FF;
+                ctx->fpscr &= (FPSCR_FEX | FPSCR_VX | FPSCR_FR | FPSCR_FPRF |
+                               FPSCR_UNK20 | FPSCR_VE | FPSCR_OE | FPSCR_UE |
+                               FPSCR_ZE | FPSCR_XE | FPSCR_NI | FPSCR_RN);
                 OSEnableScheduler();
                 __OSReschedule();
             } else {

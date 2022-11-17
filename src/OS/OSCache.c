@@ -1,8 +1,8 @@
 #include "OSCache.h"
 #include "OSInterrupt.h"
 
+#include <BASE/PPCArch.h>
 #include <NdevExi2AD/db.h>
-#include <PPC/PPCArch.h>
 
 asm void DCEnable(void) {
     // clang-format off
@@ -375,10 +375,13 @@ asm void LCQueueWait(register u32 n) {
 }
 
 static void L2Init(void) {
-    const u32 msr = PPCMfmsr();
+    u32 msr;
+
+    msr = PPCMfmsr();
     __sync();
-    PPCMtmsr(0x30);
+    PPCMtmsr(MSR_IR | MSR_DR);
     __sync();
+
     L2Disable();
     L2GlobalInvalidate();
     PPCMtmsr(msr);
@@ -386,7 +389,7 @@ static void L2Init(void) {
 
 void L2Enable(void) {
     const u32 l2cr = PPCMfl2cr();
-    PPCMtl2cr((l2cr | 0x80000000) & ~0x200000);
+    PPCMtl2cr((l2cr | L2CR_L2E) & ~L2CR_L2I);
 }
 
 void L2Disable(void) {
@@ -394,7 +397,7 @@ void L2Disable(void) {
 
     __sync();
     l2cr = PPCMfl2cr();
-    PPCMtl2cr(l2cr & ~0x80000000);
+    PPCMtl2cr(l2cr & ~L2CR_L2E);
     __sync();
 }
 
@@ -404,15 +407,15 @@ void L2GlobalInvalidate(void) {
     L2Disable();
 
     l2cr = PPCMfl2cr();
-    PPCMtl2cr(l2cr | 0x200000);
+    PPCMtl2cr(l2cr | L2CR_L2I);
 
-    while (PPCMfl2cr() & 0x1) {
+    while (PPCMfl2cr() & L2CR_L2IP) {
     }
 
     l2cr = PPCMfl2cr();
-    PPCMtl2cr(l2cr & ~0x200000);
+    PPCMtl2cr(l2cr & ~L2CR_L2I);
 
-    while (PPCMfl2cr() & 0x1) {
+    while (PPCMfl2cr() & L2CR_L2IP) {
         DBPrintf(">>> L2 INVALIDATE : SHOULD NEVER HAPPEN\n");
     }
 }
@@ -423,7 +426,8 @@ void DMAErrorHandler(u8 error, OSContext* ctx, u32 dsisr, u32 dar, ...) {
     OSReport("Machine check received\n");
     OSReport("HID2 = 0x%x   SRR1 = 0x%x\n", hid2, ctx->srr1);
 
-    if (!(hid2 & 0xF00000) || !(ctx->srr1 & 0x200000)) {
+    if (!(hid2 & (HID2_DCHERR | HID2_DNCERR | HID2_DCMERR | HID2_DQOERR)) ||
+        !(ctx->srr1 & 0x200000)) {
         OSReport("Machine check was not DMA/locked cache related\n");
         OSDumpContext(ctx);
         PPCHalt();
@@ -432,17 +436,17 @@ void DMAErrorHandler(u8 error, OSContext* ctx, u32 dsisr, u32 dar, ...) {
     OSReport("DMAErrorHandler(): An error occurred while processing DMA.\n");
     OSReport("The following errors have been detected and cleared :\n");
 
-    if (hid2 & 0x800000) {
+    if (hid2 & HID2_DCHERR) {
         OSReport(
             "\t- Requested a locked cache tag that was already in the cache\n");
     }
-    if (hid2 & 0x400000) {
+    if (hid2 & HID2_DNCERR) {
         OSReport("\t- DMA attempted to access normal cache\n");
     }
-    if (hid2 & 0x200000) {
+    if (hid2 & HID2_DCMERR) {
         OSReport("\t- DMA missed in data cache\n");
     }
-    if (hid2 & 0x100000) {
+    if (hid2 & HID2_DQOERR) {
         OSReport("\t- DMA queue overflowed\n");
     }
 
@@ -450,17 +454,17 @@ void DMAErrorHandler(u8 error, OSContext* ctx, u32 dsisr, u32 dar, ...) {
 }
 
 void __OSCacheInit(void) {
-    if (!(PPCMfhid0() & 0x8000)) {
+    if (!(PPCMfhid0() & HID0_ICE)) {
         ICEnable();
         DBPrintf("L1 i-caches initialized\n");
     }
 
-    if (!(PPCMfhid0() & 0x4000)) {
+    if (!(PPCMfhid0() & HID0_DCE)) {
         DCEnable();
         DBPrintf("L1 d-caches initialized\n");
     }
 
-    if (!(PPCMfl2cr() & 0x80000000)) {
+    if (!(PPCMfl2cr() & L2CR_L2E)) {
         L2Init();
         L2Enable();
         DBPrintf("L2 cache initialized\n");

@@ -3,6 +3,7 @@
 #include "OSError.h"
 #include "OSInterrupt.h"
 
+#include <BASE/PPCArch.h>
 #include <NdevExi2AD/db.h>
 
 static asm void __OSLoadFPUContext(UNKWORD unused, register OSContext* ctx) {
@@ -540,7 +541,7 @@ static asm void OSSwitchFPUContext(register u8 err, register OSContext* ctx) {
     nofralloc
 
     mfmsr r5
-    ori r5, r5, 0x2000
+    ori r5, r5, MSR_FP
     mtmsr r5
     
     isync
