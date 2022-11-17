@@ -5,6 +5,11 @@
 extern "C" {
 #endif
 
+/**
+ * SC/SYSCONF documentation from:
+ * https://wiibrew.org/wiki//shared2/sys/SYSCONF
+ */
+
 typedef enum { SC_ASPECT_STD, SC_ASPECT_WIDE } SCAspectRatio;
 
 typedef enum { SC_EURGB_50_HZ, SC_EURGB_60_HZ } SCEuRgb60Mode;
