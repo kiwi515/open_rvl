@@ -48,7 +48,7 @@ u8 SCGetLanguage(void) {
     u8 item;
 
     if (!SCFindU8Item(&item, SC_ITEM_IPL_LNG)) {
-        if (SCGetProductArea() == 0) {
+        if (SCGetProductArea() == SC_AREA_JPN) {
             item = SC_LANG_JP;
         } else {
             item = SC_LANG_EN;
