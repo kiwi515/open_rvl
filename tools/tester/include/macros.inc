@@ -1,3 +1,22 @@
+# Macros for emitting proper object file info
+# Written by encounter
+.macro fn visibility name
+.\visibility \name
+.type \name, @function
+\name:
+.endm
+
+.macro obj visibility name
+.\visibility \name
+.type \name, @object
+\name:
+.endm
+
+.macro end name
+.size \name, . - \name
+.endm
+
+# Register macros
 .set r0, 0
 .set r1, 1
 .set r2, 2

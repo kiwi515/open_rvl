@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 from src.elf import ELFFile, ELFSection
 from src.stream import InputStream
 from src.hasher import Hasher
-from src.fix_asm import fix
+from src.fixer import Fixer
 
 # Can be overridden per unit test
 DEFAULT_CC_ARCH = "GC"
@@ -56,9 +56,10 @@ def make_asm(asm_file: str) -> str:
     """Generate unit test from a given assembly file
     """
     # Fixup assembly for tester
+    fx = Fixer()
     with open(asm_file, "r") as f:
         asm = f.readlines()
-    asm = fix(asm)
+    asm = fx.fix(asm)
     # Write to temp file
     with open("temp_asm.s", "w+") as f:
         f.writelines(asm)
