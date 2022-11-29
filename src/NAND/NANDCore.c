@@ -478,7 +478,7 @@ static IPCResult _ES_GetDataDir(s32* fd, u64 titleid, char* out) {
     u64* pTitleid = (u64*)titleidWork;
 
     // Cast is necessary
-    if (*fd < 0 || out == (void*)NULL) {
+    if (*fd < 0 || out == ((void*)NULL)) {
         return -0x3F9;
     }
 
@@ -504,7 +504,7 @@ static IPCResult _ES_GetTitleId(s32* fd, u64* out) {
     IPCIOVector* pVectors = (IPCIOVector*)vectorWork;
 
     // Cast is necessary
-    if (*fd < 0 || out == (void*)NULL) {
+    if (*fd < 0 || out == ((void*)NULL)) {
         return -0x3F9;
     }
 

@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#define SC_PRDINFO_SIZE 0x100
+
 typedef enum {
     SC_AREA_JPN,
     SC_AREA_USA,

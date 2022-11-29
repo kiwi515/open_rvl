@@ -73,6 +73,7 @@ extern const char* __OSVersion;
 
 u32 __OSGetHollywoodRev(void);
 void __OSGetIOSRev(OSIOSRev*);
+u32 OSGetConsoleType(void);
 
 OSExceptionHandler __OSSetExceptionHandler(u16, OSExceptionHandler);
 OSExceptionHandler __OSGetExceptionHandler(u16);

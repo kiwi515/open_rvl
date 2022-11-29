@@ -5,7 +5,6 @@
 #include <OS/OSAddress.h>
 
 #define XOR_KEY 0x73B5DBFA
-#define SETTING_TXT_SIZE 0x100
 
 static SCRegion ProductAreaAndStringTbl[] = {{SC_AREA_JPN, "JPN"},
                                              {SC_AREA_USA, "USA"},
@@ -25,12 +24,12 @@ BOOL __SCF1(const char* type, char* buf, u32 sz) {
     u8 ptext;
     BOOL found = FALSE;
     u32 i;
-    const u8* settings = (const u8*)OSPhysicalToCached(OS_PHYS_SC_SETTING_TXT);
+    const u8* settings = (const u8*)OSPhysicalToCached(OS_PHYS_SC_PRDINFO);
     u32 key = XOR_KEY;
     u32 type_ofs = 0;
     u32 buf_ofs = 0;
 
-    for (i = 0; i < SETTING_TXT_SIZE; i++, key = key >> 31 | key << 1) {
+    for (i = 0; i < SC_PRDINFO_SIZE; i++, key = key >> 31 | key << 1) {
         ptext = settings[i];
 
         if (ptext != 0x00) {
@@ -49,7 +48,7 @@ BOOL __SCF1(const char* type, char* buf, u32 sz) {
     }
 
     if (found) {
-        for (i++; i < SETTING_TXT_SIZE && buf_ofs < sz; i++) {
+        for (i++; i < SC_PRDINFO_SIZE && buf_ofs < sz; i++) {
             key = key >> 31 | key << 1;
             ptext = settings[i];
 

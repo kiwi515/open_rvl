@@ -35,6 +35,7 @@ typedef int BOOL;
 
 #ifdef __INTELLISENSE__
 #define asm
+#define __attribute__(x)
 #endif
 
 #endif

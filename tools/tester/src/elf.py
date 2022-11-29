@@ -54,10 +54,14 @@ class ELFSection():
         self.sh_addralign = strm.get_u32()
         self.sh_entsize = strm.get_u32()
 
-        # Read section data
-        if self.sh_size > 0:
-            strm.seek(self.sh_offset, InputStream.SEEK_BEGIN)
-            self.data = strm.read(self.sh_size)
+        # TO-DO: Actually fix BSS
+        try:
+            # Read section data
+            if self.sh_size > 0:
+                strm.seek(self.sh_offset, InputStream.SEEK_BEGIN)
+                self.data = strm.read(self.sh_size)
+        except Exception:
+            self.data = bytearray(self.sh_size)
 
     def all_symbols(self) -> "List[ELFSymbol]":
         """Access all ELF symbols in section
@@ -281,11 +285,6 @@ class ELFFile():
                                                            1].st_value - sym.st_value
                         else:
                             sym.st_size = sect.sh_size - sym.st_value
-                    # ELF specified symbol size
-                    else:
-                        # Align symbol size to 4 in data sections
-                        if sect.is_data():
-                            sym.st_size = (sym.st_size + 4 - 1) // 4 * 4
 
                     # Read symbol data
                     if sym.st_size > 0:
