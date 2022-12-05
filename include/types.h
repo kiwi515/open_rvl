@@ -1,7 +1,13 @@
 #ifndef TYPES_H
 #define TYPES_H
+
+#ifdef __cplusplus
+#include <cstdarg>
+#include <cstddef>
+#else
 #include <stdarg.h>
 #include <stddef.h>
+#endif
 
 #define ROUND_UP(x, align) (((x) + (align)-1) & (-(align)))
 #define ROUND_UP_PTR(x, align)                                                 \
