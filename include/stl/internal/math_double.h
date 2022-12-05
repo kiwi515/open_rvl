@@ -7,8 +7,10 @@
 extern "C" {
 #endif
 
-static inline f32 sqrtf(f32 x) { return sqrt(x); }
-static inline f32 cosf(f32 x) { return cos(x); }
+static inline float sqrtf(float x) { return sqrt(x); }
+static inline float cosf(float x) { return cos(x); }
+
+float fabsf(float);
 
 #ifdef __cplusplus
 }

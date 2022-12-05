@@ -1,11 +1,11 @@
-#ifndef MSL_S_COS_H
-#define MSL_S_COS_H
+#ifndef MSL_W_ASIN_H
+#define MSL_W_ASIN_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-f64 cos(f64);
+double asin(double);
 
 #ifdef __cplusplus
 }

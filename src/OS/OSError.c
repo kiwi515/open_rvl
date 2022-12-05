@@ -19,7 +19,7 @@ void OSPanic(const char* file, int line, const char* msg, ...) {
 
     OSDisableInterrupts();
 
-    va_start(msg, list);
+    va_start(list, msg);
     vprintf(msg, list);
     va_end(list);
     OSReport(" in \"%s\" on line %d.\n", file, line);

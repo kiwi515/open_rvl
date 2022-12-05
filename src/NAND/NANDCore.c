@@ -3,7 +3,7 @@
 #include <TRK/__mem.h>
 #include <stdio.h>
 #include <string.h>
-#include <wstring.h>
+#include <wchar.h>
 
 #include <OS/OS.h>
 #include <OS/OSError.h>

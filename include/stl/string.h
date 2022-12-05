@@ -1,7 +1,9 @@
 #ifndef MSL_STRING_H
 #define MSL_STRING_H
+#include <types.h>
+
+#include "internal/mem.h"
 #include <TRK/__mem.h>
-#include <stddef.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -20,7 +22,6 @@ char* strchr(const char*, int);
 char* strstr(const char*, const char*);
 
 size_t strlen(const char*);
-size_t strnlen(const char*, size_t);
 
 #ifdef __cplusplus
 }

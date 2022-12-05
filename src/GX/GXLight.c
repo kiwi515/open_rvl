@@ -1,7 +1,7 @@
 #include "GXLight.h"
 #include "GXInit.h"
 
-#include <math_double.h>
+#include <math.h>
 
 void GXInitLightAttn(GXLightObj* light, f32 aa, f32 ab, f32 ac, f32 ka, f32 kb,
                      f32 kc) {

@@ -3,7 +3,7 @@
 #include <OS/OS.h>
 #include <OS/OSInterrupt.h>
 #include <OS/OSTime.h>
-#include <mem.h>
+#include <string.h>
 
 const char* __EXIVersion =
     "<< RVL_SDK - EXI \trelease build: Nov 30 2006 03:26:56 (0x4199_60831) >>";

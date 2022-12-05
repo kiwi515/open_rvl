@@ -1,11 +1,11 @@
-#ifndef MSL_W_SQRT_H
-#define MSL_W_SQRT_H
+#ifndef MSL_ERRNO_H
+#define MSL_ERRNO_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-f64 sqrt(f64);
+extern int errno;
 
 #ifdef __cplusplus
 }

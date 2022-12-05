@@ -8,7 +8,6 @@
 #include <NAND/NANDCore.h>
 #include <NAND/NANDOpenClose.h>
 
-#include <mem.h>
 #include <string.h>
 
 #define SYSCONF_SIZE 0x4000
