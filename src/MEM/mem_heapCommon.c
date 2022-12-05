@@ -7,8 +7,6 @@ static BOOL sRootListInitialized;
 static MEMList sRootList;
 static OSMutex sRootMutex;
 
-static inline uintptr_t GetUIntPtr(const void* p) { return (uintptr_t)p; }
-
 static MEMiHeapHead* FindContainHeap_(MEMList* list, const void* memBlock) {
     MEMiHeapHead* heap = NULL;
 
@@ -34,8 +32,6 @@ static MEMList* FindListContainHeap_(MEMiHeapHead* heap) {
     }
     return list;
 }
-
-static void SetOptForHeap(MEMiHeapHead* heap, u16 opt) { heap->opt = (u8)opt; }
 
 void MEMiInitHeapHead(MEMiHeapHead* heap, u32 magic, void* start, void* end,
                       u16 opt) {
