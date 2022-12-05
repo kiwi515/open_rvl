@@ -1,0 +1,13 @@
+#ifndef MSL_CPP_CSTDDEF_H
+#define MSL_CPP_CSTDDEF_H
+#include <stddef.h>
+
+namespace std {
+using ::intptr_t;
+using ::ptrdiff_t;
+using ::size_t;
+using ::uintptr_t;
+using ::wchar_t;
+} // namespace std
+
+#endif
