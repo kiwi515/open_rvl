@@ -68,31 +68,5 @@
             "RFLIsResourceCached",
             "51f454a2966847d26b82bc3c46542065e84f4d735f95c50ca6b5697807bab80b"
         ]
-    ],
-    ".rodata": [
-        [
-            "scParts2Arc$239",
-            "e8fb5b8461dec92781200a2b1d110b5fb442f6ef4331294603c00a4dbba116ac"
-        ],
-        [
-            "scParts2Arc$246",
-            "e8fb5b8461dec92781200a2b1d110b5fb442f6ef4331294603c00a4dbba116ac"
-        ],
-        [
-            "scParts2Arc$252",
-            "7cec7d75e51fe31de684197e1e8b694be059bb562c7ed047a24010931b58cd6e"
-        ],
-        [
-            "scParts2Arc$259",
-            "7cec7d75e51fe31de684197e1e8b694be059bb562c7ed047a24010931b58cd6e"
-        ],
-        [
-            "scParts2Arc$265",
-            "270dbb02d06955907b29489b9ede696fbad004d7fbe29470f33f090f32d0d310"
-        ],
-        [
-            "scParts2Arc$272",
-            "270dbb02d06955907b29489b9ede696fbad004d7fbe29470f33f090f32d0d310"
-        ]
     ]
 }

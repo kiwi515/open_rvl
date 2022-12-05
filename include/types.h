@@ -33,6 +33,9 @@ typedef void UNKTYPE;
 enum { FALSE, TRUE };
 typedef int BOOL;
 
+typedef signed long intptr_t;
+typedef unsigned long uintptr_t;
+
 #ifdef __INTELLISENSE__
 #define asm
 #define __attribute__(x)
