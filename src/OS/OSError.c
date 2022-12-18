@@ -191,8 +191,8 @@ void __OSUnhandledException(u8 error, OSContext* ctx, u32 dsisr, u32 dar) {
         OSReport("\n");
         OSReport("AI DMA Address =   0x%04x%04x\n", OS_AI_DMA_ADDR_HI,
                  OS_AI_DMA_ADDR_LO);
-        OSReport("ARAM DMA Address = 0x%04x%04x\n", OS_ARAM_DMA_ADDR_HI,
-                 OS_ARAM_DMA_ADDR_LO);
+        OSReport("ARAM DMA Address = 0x%04x%04x\n", OS_DSP_DMA_MAINADDR_HI,
+                 OS_DSP_DMA_MAINADDR_LO);
         OSReport("DI DMA Address =   0x%08x\n", OS_DI_DMA_ADDR);
         break;
     }

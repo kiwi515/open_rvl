@@ -141,7 +141,7 @@ u32 SetInterruptMask(u32 type, u32 mask) {
     case OS_INTR_DSP_AI:
     case OS_INTR_DSP_ARAM:
     case OS_INTR_DSP_DSP:
-        dspIntr = OS_DSP_INTR_MASK;
+        dspIntr = OS_DSP_CONTROL;
         dspIntr &= ~0x1F8;
 
         if (!(mask & 0x4000000)) {
@@ -154,7 +154,7 @@ u32 SetInterruptMask(u32 type, u32 mask) {
             dspIntr |= 0x100;
         }
 
-        OS_DSP_INTR_MASK = dspIntr;
+        OS_DSP_CONTROL = dspIntr;
         return type & 0xF8FFFFFF;
     case OS_INTR_AI_AI:
         aiIntr = OS_AI_INTR_MASK;
@@ -343,7 +343,7 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
     }
 
     if (intsr & 0x40) {
-        dspMask = OS_DSP_INTR_MASK;
+        dspMask = OS_DSP_CONTROL;
         if (dspMask & 0x8) {
             cause |= 0x4000000;
         }
