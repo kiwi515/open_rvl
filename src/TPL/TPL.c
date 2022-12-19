@@ -7,10 +7,9 @@
 void TPLBind(TPLPalette* pal) {
     u16 i;
 
-    if (pal->version != TPL_VERSION) {
-#line 25
-        OSError("invalid version number for texture palette");
-    }
+#line 24
+    OSAssert(pal->version == TPL_VERSION,
+             "invalid version number for texture palette");
 
     pal->imageTable = (TPLDescriptor*)(pal->imageTableOfs + (u32)pal);
 

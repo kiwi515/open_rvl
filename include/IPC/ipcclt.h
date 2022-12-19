@@ -37,6 +37,12 @@ typedef enum {
 typedef enum {
     // TO-DO
     IPC_IOCTL_TYPE_0,
+    IPC_IOCTL_STM_REG_EVENT = 0x1000,
+    IPC_IOCTL_STM_HOT_RESET = 0x2001,
+    IPC_IOCTL_STM_SHUTDOWN_TO_SBY = 0x2003,
+    IPC_IOCTL_STM_UNREG_EVENT = 0x3002,
+    IPC_IOCTL_STM_SET_VI_DIM = 0x5001,
+    IPC_IOCTL_STM_SET_IDLE_LED_MODE = 0x6002,
 } IPCIoctlType;
 
 typedef enum {
@@ -57,7 +63,7 @@ typedef enum {
     IPC_SEEK_END,
 } IPCSeekMode;
 
-typedef void (*IPCAsyncCallback)(IPCResult, void*);
+typedef s32 (*IPCAsyncCallback)(IPCResult, void*);
 
 typedef struct IPCIOVector {
     void* base; // at 0x0

@@ -14,7 +14,7 @@ typedef void (*FSAsyncCallback)(IPCResult, void*);
 typedef struct FSFileStats {
     u32 length; // at 0x0
     u32 WORD_0x4;
-} FSFileStats __attribute__((aligned(32)));
+} FSFileStats ALIGN(32);
 
 typedef struct FSFileAttr {
     u8 BYTE_0x0;

@@ -27,11 +27,11 @@ static const char* __NANDVersion =
     "<< RVL_SDK - NAND \trelease build: Nov 30 2006 03:32:57 (0x4199_60831) >>";
 
 static NANDLibState s_libState = NAND_LIB_UNINITIALIZED;
-static char s_currentDir[64] __attribute__((aligned(32))) = "/";
+static char s_currentDir[64] ALIGN(32) = "/";
 static OSShutdownFunctionInfo s_shutdownFuncInfo = {nandOnShutdown, 255, NULL,
                                                     NULL};
 
-static char s_homeDir[64] __attribute__((aligned(32)));
+static char s_homeDir[64] ALIGN(32);
 
 void nandRemoveTailToken(char* newp, const char* oldp) {
     int i;
@@ -472,8 +472,8 @@ static IPCResult _ES_InitLib(s32* fd) {
 
 static IPCResult _ES_GetDataDir(s32* fd, u64 titleid, char* out) {
     // TO-DO: Hacky solution
-    u8 titleidWork[256] __attribute__((aligned(32)));
-    u8 vectorWork[32] __attribute__((aligned(32)));
+    u8 titleidWork[256] ALIGN(32);
+    u8 vectorWork[32] ALIGN(32);
     IPCIOVector* pVectors = (IPCIOVector*)vectorWork;
     u64* pTitleid = (u64*)titleidWork;
 
@@ -499,8 +499,8 @@ static IPCResult _ES_GetTitleId(s32* fd, u64* out) {
     IPCResult result;
     u64* pTitleid;
     // TO-DO: Hacky solution
-    u8 titleidWork[256] __attribute__((aligned(32)));
-    u8 vectorWork[32] __attribute__((aligned(32)));
+    u8 titleidWork[256] ALIGN(32);
+    u8 vectorWork[32] ALIGN(32);
     IPCIOVector* pVectors = (IPCIOVector*)vectorWork;
 
     // Cast is necessary

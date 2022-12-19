@@ -3,7 +3,7 @@
 #include <NAND/nand.h>
 #include <TRK/__mem.h>
 
-static OSStateFlags StateFlags __attribute__((aligned(32)));
+static OSStateFlags StateFlags ALIGN(32);
 
 static u32 CheckSum(OSStateFlags* state) {
     int i;

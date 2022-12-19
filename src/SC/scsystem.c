@@ -18,8 +18,8 @@ const char* __SCVersion =
     "<< RVL_SDK - SC \trelease build: Nov 30 2006 03:33:00 (0x4199_60831) >>";
 
 static SCControl Control;
-static u8 ConfBuf[SYSCONF_SIZE] __attribute__((aligned(32)));
-static u8 ConfBufForFlush[SYSCONF_SIZE] __attribute__((aligned(32)));
+static u8 ConfBuf[SYSCONF_SIZE] ALIGN(32);
+static u8 ConfBufForFlush[SYSCONF_SIZE] ALIGN(32);
 
 static const char ConfDirName[] = "/shared2/sys";
 static const char ConfFileName[] = "/shared2/sys/SYSCONF";

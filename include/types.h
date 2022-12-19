@@ -18,6 +18,8 @@
 
 #define ARRAY_LENGTH(x) (sizeof((x)) / sizeof((x)[0]))
 
+#define ALIGN(x) __attribute__((aligned(x)))
+
 typedef unsigned long long u64;
 typedef signed long long s64;
 
