@@ -42,7 +42,7 @@ typedef enum {
     NAND_ACCESS_NONE,
     NAND_ACCESS_READ,
     NAND_ACCESS_WRITE,
-    NAND_ACCESS_3 //!< RW?
+    NAND_ACCESS_RW
 } NANDAccessType;
 
 typedef struct NANDCommandBlock;

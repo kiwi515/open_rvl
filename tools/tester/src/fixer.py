@@ -17,7 +17,7 @@ class Fixer():
     GLABEL_REGEX = r"^\s*.global\s*(\")*(?P<Name>[0-9A-Za-z_$@()#]+)"
     ADDI_REGEX = r"^\/\*.+\*\/\s+addi\s+(?P<dst>r[0-9]+),\s+(r13)*(r2)*,\s+(?P<sym>[a-zA-Z0-9_@$#]+)@sda21"
     FUNC_REGEX = r"(?P<Name>^\w+):"
-    BRANCH_REGEX = r"^\/\*.+\*\/\s+(?P<insn>b|bne|beq|bgt|blt|bge|ble|bl)\s+(?P<dst>[0-9a-zA-Z_]+)"
+    BRANCH_REGEX = r"^\/\*.+\*\/\s+(?P<insn>b|bne|beq|bgt|blt|bge|ble|bl|bdnz)\s+(?P<dst>[0-9a-zA-Z_]+)"
 
     def __init__(self):
         self.__curr_sect = None

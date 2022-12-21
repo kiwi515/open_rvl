@@ -31,8 +31,8 @@ static IPCResult nandOpen(const char* path, u8 mode, NANDCommandBlock* block,
     }
 
     switch (mode) {
-    case NAND_ACCESS_3:
-        ipcMode = IPC_OPEN_3;
+    case NAND_ACCESS_RW:
+        ipcMode = IPC_OPEN_RW;
         break;
     case NAND_ACCESS_READ:
         ipcMode = IPC_OPEN_READ;
@@ -190,7 +190,7 @@ static NANDResult nandSafeOpenAsync(const char* path, NANDFileInfo* info,
                                          : nandConvertErrorCode(result);
     }
 
-    if (access == NAND_ACCESS_WRITE || access == NAND_ACCESS_3) {
+    if (access == NAND_ACCESS_WRITE || access == NAND_ACCESS_RW) {
         block->info = info;
         block->callback = callback;
         block->WORD_0x7C = 0;
@@ -251,8 +251,8 @@ static void nandSafeOpenCallback(IPCResult result, void* arg) {
             if (info->access == NAND_ACCESS_WRITE) {
                 myResult = ISFS_OpenAsync(info->renamePath, IPC_OPEN_WRITE,
                                           nandSafeOpenCallback, block);
-            } else if (info->access == NAND_ACCESS_3) {
-                myResult = ISFS_OpenAsync(info->renamePath, IPC_OPEN_3,
+            } else if (info->access == NAND_ACCESS_RW) {
+                myResult = ISFS_OpenAsync(info->renamePath, IPC_OPEN_RW,
                                           nandSafeOpenCallback, block);
             } else {
                 myResult = -0x75;
@@ -336,7 +336,7 @@ static inline NANDResult nandSafeCloseAsync(NANDFileInfo* info,
         block->callback = callback;
         result = ISFS_CloseAsync(info->fd, nandReadCloseCallback, block);
     } else if (info->access == NAND_ACCESS_WRITE ||
-               info->access == NAND_ACCESS_3) {
+               info->access == NAND_ACCESS_RW) {
         block->info = info;
         block->callback = callback;
         block->WORD_0x7C = 10;

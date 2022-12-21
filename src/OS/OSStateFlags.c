@@ -5,13 +5,13 @@
 
 static OSStateFlags StateFlags ALIGN(32);
 
-static u32 CheckSum(OSStateFlags* state) {
+static u32 CheckSum(const OSStateFlags* state) {
     int i;
-
+    const u32* ptr = (const u32*)&state->WORD_0x4;
     u32 checksum = 0;
-    const u32* ptr = (const u32*)&state->data;
-    for (i = 0; i < sizeof(state->data) / sizeof(u32); i++) {
-        checksum += ptr[i];
+
+    for (i = 0; i < (sizeof(OSStateFlags) / sizeof(u32)) - 1; i++) {
+        checksum += *ptr++;
     }
 
     return checksum;
@@ -24,13 +24,13 @@ BOOL __OSWriteStateFlags(const OSStateFlags* newState) {
     StateFlags.checksum = CheckSum(&StateFlags);
 
     if (NANDOpen("/title/00000001/00000002/data/state.dat", &file,
-                 NAND_ACCESS_WRITE) == 0) {
+                 NAND_ACCESS_WRITE) == NAND_RESULT_OK) {
         if (NANDWrite(&file, &StateFlags, sizeof(OSStateFlags)) !=
             sizeof(OSStateFlags)) {
             NANDClose(&file);
             return FALSE;
         }
-        if (NANDClose(&file) != 0) {
+        if (NANDClose(&file) != NAND_RESULT_OK) {
             return FALSE;
         }
     } else {
@@ -44,9 +44,9 @@ BOOL __OSReadStateFlags(OSStateFlags* stateOut) {
     NANDFileInfo file;
 
     if (NANDOpen("/title/00000001/00000002/data/state.dat", &file,
-                 NAND_ACCESS_READ) == 0) {
+                 NAND_ACCESS_READ) == NAND_RESULT_OK) {
 
-        const int bytesRead =
+        const s32 bytesRead =
             NANDRead(&file, &StateFlags, sizeof(OSStateFlags));
         NANDClose(&file);
 

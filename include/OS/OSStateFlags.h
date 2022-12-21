@@ -7,15 +7,13 @@ extern "C" {
 
 typedef struct OSStateFlags {
     u32 checksum; // at 0x0
-    struct {
-        u32 WORD_0x4;
-        u32 WORD_0x8;
-        u32 WORD_0xC;
-        u32 WORD_0x10;
-        u32 WORD_0x14;
-        u32 WORD_0x18;
-        u32 WORD_0x1C;
-    } data;
+    u32 WORD_0x4;
+    u32 WORD_0x8;
+    u32 WORD_0xC;
+    u32 WORD_0x10;
+    u32 WORD_0x14;
+    u32 WORD_0x18;
+    u32 WORD_0x1C;
 } OSStateFlags;
 
 BOOL __OSWriteStateFlags(const OSStateFlags*);

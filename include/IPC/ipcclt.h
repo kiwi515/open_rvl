@@ -54,7 +54,7 @@ typedef enum {
     IPC_OPEN_NONE,
     IPC_OPEN_READ,
     IPC_OPEN_WRITE,
-    IPC_OPEN_3
+    IPC_OPEN_RW
 } IPCOpenMode;
 
 typedef enum {
