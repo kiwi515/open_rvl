@@ -218,6 +218,7 @@ static s32 AccessVIDimRegs(void) {
 static s32 __OSVIDimReplyHandler(IPCResult result, void* arg) {
 #pragma unused(result)
 #pragma unused(arg)
+
     StmVdInUse = FALSE;
     return 0;
 }

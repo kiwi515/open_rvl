@@ -80,4 +80,8 @@ s32 contentReadNAND(CNTFileInfo* info, void* dst, s32 len, s32 skip) {
         ESP_ReadContentFile(info->handle->WORD_0x1C, dst, len));
 }
 
-s32 contentCloseNAND(CNTFileInfo* info) { return 0; }
+s32 contentCloseNAND(CNTFileInfo* info) {
+#pragma unused(info)
+
+    return 0;
+}

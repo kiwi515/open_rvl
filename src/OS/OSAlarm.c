@@ -149,6 +149,8 @@ void OSCancelAlarm(OSAlarm* alarm) {
 }
 
 static void DecrementerExceptionCallback(u8 type, OSContext* ctx) {
+#pragma unused(type)
+
     OSAlarmHandler handler;
     OSContext tempCtx;
     OSAlarm* alarm;

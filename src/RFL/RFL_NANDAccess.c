@@ -144,6 +144,7 @@ RFLAccessType RFLiGetType(NANDCommandBlock* block) {
 
 static void alarmCallback_(OSAlarm* alarm, OSContext* ctx) {
 #pragma unused(ctx)
+
     RFLAlarmUserData* data = (RFLAlarmUserData*)OSGetAlarmUserData(alarm);
     if (RFLAvailable()) {
         RFLAlarmCallback alarmCallback =

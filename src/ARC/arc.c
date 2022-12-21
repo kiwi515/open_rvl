@@ -260,7 +260,11 @@ s32 ARCGetStartOffset(ARCFileInfo* info) { return info->offset; }
 
 u32 ARCGetLength(ARCFileInfo* info) { return info->size; }
 
-BOOL ARCClose(ARCFileInfo* info) { return TRUE; }
+BOOL ARCClose(ARCFileInfo* info) {
+#pragma unused(info)
+
+    return TRUE;
+}
 
 BOOL ARCChangeDir(ARCHandle* info, const char* path) {
     const s32 entrynum = ARCConvertPathToEntrynum(info, path);
@@ -319,4 +323,8 @@ BOOL ARCReadDir(ARCDir* dir, ARCEntry* entry) {
     }
 }
 
-BOOL ARCCloseDir(ARCDir* dir) { return TRUE; }
+BOOL ARCCloseDir(ARCDir* dir) {
+#pragma unused(dir)
+
+    return TRUE;
+}

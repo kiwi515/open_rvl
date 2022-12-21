@@ -14,7 +14,10 @@ static void* AllocatorAllocForFrmHeap_(MEMAllocator* allocator, u32 size) {
     return MEMAllocFromFrmHeapEx(allocator->heap, size, allocator->align);
 }
 
-static void AllocatorFreeForFrmHeap_(MEMAllocator* allocator, void* block) {}
+static void AllocatorFreeForFrmHeap_(MEMAllocator* allocator, void* block) {
+#pragma unused(allocator)
+#pragma unused(block)
+}
 
 void* MEMAllocFromAllocator(MEMAllocator* allocator, u32 size) {
     return allocator->funcs->allocFunc(allocator, size);

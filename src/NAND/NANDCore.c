@@ -149,7 +149,9 @@ BOOL nandIsInitialized(void) {
 }
 
 // Stubbed for release
-void nandReportErrorCode(IPCResult result) {}
+void nandReportErrorCode(IPCResult result) {
+#pragma unused(result)
+}
 
 // Padding for the string table in order to match NANDInit
 const char* NANDCore_c_PADDING() { return "ABCDEFGH"; }
@@ -328,6 +330,8 @@ static BOOL nandOnShutdown(u32 r3, u32 r4) {
 }
 
 static void nandShutdownCallback(IPCResult result, void* arg) {
+#pragma unused(result)
+
     *(BOOL*)arg = TRUE;
 }
 
@@ -395,6 +399,8 @@ static IPCResult nandGetType(const char* path, u8* type,
             *type = 1;
             return IPC_RESULT_OK;
         }
+
+        return result;
     }
 }
 

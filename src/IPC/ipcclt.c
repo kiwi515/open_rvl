@@ -101,6 +101,8 @@ exit:
 }
 
 static void IpcReplyHandler(s16 intr, OSContext* ctx) {
+#pragma unused(intr)
+
     IPCRequestEx* req;
     IPCIoctlvArgs* args;
     u32 reg;
@@ -187,6 +189,9 @@ static void IpcReplyHandler(s16 intr, OSContext* ctx) {
 }
 
 static void IpcAckHandler(u8 intr, OSContext* ctx) {
+#pragma unused(intr)
+#pragma unused(ctx)
+
     IPCWriteReg(1, (IPCReadReg(1) & 0x30) | 2);
     ACRWriteReg(0x30, 0x40000000);
 

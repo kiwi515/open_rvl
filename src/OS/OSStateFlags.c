@@ -9,9 +9,9 @@ static u32 CheckSum(OSStateFlags* state) {
     int i;
 
     u32 checksum = 0;
-    const u32* ptr = &state->WORD_0x4;
-    for (i = 0; i < (sizeof(OSStateFlags) / 0x4) - 1; i++, ptr++) {
-        checksum += *ptr;
+    const u32* ptr = (const u32*)&state->data;
+    for (i = 0; i < sizeof(state->data) / sizeof(u32); i++) {
+        checksum += ptr[i];
     }
 
     return checksum;

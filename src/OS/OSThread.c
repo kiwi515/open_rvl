@@ -6,7 +6,11 @@
 #include "__ppc_eabi_init.h"
 
 static void DefaultSwitchThreadCallback(OSThread* currThread,
-                                        OSThread* newThread) {}
+                                        OSThread* newThread) {
+#pragma unused(currThread)
+#pragma unused(newThread)
+}
+
 static OSSwitchThreadCallback SwitchThreadCallback =
     DefaultSwitchThreadCallback;
 
@@ -34,7 +38,6 @@ OSSwitchThreadCallback OSSetSwitchThreadCallback(OSSwitchThreadCallback newCb) {
 void __OSThreadInit(void) {
     int i;
     OSThread* thread = &DefaultThread;
-    OSThreadQueue* queue;
     OSThread* tail;
 
     thread->state = OS_THREAD_STATE_RUNNING;
@@ -920,6 +923,8 @@ BOOL OSSetThreadPriority(OSThread* thread, s32 prio) {
 }
 
 static void SleepAlarmHandler(OSAlarm* alarm, OSContext* ctx) {
+#pragma unused(ctx)
+
     OSResumeThread((OSThread*)OSGetAlarmUserData(alarm));
 }
 
