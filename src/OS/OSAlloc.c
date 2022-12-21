@@ -1,5 +1,20 @@
 #include "OSAlloc.h"
 
+typedef struct OSHeapDescriptor {
+    s32 size;                    // at 0x0
+    struct OSHeapCell* freeList; // at 0x4
+    struct OSHeapCell* usedList; // at 0x8
+} OSHeapDescriptor;
+
+typedef struct OSHeapCell {
+    struct OSHeapCell* prev;     // at 0x0
+    struct OSHeapCell* next;     // at 0x4
+    s32 size;                    // at 0x8
+    struct OSHeapDescriptor* hd; // at 0xC
+    s32 usedSize;                // at 0x10
+    char UNK_0x14[0x20 - 0x14];
+} OSHeapCell;
+
 volatile s32 __OSCurrHeap = -1;
 
 static void* ArenaEnd = NULL;
@@ -36,7 +51,7 @@ static OSHeapCell* DLInsert(OSHeapCell* list, OSHeapCell* child) {
     OSHeapCell* next = list;
 
     for (; next != NULL; prev = next, next = next->next) {
-        if ((char*)child <= (char*)next) {
+        if (child <= next) {
             break;
         }
     }
@@ -47,7 +62,7 @@ static OSHeapCell* DLInsert(OSHeapCell* list, OSHeapCell* child) {
     if (next != NULL) {
         next->prev = child;
 
-        if ((char*)child + child->size == (char*)next) {
+        if ((u8*)child + child->size == (u8*)next) {
             child->size += next->size;
             next = next->next;
             child->next = next;
@@ -60,7 +75,7 @@ static OSHeapCell* DLInsert(OSHeapCell* list, OSHeapCell* child) {
     if (prev != NULL) {
         prev->next = child;
 
-        if ((char*)prev + prev->size == (char*)child) {
+        if ((u8*)prev + prev->size == (u8*)child) {
             prev->size += child->size;
             prev->next = next;
             if (next != NULL) {
@@ -99,7 +114,7 @@ void* OSAllocFromHeap(s32 handle, s32 size) {
         OSHeapCell* adj;
         cell->size = size;
 
-        adj = (OSHeapCell*)((char*)cell + size);
+        adj = (OSHeapCell*)((u8*)cell + size);
         adj->size = avail;
         adj->prev = cell->prev;
         adj->next = cell->next;
@@ -116,12 +131,12 @@ void* OSAllocFromHeap(s32 handle, s32 size) {
     }
 
     hd->usedList = DLAddFront(hd->usedList, cell);
-    return (char*)cell + sizeof(OSHeapCell);
+    return (u8*)cell + sizeof(OSHeapCell);
 }
 
 void OSFreeToHeap(s32 handle, void* p) {
     OSHeapDescriptor* hd = &HeapArray[handle];
-    OSHeapCell* cell = (OSHeapCell*)((char*)p - sizeof(OSHeapCell));
+    OSHeapCell* cell = (OSHeapCell*)((u8*)p - sizeof(OSHeapCell));
     hd->usedList = DLExtract(hd->usedList, cell);
     hd->freeList = DLInsert(hd->freeList, cell);
 }
@@ -148,7 +163,7 @@ void* OSInitAlloc(void* start, void* end, s32 numHeaps) {
     }
 
     __OSCurrHeap = -1;
-    ArenaStart = ROUND_UP_PTR((char*)HeapArray + headerSize, 32);
+    ArenaStart = ROUND_UP_PTR((u8*)HeapArray + headerSize, 32);
     ArenaEnd = ROUND_DOWN_PTR(end, 32);
 
     return ArenaStart;
