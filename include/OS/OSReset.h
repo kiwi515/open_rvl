@@ -20,6 +20,13 @@ typedef struct OSShutdownFunctionQueue {
 } OSShutdownFunctionQueue;
 
 void OSRegisterShutdownFunction(OSShutdownFunctionInfo*);
+BOOL __OSCallShutdownFunctions(u32, u32);
+void __OSShutdownDevices(u32);
+void __OSGetDiscState(u8*);
+void OSShutdownSystem(void);
+void OSReturnToMenu(void);
+u32 OSGetResetCode(void);
+void OSResetSystem(void);
 
 #ifdef __cplusplus
 }

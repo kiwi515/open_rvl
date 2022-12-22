@@ -19,6 +19,7 @@ volatile u16 OS_VI_DISP_CONF : 0xCC002002;
 volatile u32 OS_PI_CD000034 : 0xCD000034;
 volatile u32 OS_PI_INTR_CAUSE : 0xCC003000;
 volatile u32 OS_PI_INTR_MASK : 0xCC003004;
+volatile u32 OS_PI_RESET_REG : 0xCC003024;
 
 volatile u16 OS_MI_INTR_MASK : 0xCC00401C;
 
@@ -80,12 +81,22 @@ typedef struct OSBootInfo {
     u32 consoleType; // at 0x2C
 } OSBootInfo;
 
+typedef struct OSExecParams {
+    UNKWORD WORD_0x0;
+    UNKWORD WORD_0x4;
+    char UNK_0x8[0x4];
+    void* regionStart; // at 0xC
+    void* regionEnd;   // at 0x10
+    char UNK_0x14[0x1C - 0x14];
+} OSExecParams;
+
 typedef void (*OSExceptionHandler)(u8, OSContext*);
 
 extern BOOL __OSInIPL;
 extern BOOL __OSInNandBoot;
 extern s64 __OSStartTime;
 extern const char* __OSVersion;
+extern OSExecParams __OSRebootParams;
 
 u32 __OSGetHollywoodRev(void);
 void __OSGetIOSRev(OSIOSRev*);

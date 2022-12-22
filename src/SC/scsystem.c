@@ -87,7 +87,7 @@ void SCInit(void) {
 
 static void SetBgJobStatus(SCStatus status) { BgJobStatus = status; }
 
-SCStatus SCCheckStatus(void) {
+u32 SCCheckStatus(void) {
     BOOL enabled;
     u32 status;
 

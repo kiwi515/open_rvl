@@ -6,6 +6,9 @@
 extern "C" {
 #endif
 
+u32 __DVDGetCoverStatus(void);
+
+void __DVDPrepareReset(void);
 BOOL __DVDTestAlarm(OSAlarm*);
 
 #ifdef __cplusplus
