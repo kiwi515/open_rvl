@@ -159,7 +159,7 @@ BOOL __OSUnlockSramEx(BOOL save) { return UnlockSram(save, sizeof(OSSram)); }
 
 BOOL __OSSyncSram(void) { return Scb.sync; }
 
-BOOL __OSReadROM(void* dst, s32 size, u32 arg3) {
+BOOL __OSReadROM(void* dst, s32 size, const void* src) {
     u32 imm;
     BOOL error = FALSE;
 
@@ -174,7 +174,7 @@ BOOL __OSReadROM(void* dst, s32 size, u32 arg3) {
         return FALSE;
     }
 
-    imm = arg3 << 6;
+    imm = (u32)src << 6;
     error |= !EXIImm(EXI_CHAN_0, &imm, sizeof(imm), EXI_WRITE, NULL);
     error |= !EXISync(EXI_CHAN_0);
     error |= !EXIDma(EXI_CHAN_0, dst, size, EXI_READ, NULL);
