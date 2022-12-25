@@ -34,7 +34,7 @@ void __OSInitSram(void);
 OSSramEx* __OSLockSramEx(void);
 BOOL __OSUnlockSramEx(BOOL);
 BOOL __OSSyncSram(void);
-BOOL __OSReadROM(void*, s32, u32);
+BOOL __OSReadROM(void*, s32, const void*);
 u16 OSGetWirelessID(s32);
 void OSSetWirelessID(s32, u16);
 u16 OSGetGbsMode(void);
