@@ -273,6 +273,8 @@ BOOL EXIProbe(EXIChannel chan) {
         u32 id;
         return EXIGetID(chan, 0, &id);
     }
+
+    return FALSE;
 }
 
 static BOOL __EXIAttach(EXIChannel chan, EXICallback callback) {
@@ -557,7 +559,6 @@ BOOL EXIUnlock(EXIChannel chan) {
     EXIData* exi = &Ecb[chan];
     BOOL enabled;
     EXICallback callback;
-    s32 numItems;
 
     enabled = OSDisableInterrupts();
 
@@ -569,12 +570,10 @@ BOOL EXIUnlock(EXIChannel chan) {
     exi->state &= ~EXI_STATE_LOCKED;
     SetExiInterruptMask(chan, exi);
 
-    numItems = exi->numItems;
     if (exi->numItems > 0) {
         callback = exi->items[0].callback;
-        numItems = --exi->numItems;
 
-        if (numItems > 0) {
+        if (--exi->numItems > 0) {
             memmove(&exi->items[0], &exi->items[1],
                     exi->numItems * sizeof(EXIItem));
         }
@@ -588,12 +587,11 @@ BOOL EXIUnlock(EXIChannel chan) {
 
 // Does nothing???
 static void UnlockedHandler(EXIChannel chan, OSContext* ctx) {
+#pragma unused(ctx)
     u32 id;
     EXIGetID(chan, 0, &id);
 }
 
-#ifdef NON_MATCHING
-// EXIUnlock isn't inlining when it needs to be.
 s32 EXIGetID(EXIChannel chan, u32 dev, u32* out) {
     EXIData* exi = &Ecb[chan];
     u32 imm;
@@ -656,4 +654,3 @@ s32 EXIGetID(EXIChannel chan, u32 dev, u32* out) {
 
     return ret == 0;
 }
-#endif
