@@ -78,8 +78,10 @@ static u32 GetFontCode(u16 encode, u16 code) {
     return 0;
 }
 
+#ifndef NON_MATCHING
+#error Decode has not yet been matched. (https://decomp.me/scratch/5XsRN)
+#endif
 // 'Yay0' decompression (See YAGCD sections 16.1.1, 16.1.2)
-// NON MATCHING: https://decomp.me/scratch/5XsRN
 static void Decode(u8* src, u8* dst) {
     s32 count;
     s32 chunkPos;
