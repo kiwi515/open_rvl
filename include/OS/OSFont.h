@@ -45,7 +45,7 @@ typedef struct OSFontData {
 u16 OSGetFontEncode(void);
 u16 OSSetFontEncode(u16);
 u32 OSLoadFont(OSFontData*, void*);
-const char* OSGetFontTexel(const char*, u32, u32, u32, u32*);
+const char* OSGetFontTexel(const char*, void*, s32, s32, u32*);
 BOOL OSInitFont(OSFontData*);
 const char* OSGetFontTexture(const char*, void**, u32*, u32*, u32*);
 const char* OSGetFontWidth(const char*, u32*);

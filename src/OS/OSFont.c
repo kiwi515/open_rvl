@@ -236,7 +236,7 @@ static u32 ReadFont(void* dst, u16 encode, OSFontData* font) {
         // Font sheet on which the texture resides
         sheet = (s32)code / (font->texNumCol * font->texNumRow);
         // Number of succeeding textures on the sheet
-        numRestTex = code - (sheet * (font->texNumRow * font->texNumCol));
+        numRestTex = code - (sheet * (font->texNumCol * font->texNumRow));
         // Texture position on sheet
         row = numRestTex / font->texNumCol;
         col = numRestTex - row * font->texNumCol;
@@ -386,18 +386,67 @@ static const u8* ParseStringW(u16 encode, const u8* str, OSFontData** fontOut,
     return str;
 }
 
-// NON MATCHING: https://decomp.me/scratch/N7Jvh
-const char* OSGetFontTexel(const char* str, u32 arg1, u32 arg2, u32 arg3,
+const char* OSGetFontTexel(const char* str, void* dst, s32 xOfs, s32 arg3,
                            u32* widthOut) {
     OSFontData* font;
-    u8* font_u8;
+    s32 numRestTex;
+    u8* local_24;
+    s32 row;
+    u8* local_20;
+    s32 col;
+    s32 local_48;
     u32 code;
+    int j;
+    int i;
+    u32 sheet;
+    u8* local_4C;
+    u8* font_u8;
+    u8* tex;
+    s32 local_44;
 
     str = (const char*)ParseString(OSGetFontEncode(), (const u8*)str, &font,
                                    &code);
+    local_4C = (u8*)font + sizeof(OSFontData);
 
-    // TO-DO
-    ;
+    /**
+     * Find font code texture (See OSGetFontTexture)
+     */
+    // Font sheet on which the texture resides
+    sheet = (s32)code / (font->texNumCol * font->texNumRow);
+    // Number of succeeding textures on the sheet
+    numRestTex = code - (sheet * (font->texNumCol * font->texNumRow));
+    // Texture position on sheet
+    row = numRestTex / font->texNumCol;
+    col = numRestTex - row * font->texNumCol;
+    // Texture position
+    row *= font->cellHeight;
+    col *= font->cellWidth;
+    // Font code texture
+    tex = (u8*)font + font->fontSheetOfs;
+    tex += sheet * font->texSize / 2;
+
+    for (i = 0; i < font->cellHeight; i++) {
+        for (j = 0; j < font->cellWidth; j++) {
+            local_20 =
+                tex + (((font->texWidth / 8) * 32) / 2) * ((row + i) / 8);
+            local_20 += ((col + j) / 8) * 16;
+            local_20 += ((row + i) % 8) * 2;
+            local_20 += ((col + j) % 8) / 4;
+
+            local_44 = (col + j) % 4;
+
+            local_24 = (u8*)dst + ((i / 8) * (((arg3 * 4) / 8) * 32));
+            local_24 += (((xOfs + j) / 8) * 32);
+            local_24 += ((i % 8) * 4);
+            local_24 += ((xOfs + j) % 8) / 2;
+
+            local_48 = (xOfs + j) % 2;
+
+            *local_24 |=
+                (u8)(local_4C[(*local_20 >> (6 - (local_44 * 2))) & 3] &
+                     (local_48 != 0 ? 0x0F : 0xF0));
+        }
+    }
 
     if (widthOut != NULL) {
         // TO-DO: Permuter fake(?)match
@@ -491,16 +540,16 @@ BOOL OSInitFont(OSFontData* font) {
     return TRUE;
 }
 
-// NON MATCHING: https://decomp.me/scratch/w4wfP
 const char* OSGetFontTexture(const char* str, void** texOut, u32* xOut,
                              u32* yOut, u32* widthOut) {
     OSFontData* font;
+    s32 numRestTex;
     u8* font_u8;
     u32 code;
     u32 sheet;
-    s32 numRestTex;
     u32 row;
     u32 col;
+    u32 tmp;
 
     str = (const char*)ParseString(OSGetFontEncode(), (const u8*)str, &font,
                                    &code);
@@ -511,7 +560,8 @@ const char* OSGetFontTexture(const char* str, void** texOut, u32* xOut,
     *texOut = (font->texSize * sheet) + ((u8*)font + font->fontSheetOfs);
 
     // Number of succeeding textures on the sheet
-    numRestTex = code - (sheet * font->texNumCol * font->texNumRow);
+    tmp = font->texNumRow;
+    numRestTex = code - (sheet * (font->texNumCol * tmp));
 
     // Sheet row on which the texure resides
     row = numRestTex / font->texNumCol;
