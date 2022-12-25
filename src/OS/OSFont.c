@@ -560,6 +560,7 @@ const char* OSGetFontTexture(const char* str, void** texOut, u32* xOut,
     *texOut = (font->texSize * sheet) + ((u8*)font + font->fontSheetOfs);
 
     // Number of succeeding textures on the sheet
+    // TO-DO: Permuter fake(?)match
     tmp = font->texNumRow;
     numRestTex = code - (sheet * (font->texNumCol * tmp));
 
