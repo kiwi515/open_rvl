@@ -5,7 +5,9 @@
 #include "GXTexture.h"
 #include "GXTransform.h"
 
-#ifdef NON_MATCHING
+#ifndef NON_MATCHING
+#error __GXSetAmbMat has not yet been matched.
+#endif
 inline void __GXSetAmbMat(u32 flags) {
     if (flags & GX_DIRTY_AMB_COLOR0) {
         WGPIPE.c = 0x10;
@@ -29,6 +31,9 @@ inline void __GXSetAmbMat(u32 flags) {
     }
 }
 
+#ifndef NON_MATCHING
+#error __GXSetLightChan has not yet been matched.
+#endif
 inline void __GXSetLightChan(u32 flags) {
     int i;
     u32 bit;
@@ -52,6 +57,9 @@ inline void __GXSetLightChan(u32 flags) {
     }
 }
 
+#ifndef NON_MATCHING
+#error __GXSetTexGen has not yet been matched.
+#endif
 inline void __GXSetTexGen(u32 flags) {
     int i;
     u32 bit;
@@ -81,7 +89,9 @@ inline void __GXSetTexGen(u32 flags) {
     }
 }
 
-// https://decomp.me/scratch/qKk9k
+#ifndef NON_MATCHING
+#error __GXSetDirtyState has not yet been matched. (https://decomp.me/scratch/qKk9k)
+#endif
 void __GXSetDirtyState(void) {
     u32 flags = __GXData->dirtyFlags;
 
@@ -130,9 +140,6 @@ void __GXSetDirtyState(void) {
     }
     __GXData->dirtyFlags = 0;
 }
-#else
-#error This file has not yet been decompiled.
-#endif
 
 void GXBegin(GXPrimitive prim, UNKWORD fmtIndex, u16 r5) {
     if (__GXData->dirtyFlags != 0) {

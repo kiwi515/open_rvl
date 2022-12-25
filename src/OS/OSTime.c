@@ -126,9 +126,9 @@ void OSTicksToCalendarTime(s64 ticks, OSCalendarTime* cal) {
 }
 
 #ifdef NON_MATCHING
-// https://decomp.me/scratch/fAlfM
+#error OSCalendarTimeToTicks has not yet been matched. (// https://decomp.me/scratch/fAlfM)
+#endif
 s64 OSCalendarTimeToTicks(const OSCalendarTime* cal) {
     ;
     ;
 }
-#endif

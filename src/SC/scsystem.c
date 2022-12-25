@@ -289,11 +289,12 @@ static void ClearConfBuf(u8* conf) {
 }
 
 #ifdef NON_MATCHING
+#error ParseConfBuf has not yet been matched.
+#endif
 static s32 ParseConfBuf(u8* conf, u32 len) {
     ;
     ;
 }
-#endif
 
 static BOOL UnpackItem(const u8* data, SCItem* item) {
     u8 type;
@@ -365,18 +366,20 @@ static BOOL FindItemByID(SCItemID id, SCItem* item) {
 }
 
 #ifdef NON_MATCHING
+#error DeleteItemByID has not yet been matched.
+#endif
 static void DeleteItemByID(SCItemID id) {
     ;
     ;
 }
-#endif
 
 #ifdef NON_MATCHING
+#error CreateItemByID has not yet been matched.
+#endif
 static BOOL CreateItemByID(SCItemID id, u8 primType, const void* src, u32 len) {
     ;
     ;
 }
-#endif
 
 BOOL SCFindByteArrayItem(void* dst, u32 len, SCItemID id) {
     BOOL success;

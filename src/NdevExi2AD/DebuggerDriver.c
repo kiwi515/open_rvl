@@ -58,7 +58,8 @@ void DBInitComm(u8** flagOut, OSInterruptHandler mtrCb) {
 }
 
 #ifdef NON_MATCHING
-// https://decomp.me/scratch/YjmTr
+#error DBInitInterrupts has not yet been matched. (// https://decomp.me/scratch/YjmTr)
+#endif
 void DBInitInterrupts(void) {
     __OSMaskInterrupts(0x18000);
     __OSMaskInterrupts(0x40);
@@ -66,9 +67,6 @@ void DBInitInterrupts(void) {
     __OSSetInterruptHandler(OS_INTR_PI_DEBUG, __DBIntrHandler);
     __OSUnmaskInterrupts(0x40);
 }
-#else
-#error
-#endif
 
 u32 DBQueryData(void) {
     __DBEXIInputFlag = FALSE;

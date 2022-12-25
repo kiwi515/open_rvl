@@ -100,7 +100,7 @@ static const GXColor cFavoriteColor[RFL_COLOR_MAX] = {
 static const GXColor cWhite = {255, 255, 255, 255};
 
 #ifndef NON_MATCHING
-#error RFLSetCoordinate has not been matched yet.
+#error RFLSetCoordinate has not yet been matched.
 #endif
 void RFLSetCoordinate(RFLCoordinateType t1, RFLCoordinateType t2) {
     ;
@@ -487,7 +487,7 @@ void RFLDrawXluCore(const RFLCharModel* model,
 }
 
 #ifndef NON_MATCHING
-#error RFLiInitCharModelRes has not been matched yet.
+#error RFLiInitCharModelRes has not yet been matched.
 #endif
 void RFLiInitCharModelRes(RFLCharModelRes* res, RFLCharInfo* info) {
     ;
@@ -495,7 +495,7 @@ void RFLiInitCharModelRes(RFLCharModelRes* res, RFLCharInfo* info) {
 }
 
 #ifndef NON_MATCHING
-#error RFLiInitShapeRes has not been matched yet. (https://decomp.me/scratch/eYP1o)
+#error RFLiInitShapeRes has not yet been matched. (https://decomp.me/scratch/eYP1o)
 #endif
 /**
  * https://wiki.tockdom.com/wiki/RFL_Res.dat_(File_Format)
