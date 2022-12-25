@@ -10,6 +10,8 @@ void GXSetMisc(UNKWORD token, UNKWORD val);
 void GXFlush(void);
 void GXResetWriteGatherPipe(void);
 
+void GXAbortFrame(void);
+
 #ifdef __cplusplus
 }
 #endif
