@@ -46,6 +46,9 @@ typedef enum {
 } IPCIoctlType;
 
 typedef enum {
+    IPC_IOCTLV_LAUNCH_TITLE = 8,
+    IPC_IOCTLV_GET_NUM_TICKET_VIEWS = 18,
+    IPC_IOCTLV_GET_TICKET_VIEWS = 19,
     IPC_IOCTLV_GET_DATA_DIR = 29,
     IPC_IOCTLV_GET_TITLE_ID = 32,
 } IPCIoctlvType;

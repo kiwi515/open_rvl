@@ -255,7 +255,7 @@ void nandGetParentDirectory(char* dir, const char* path) {
 
 NANDResult NANDInit(void) {
     IPCResult result;
-    u64 titleid;
+    u64 tid;
     s32 fd;
     BOOL enabled;
 
@@ -278,11 +278,11 @@ NANDResult NANDInit(void) {
         result = _ES_InitLib(&fd);
 
         if (result == IPC_RESULT_OK) {
-            result = _ES_GetTitleId(&fd, &titleid);
+            result = _ES_GetTitleId(&fd, &tid);
         }
 
         if (result == IPC_RESULT_OK) {
-            result = _ES_GetDataDir(&fd, titleid, s_homeDir);
+            result = _ES_GetDataDir(&fd, tid, s_homeDir);
         }
 
         if (result == IPC_RESULT_OK) {
@@ -476,51 +476,52 @@ static IPCResult _ES_InitLib(s32* fd) {
     return result;
 }
 
-static IPCResult _ES_GetDataDir(s32* fd, u64 titleid, char* out) {
+static IPCResult _ES_GetDataDir(s32* fd, u64 tid, char* dirOut) {
     // TO-DO: Hacky solution
-    u8 titleidWork[256] ALIGN(32);
+    u8 tidWork[256] ALIGN(32);
     u8 vectorWork[32] ALIGN(32);
     IPCIOVector* pVectors = (IPCIOVector*)vectorWork;
-    u64* pTitleid = (u64*)titleidWork;
+    u64* pTid = (u64*)tidWork;
 
     // Cast is necessary
-    if (*fd < 0 || out == ((void*)NULL)) {
+    if (*fd < 0 || dirOut == ((void*)NULL)) {
         return -0x3F9;
     }
 
-    if ((u32)out % 32 != 0) {
+    if ((u32)dirOut % 32 != 0) {
         return -0x3F9;
     }
 
-    pTitleid[0] = titleid;
-    pVectors[0].base = pTitleid;
+    *pTid = tid;
+
+    pVectors[0].base = pTid;
     pVectors[0].length = sizeof(u64);
-    pVectors[1].base = out;
+    pVectors[1].base = dirOut;
     pVectors[1].length = 30;
 
     return IOS_Ioctlv(*fd, IPC_IOCTLV_GET_DATA_DIR, 1, 1, pVectors);
 }
 
-static IPCResult _ES_GetTitleId(s32* fd, u64* out) {
+static IPCResult _ES_GetTitleId(s32* fd, u64* tidOut) {
     IPCResult result;
-    u64* pTitleid;
+    u64* pTid;
     // TO-DO: Hacky solution
-    u8 titleidWork[256] ALIGN(32);
+    u8 tidWork[256] ALIGN(32);
     u8 vectorWork[32] ALIGN(32);
     IPCIOVector* pVectors = (IPCIOVector*)vectorWork;
 
     // Cast is necessary
-    if (*fd < 0 || out == ((void*)NULL)) {
+    if (*fd < 0 || tidOut == ((void*)NULL)) {
         return -0x3F9;
     }
 
-    pTitleid = (u64*)titleidWork;
-    pVectors[0].base = pTitleid;
+    pTid = (u64*)tidWork;
+    pVectors[0].base = pTid;
     pVectors[0].length = sizeof(u64);
 
     result = IOS_Ioctlv(*fd, IPC_IOCTLV_GET_TITLE_ID, 0, 1, pVectors);
     if (result == IPC_RESULT_OK) {
-        *out = *pTitleid;
+        *tidOut = *pTid;
     }
 
     return result;
