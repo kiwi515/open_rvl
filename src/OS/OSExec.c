@@ -34,7 +34,7 @@ void __OSLaunchMenu(void) {
         u8 tmp[4];
     } unused = {0xFF, 0xFF, 0xFF, 0};
 
-    if (_ES_InitLib(&fd) == IPC_RESULT_OK) {
+    if (_ES_InitLib(&fd) != IPC_RESULT_OK) {
         return;
     }
 
