@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+void InitMetroTRK(void);
+void InitMetroTRK_BBA(void);
+
 void EnableMetroTRKInterrupts(void);
 
 #ifdef __cplusplus

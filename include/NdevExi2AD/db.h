@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+void DBInit(void);
+
 BOOL __DBIsExceptionMarked(u8);
 
 void DBPrintf(const char*, ...);
