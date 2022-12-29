@@ -5,9 +5,6 @@
 extern "C" {
 #endif
 
-void* OS_IPC_BUFFER_LO : 0x80003130;
-void* OS_IPC_BUFFER_HI : 0x80003134;
-
 void* __OSGetIPCBufferHi(void);
 void* __OSGetIPCBufferLo(void);
 void __OSInitIPCBuffer(void);

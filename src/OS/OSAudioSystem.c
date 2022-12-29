@@ -29,42 +29,42 @@ static void waitMicroSec(u32 usec) {
 static void __AIClockInit(BOOL param_1) {
     u32 tmp;
 
-    tmp = OS_CD800180;
+    tmp = OS_UNK_CD800180;
     tmp &= ~0x100;
     tmp |= (param_1 << 8);
     tmp &= ~0x80;
-    OS_CD800180 = tmp;
+    OS_UNK_CD800180 = tmp;
 
-    OS_CD8001D0 &= ~0xC0000000;
+    OS_UNK_CD8001D0 &= ~0xC0000000;
     waitMicroSec(100);
 
     if (!param_1) {
-        tmp = OS_CD8001CC;
+        tmp = OS_UNK_CD8001CC;
         tmp &= ~0x3FFC0;
         tmp |= 0xFC0;
         tmp &= ~0x3F;
         tmp &= ~0x7FC0000;
         tmp |= 0x4640000;
-        OS_CD8001CC = tmp;
+        OS_UNK_CD8001CC = tmp;
     } else {
-        tmp = OS_CD8001CC;
+        tmp = OS_UNK_CD8001CC;
         tmp &= ~0x3FFC0;
         tmp |= 0xFFC0;
         tmp &= ~0x3F;
         tmp |= 0xE;
         tmp &= ~0x7FC0000;
         tmp |= 0x4B00000;
-        OS_CD8001CC = tmp;
+        OS_UNK_CD8001CC = tmp;
     }
     waitMicroSec(100);
 
-    OS_CD8001D0 &= ~0x10000000;
+    OS_UNK_CD8001D0 &= ~0x10000000;
     waitMicroSec(1000);
 
-    OS_CD8001D0 = (OS_CD8001D0 & ~0x40000000) | 0x40000000;
+    OS_UNK_CD8001D0 = (OS_UNK_CD8001D0 & ~0x40000000) | 0x40000000;
     waitMicroSec(1000);
 
-    OS_CD8001D0 = (OS_CD8001D0 & ~0x80000000) | 0x80000000;
+    OS_UNK_CD8001D0 = (OS_UNK_CD8001D0 & ~0x80000000) | 0x80000000;
     waitMicroSec(1000);
 }
 
@@ -83,12 +83,12 @@ void __OSInitAudioSystem(void) {
     memcpy(DSP_CODE_WORK_MEM, DSPInitCode, sizeof(DSPInitCode));
     DCFlushRange(DSP_CODE_WORK_MEM, sizeof(DSPInitCode));
 
-    OS_DSP_CC005012 = 0x43;
-    OS_DSP_CONTROL = 0x8AC;
+    OS_DSP_AR_SIZE = 0x43;
+    OS_DSP_CSR = 0x8AC;
 
     // Reset DSP
-    OS_DSP_CONTROL |= 0x1;
-    while (OS_DSP_CONTROL & 0x1) {
+    OS_DSP_CSR |= 0x1;
+    while (OS_DSP_CSR & 0x1) {
         ;
     }
 
@@ -98,37 +98,37 @@ void __OSInitAudioSystem(void) {
         ;
     }
 
-    OS_DSP_DMA_MAINADDR = 0x01000000;
-    OS_DSP_DMA_ARAMADDR = NULL;
-    OS_DSP_DMA_CONTROL = 0x20;
+    OS_DSP_AR_DMA_MMADDR = 0x01000000;
+    OS_DSP_AR_DMA_ARADDR = NULL;
+    OS_DSP_AR_DMA_CNT = 0x20;
 
     // Wait for ARAM interrupt
-    for (ctrl = OS_DSP_CONTROL; !(ctrl & 0x20); ctrl = OS_DSP_CONTROL) {
+    for (ctrl = OS_DSP_CSR; !(ctrl & 0x20); ctrl = OS_DSP_CSR) {
         ;
     }
-    OS_DSP_CONTROL = ctrl;
+    OS_DSP_CSR = ctrl;
 
     start = OSGetTick();
     do {
         ;
     } while (OSGetTick() - start < 0x892);
 
-    OS_DSP_DMA_MAINADDR = 0x01000000;
-    OS_DSP_DMA_ARAMADDR = NULL;
-    OS_DSP_DMA_CONTROL = 0x20;
+    OS_DSP_AR_DMA_MMADDR = 0x01000000;
+    OS_DSP_AR_DMA_ARADDR = NULL;
+    OS_DSP_AR_DMA_CNT = 0x20;
 
     // Wait for ARAM interrupt
-    for (ctrl = OS_DSP_CONTROL; !(ctrl & 0x20); ctrl = OS_DSP_CONTROL) {
+    for (ctrl = OS_DSP_CSR; !(ctrl & 0x20); ctrl = OS_DSP_CSR) {
         ;
     }
-    OS_DSP_CONTROL = ctrl;
+    OS_DSP_CSR = ctrl;
 
-    OS_DSP_CONTROL &= ~0x800;
-    while (OS_DSP_CONTROL & 0x400) {
+    OS_DSP_CSR &= ~0x800;
+    while (OS_DSP_CSR & 0x400) {
         ;
     }
 
-    OS_DSP_CONTROL &= ~0x4;
+    OS_DSP_CSR &= ~0x4;
     for (cpuMboxHi = OS_DSP_CPUMBOX_HI; !(cpuMboxHi & 0x8000);
          cpuMboxHi = OS_DSP_CPUMBOX_HI) {
         ;
@@ -137,12 +137,12 @@ void __OSInitAudioSystem(void) {
     // ?????
     OS_DSP_CPUMBOX_LO;
 
-    OS_DSP_CONTROL |= 0x4;
-    OS_DSP_CONTROL = 0x8AC;
+    OS_DSP_CSR |= 0x4;
+    OS_DSP_CSR = 0x8AC;
 
     // Reset DSP
-    OS_DSP_CONTROL |= 0x1;
-    while (OS_DSP_CONTROL & 0x1) {
+    OS_DSP_CSR |= 0x1;
+    while (OS_DSP_CSR & 0x1) {
         ;
     }
 
@@ -154,20 +154,20 @@ void __OSStopAudioSystem(void) {
     s32 start;
     u16 ctrl;
 
-    OS_DSP_CONTROL = 0x804;
+    OS_DSP_CSR = 0x804;
     // Clear sample control
-    OS_AI_DMA_CONTROL &= ~0x8000;
+    OS_DSP_AI_DMA_CONTROL &= ~0x8000;
 
-    for (ctrl = OS_DSP_CONTROL; ctrl & 0x400; ctrl = OS_DSP_CONTROL) {
+    for (ctrl = OS_DSP_CSR; ctrl & 0x400; ctrl = OS_DSP_CSR) {
         ;
     }
 
     // Wait for DSP interrupt to end
-    for (ctrl = OS_DSP_CONTROL; ctrl & 0x200; ctrl = OS_DSP_CONTROL) {
+    for (ctrl = OS_DSP_CSR; ctrl & 0x200; ctrl = OS_DSP_CSR) {
         ;
     }
 
-    OS_DSP_CONTROL = 0x8AC;
+    OS_DSP_CSR = 0x8AC;
 
     OS_DSP_DSPMBOX_HI = 0;
     // Wait for mail delivery
@@ -181,8 +181,8 @@ void __OSStopAudioSystem(void) {
     } while (OSGetTick() - start < 0x2C);
 
     // Reset DSP
-    OS_DSP_CONTROL |= 0x1;
-    for (ctrl = OS_DSP_CONTROL; ctrl & 0x1; ctrl = OS_DSP_CONTROL) {
+    OS_DSP_CSR |= 0x1;
+    for (ctrl = OS_DSP_CSR; ctrl & 0x1; ctrl = OS_DSP_CSR) {
         ;
     }
 }

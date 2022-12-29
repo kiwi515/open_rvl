@@ -141,7 +141,7 @@ static void ConfigureVideo(u16 width, u16 height) {
     switch (VIGetTvFormat()) {
     case VI_TV_FMT_NTSC:
     case VI_TV_FMT_MPAL:
-        if (OS_VI_CLOCK_MODE & 1) {
+        if (OS_VI_VICLK & 1) {
             // Progressive mode
             rmode.tvInfo = GX_RM_TV_INFO(VI_TV_FMT_NTSC, GX_TV_MODE_PROG);
             rmode.viYOrigin = 0;
@@ -191,6 +191,9 @@ static GXColor RGB2YUV(GXColor rgb) {
 void OSFatal(GXColor textColor, GXColor bgColor, const char* msg) {
     s32 retraceCount;
     s64 start;
+    OSBootInfo* bootInfo;
+
+    bootInfo = (OSBootInfo*)OSPhysicalToCached(OS_PHYS_BOOT_INFO);
 
     OSDisableInterrupts();
 
@@ -240,7 +243,7 @@ void OSFatal(GXColor textColor, GXColor bgColor, const char* msg) {
     GXAbortFrame();
 
     OSSetArenaLo((void*)0x81400000);
-    OSSetArenaHi(*(void**)OSPhysicalToCached(OS_PHYS_FST_ADDR));
+    OSSetArenaHi(bootInfo->fstStart);
 
     FatalParam.textColor = textColor;
     FatalParam.bgColor = bgColor;

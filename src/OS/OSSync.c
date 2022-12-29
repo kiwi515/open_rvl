@@ -1,9 +1,10 @@
 #include "OSSync.h"
-#include "OSAddress.h"
 #include "OSCache.h"
+#include "OSGlobals.h"
 
 #include <TRK/__mem.h>
 
+#define OS_PHYS_SYSCALL_INTR 0xC00
 #define OS_INTR_SLOT_SIZE 0x100
 
 static asm void SystemCallVector(void) {

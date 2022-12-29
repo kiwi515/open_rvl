@@ -1,4 +1,5 @@
 #include "OSExec.h"
+#include "OSGlobals.h"
 
 #include <IPC/ipcclt.h>
 
@@ -17,8 +18,8 @@ static IPCResult _ES_LaunchTitle(s32*, u64, void*)
     __attribute__((never_inline));
 
 void __OSGetExecParams(OSExecParams* out) {
-    if (DOL_EXEC_PARAMS_ADDR >= (void*)0x80000000) {
-        memcpy(out, DOL_EXEC_PARAMS_ADDR, sizeof(OSExecParams));
+    if (OS_DOL_EXEC_PARAMS >= (void*)0x80000000) {
+        memcpy(out, OS_DOL_EXEC_PARAMS, sizeof(OSExecParams));
     } else {
         out->WORD_0x0 = 0;
     }

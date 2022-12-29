@@ -1,6 +1,7 @@
 #include "OSContext.h"
 #include "OS.h"
 #include "OSError.h"
+#include "OSGlobals.h"
 #include "OSInterrupt.h"
 
 #include <BASE/PPCArch.h>

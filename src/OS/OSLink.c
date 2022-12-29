@@ -1,7 +1,7 @@
 #include "OSLink.h"
+#include "OSGlobals.h"
 
 void __OSModuleInit(void) {
-    OS_MODULE_LAST = NULL;
-    OS_MODULE_FIRST = NULL;
-    OS_MODULE_NAME_TABLE = NULL;
+    OS_FIRST_REL = OS_LAST_REL = NULL;
+    OS_REL_NAME_TABLE = NULL;
 }

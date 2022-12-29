@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+extern u32 __PADSpec;
+
 BOOL __PADDisableRecalibration(BOOL);
 
 #ifdef __cplusplus

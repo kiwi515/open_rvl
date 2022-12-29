@@ -1,11 +1,11 @@
-#ifndef RVL_SDK_OS_LINK_H
-#define RVL_SDK_OS_LINK_H
+#ifndef RVL_SDK_SI_SIBIOS_H
+#define RVL_SDK_SI_SIBIOS_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void __OSModuleInit(void);
+void SIInit(void);
 
 #ifdef __cplusplus
 }

@@ -1,13 +1,14 @@
 #ifndef RVL_SDK_OS_TIME_H
 #define RVL_SDK_OS_TIME_H
 #include "OS.h"
+#include "OSGlobals.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // Time base frequency = 1/4 bus clock
-#define OS_TIME_SPEED (OS_BUS_SPEED / 4)
+#define OS_TIME_SPEED (OS_BUS_CLOCK_SPEED / 4)
 
 // OS time -> Real time
 #define OS_TICKS_TO_SEC(x) ((x) / (OS_TIME_SPEED))
@@ -17,8 +18,6 @@ extern "C" {
 // Real time -> OS time
 #define OS_SEC_TO_TICKS(x) ((x) * (OS_TIME_SPEED))
 #define OS_MSEC_TO_TICKS(x) ((x) * (OS_TIME_SPEED / 1000))
-
-s64 OS_SYSTEM_TIME : 0x800030D8;
 
 typedef struct OSCalendarTime {
     s32 sec;       // at 0x0

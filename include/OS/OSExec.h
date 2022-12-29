@@ -1,12 +1,18 @@
 #ifndef RVL_SDK_OS_EXEC_H
 #define RVL_SDK_OS_EXEC_H
-#include "OS.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-OSExecParams* DOL_EXEC_PARAMS_ADDR : 0x800030F0;
+typedef struct OSExecParams {
+    UNKWORD WORD_0x0;
+    UNKWORD WORD_0x4;
+    char UNK_0x8[0x4];
+    void* regionStart; // at 0xC
+    void* regionEnd;   // at 0x10
+    char UNK_0x14[0x1C - 0x14];
+} OSExecParams;
 
 extern BOOL __OSInReboot;
 

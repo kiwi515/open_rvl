@@ -2,6 +2,7 @@
 #include "OS.h"
 #include "OSError.h"
 #include "OSExec.h"
+#include "OSGlobals.h"
 #include "OSPlayRecord.h"
 #include "OSRtc.h"
 #include "OSStateFlags.h"
@@ -234,7 +235,7 @@ u32 OSGetResetCode(void) {
         return __OSRebootParams.WORD_0x4 | 0x80000000;
     }
 
-    return OS_PI_RESET_REG >> 3;
+    return OS_PI_RESET >> 3;
 }
 
 void OSResetSystem(void) {

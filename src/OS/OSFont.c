@@ -1,6 +1,6 @@
 #include "OSFont.h"
 #include "OS.h"
-#include "OSAddress.h"
+#include "OSGlobals.h"
 #include "OSRtc.h"
 #include "OSUtf.h"
 
@@ -154,8 +154,8 @@ u16 OSGetFontEncode(void) {
 
     switch (*(u32*)OSPhysicalToCached(OS_PHYS_TV_MODE)) {
     case VI_TV_FMT_NTSC:
-        FontEncode = ((OS_VI_DTV_STATUS & 2) != 0) ? OS_FONT_ENCODE_SJIS
-                                                   : OS_FONT_ENCODE_ANSI;
+        FontEncode = ((OS_VI_VISEL & 2) != 0) ? OS_FONT_ENCODE_SJIS
+                                              : OS_FONT_ENCODE_ANSI;
         break;
     case VI_TV_FMT_PAL:
     case VI_TV_FMT_MPAL:

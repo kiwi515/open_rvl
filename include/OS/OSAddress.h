@@ -1,19 +1,9 @@
 #ifndef RVL_SDK_OS_ADDRESS_H
 #define RVL_SDK_OS_ADDRESS_H
-#include "OSContext.h"
-#include "OSThread.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define OS_PHYS_FST_ADDR 0x00000038
-#define OS_PHYS_PREV_INTR_MASK 0x000000C4
-#define OS_PHYS_CURR_INTR_MASK 0x000000C8
-#define OS_PHYS_TV_MODE 0x000000CC
-#define OS_PHYS_SYSCALL_INTR 0x00000C00
-#define OS_PHYS_INTR_TABLE 0x00003040
-#define OS_PHYS_SC_PRDINFO 0x00003800
 
 static inline void* OSPhysicalToCached(u32 ofs) {
     return (void*)(ofs + 0x80000000);

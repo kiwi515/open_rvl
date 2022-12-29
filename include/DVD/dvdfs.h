@@ -1,11 +1,11 @@
-#ifndef RVL_SDK_OS_LINK_H
-#define RVL_SDK_OS_LINK_H
+#ifndef RVL_SDK_DVD_DVDFS_H
+#define RVL_SDK_DVD_DVDFS_H
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void __OSModuleInit(void);
+extern BOOL __DVDLongFileNameFlag;
 
 #ifdef __cplusplus
 }

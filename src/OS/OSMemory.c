@@ -2,10 +2,9 @@
 #include "OS.h"
 #include "OSCache.h"
 #include "OSError.h"
+#include "OSGlobals.h"
 #include "OSInterrupt.h"
 #include "OSReset.h"
-
-#define OS_MEM_MB_TO_B(mb) ((mb)*1024 * 1024)
 
 static BOOL OnShutdown(u32, u32);
 static OSShutdownFunctionInfo ShutdownFunctionInfo = {OnShutdown, 127, NULL,
@@ -479,7 +478,7 @@ static void BATConfig(void) {
         RealMode(ConfigMEM1_48MB);
     }
 
-    mem2end = OS_MEM2_END;
+    mem2end = *(void**)OSPhysicalToCached(OS_PHYS_ACCESSIBLE_MEM2_END);
     if (OSGetConsoleSimulatedMem2Size() <= OS_MEM_MB_TO_B(64)) {
         if (mem2end <= (void*)0x93400000) {
             RealMode(ConfigMEM2_52MB);

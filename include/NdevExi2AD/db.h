@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+BOOL __DBIsExceptionMarked(u8);
+
 void DBPrintf(const char*, ...);
 
 #ifdef __cplusplus

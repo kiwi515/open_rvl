@@ -2,6 +2,7 @@
 #include "OS.h"
 #include "OSCache.h"
 #include "OSError.h"
+#include "OSGlobals.h"
 #include "OSInterrupt.h"
 
 #include <IPC/ipcclt.h>
@@ -107,7 +108,7 @@ exit:
 void __OSShutdownToSBY(void) {
 #define in_args ((u32*)StmImInBuf)
 
-    OS_VI_DISP_CONF = 0;
+    OS_VI_DCR = 0;
 
 #line 275
     OSAssert(StmReady,
@@ -122,7 +123,7 @@ void __OSShutdownToSBY(void) {
 }
 
 void __OSHotReset(void) {
-    OS_VI_DISP_CONF = 0;
+    OS_VI_DCR = 0;
 
 #line 340
     OSAssert(StmReady, "Error: The firmware doesn't support reboot feature.\n");
@@ -133,7 +134,7 @@ void __OSHotReset(void) {
 }
 
 BOOL __OSGetResetButtonStateRaw(void) {
-    return (!(OS_PI_INTR_CAUSE & 0x10000)) ? TRUE : FALSE;
+    return (!(OS_PI_INTSR & 0x10000)) ? TRUE : FALSE;
 }
 
 s32 __OSSetVIForceDimming(u32 arg0, u32 arg1, u32 arg2) {

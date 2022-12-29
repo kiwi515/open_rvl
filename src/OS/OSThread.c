@@ -1,6 +1,7 @@
 #include "OSThread.h"
 #include "OSAlarm.h"
 #include "OSError.h"
+#include "OSGlobals.h"
 #include "OSInterrupt.h"
 #include "OSMutex.h"
 #include "__ppc_eabi_init.h"

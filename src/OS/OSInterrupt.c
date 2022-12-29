@@ -1,8 +1,8 @@
 #include "OSInterrupt.h"
 #include "EXIBios.h"
 #include "OS.h"
-#include "OSAddress.h"
 #include "OSError.h"
+#include "OSGlobals.h"
 #include "OSInterrupt.h"
 #include "OSMemory.h"
 #include "OSTime.h"
@@ -92,14 +92,14 @@ OSInterruptHandler __OSGetInterruptHandler(OSInterruptType type) {
 
 void __OSInterruptInit(void) {
     InterruptHandlerTable =
-        (OSInterruptHandler*)OSPhysicalToCached(OS_PHYS_INTR_TABLE);
+        (OSInterruptHandler*)OSPhysicalToCached(OS_PHYS_INTR_HANDLER_TABLE);
     memset(InterruptHandlerTable, 0, sizeof(OSInterruptHandler) * OS_INTR_MAX);
 
     *(u32*)OSPhysicalToCached(OS_PHYS_PREV_INTR_MASK) = 0;
-    *(u32*)OSPhysicalToCached(OS_PHYS_CURR_INTR_MASK) = 0;
+    *(u32*)OSPhysicalToCached(OS_PHYS_CURRENT_INTR_MASK) = 0;
 
-    OS_PI_INTR_MASK = 0xF0;
-    OS_PI_CD000034 = 0x40000000;
+    OS_PI_INTMR = 0xF0;
+    OS_UNK_CD000034 = 0x40000000;
 
     __OSMaskInterrupts(0xFFFFFFF0);
     __OSSetExceptionHandler(OS_ERR_EXT_INTERRUPT, ExternalInterruptHandler);
@@ -136,12 +136,12 @@ u32 SetInterruptMask(u32 type, u32 mask) {
             miIntr |= 0x10;
         }
 
-        OS_MI_INTR_MASK = miIntr;
+        OS_MI_INTMR = miIntr;
         return type & 0x7FFFFFF;
     case OS_INTR_DSP_AI:
     case OS_INTR_DSP_ARAM:
     case OS_INTR_DSP_DSP:
-        dspIntr = OS_DSP_CONTROL;
+        dspIntr = OS_DSP_CSR;
         dspIntr &= ~0x1F8;
 
         if (!(mask & 0x4000000)) {
@@ -154,17 +154,17 @@ u32 SetInterruptMask(u32 type, u32 mask) {
             dspIntr |= 0x100;
         }
 
-        OS_DSP_CONTROL = dspIntr;
+        OS_DSP_CSR = dspIntr;
         return type & 0xF8FFFFFF;
     case OS_INTR_AI_AI:
-        aiIntr = OS_AI_INTR_MASK;
+        aiIntr = OS_AI_INTMR;
         aiIntr &= ~0x2C;
 
         if (!(mask & 0x800000)) {
             aiIntr |= 0x4;
         }
 
-        OS_AI_INTR_MASK = aiIntr;
+        OS_AI_INTMR = aiIntr;
         return type & 0xFF7FFFFF;
     case OS_INTR_EXI_0_EXI:
     case OS_INTR_EXI_0_TC:
@@ -263,7 +263,7 @@ u32 SetInterruptMask(u32 type, u32 mask) {
             piIntr |= 0x4000;
         }
 
-        OS_PI_INTR_MASK = piIntr;
+        OS_PI_INTMR = piIntr;
         return type & 0xFFFF800F;
     default:
         return type;
@@ -273,7 +273,7 @@ u32 SetInterruptMask(u32 type, u32 mask) {
 u32 __OSMaskInterrupts(u32 userMask) {
     const BOOL enabled = OSDisableInterrupts();
     const u32 prevMask = *(u32*)OSPhysicalToCached(OS_PHYS_PREV_INTR_MASK);
-    const u32 currMask = *(u32*)OSPhysicalToCached(OS_PHYS_CURR_INTR_MASK);
+    const u32 currMask = *(u32*)OSPhysicalToCached(OS_PHYS_CURRENT_INTR_MASK);
 
     u32 workMask = userMask & ~(prevMask | currMask);
     userMask = prevMask | userMask;
@@ -290,7 +290,7 @@ u32 __OSMaskInterrupts(u32 userMask) {
 u32 __OSUnmaskInterrupts(u32 userMask) {
     const BOOL enabled = OSDisableInterrupts();
     const u32 prevMask = *(u32*)OSPhysicalToCached(OS_PHYS_PREV_INTR_MASK);
-    const u32 currMask = *(u32*)OSPhysicalToCached(OS_PHYS_CURR_INTR_MASK);
+    const u32 currMask = *(u32*)OSPhysicalToCached(OS_PHYS_CURRENT_INTR_MASK);
 
     u32 workMask = userMask & (prevMask | currMask);
     userMask = prevMask & ~userMask;
@@ -312,10 +312,10 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
     u32 exi0Mask, exi1Mask, exi2Mask;
     u32 piMask;
 
-    intsr = OS_PI_INTR_CAUSE;
+    intsr = OS_PI_INTSR;
     intsr &= ~0x10000;
 
-    piMask = OS_PI_INTR_MASK;
+    piMask = OS_PI_INTMR;
     if (intsr == 0 || !(intsr & piMask)) {
         OSLoadContext(ctx);
     }
@@ -343,7 +343,7 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
     }
 
     if (intsr & 0x40) {
-        dspMask = OS_DSP_CONTROL;
+        dspMask = OS_DSP_CSR;
         if (dspMask & 0x8) {
             cause |= 0x4000000;
         }
@@ -355,7 +355,7 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
         }
     }
 
-    if ((intsr & 0x20) && (OS_AI_INTR_MASK & 0x8)) {
+    if ((intsr & 0x20) && (OS_AI_INTMR & 0x8)) {
         cause |= 0x800000;
     }
 
@@ -426,7 +426,7 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
     }
 
     cause2 = cause & ~(*(u32*)OSPhysicalToCached(OS_PHYS_PREV_INTR_MASK) |
-                       *(u32*)OSPhysicalToCached(OS_PHYS_CURR_INTR_MASK));
+                       *(u32*)OSPhysicalToCached(OS_PHYS_CURRENT_INTR_MASK));
 
     if (cause2 != 0) {
         s16 type;

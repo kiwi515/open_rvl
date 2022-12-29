@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include <OS/OSAddress.h>
+#include <OS/OSGlobals.h>
 
 #define XOR_KEY 0x73B5DBFA
 
