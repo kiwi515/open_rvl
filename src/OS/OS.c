@@ -49,7 +49,7 @@ static f32 ZeroPS[2]; // for psl_l
 static OSExceptionHandler* OSExceptionTable;
 
 static BOOL AreWeInitialized;
-__declspec(weak) BOOL __OSIsGcam;
+DECL_WEAK BOOL __OSIsGcam;
 BOOL __OSInNandBoot;
 BOOL __OSInIPL;
 

@@ -38,8 +38,8 @@ typedef void (*OSErrorHandler)(u8, OSContext*, u32, u32, ...);
 extern OSErrorHandler __OSErrorTable[OS_ERR_MAX];
 extern u32 __OSFpscrEnableBits;
 
-__declspec(weak) void OSReport(const char*, ...);
-__declspec(weak) void OSPanic(const char*, int, const char*, ...);
+DECL_WEAK void OSReport(const char*, ...);
+DECL_WEAK void OSPanic(const char*, int, const char*, ...);
 
 OSErrorHandler OSSetErrorHandler(u16, OSErrorHandler);
 void __OSUnhandledException(u8, OSContext*, u32, u32);
