@@ -706,15 +706,15 @@ static asm void __OSDBIntegrator(void) {
 
     entry __OSDBINTSTART
 
-    // Access OS boot debug info
-    li r5, OS_PHYS_BOOT_INFO + OSBootInfo.debugInfo
+    // Access OS debug interface
+    li r5, OS_PHYS_DEBUG_INTERFACE
 
     // Save exception hook return address
     mflr r3
-    stw r3, OSBootDebugInfo.exceptionHookLR(r5)
+    stw r3, OSDebugInterface.exceptionHookLR(r5)
 
     // Load exception hook
-    lwz r3, OSBootDebugInfo.exceptionHook(r5)
+    lwz r3, OSDebugInterface.exceptionHook(r5)
     // Physical -> Cached
     oris r3, r3, 0x8000
     mtlr r3

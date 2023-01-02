@@ -47,8 +47,8 @@ DECL_SECTION(".init") DECL_WEAK asm void __start(void) {
 
     // Clear debugger exception mask
     li r0, 0
-    lis r6, (OS_BOOT_INFO + OSBootInfo.debugInfo.exceptionMask)@ha
-    addi r6, r6, (OS_BOOT_INFO + OSBootInfo.debugInfo.exceptionMask)@l
+    lis r6, (OS_DEBUG_INTERFACE + OSDebugInterface.exceptionMask)@ha
+    addi r6, r6, (OS_DEBUG_INTERFACE + OSDebugInterface.exceptionMask)@l
     stw r0, 0(r6)
 
     /**

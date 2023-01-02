@@ -41,13 +41,6 @@ extern "C" {
     /* Memory-mapped value for direct access */                                \
     type OS_##name : (addr);
 
-typedef struct OSBootDebugInfo {
-    BOOL usingDebugger;    // at 0x40
-    u32 exceptionMask;     // at 0x44
-    void* exceptionHook;   // at 0x48
-    void* exceptionHookLR; // at 0x4C
-} OSBootDebugInfo;
-
 typedef struct OSBootInfo {
     u32 appName;    // at 0x0
     u16 appMaker;   // at 0x4
@@ -56,18 +49,24 @@ typedef struct OSBootInfo {
     u8 strmEnable;  // at 0x8
     u8 strmBufSize; // at 0x9
     char UNK_0xA[0x18 - 0xA];
-    u32 rvlDiscMagic;          // at 0x18
-    u32 gcDiscMagic;           // at 0x1C
-    u32 bootMagic;             // at 0x20
-    u32 aplVersion;            // at 0x24
-    u32 physMemSize;           // at 0x28
-    u32 consoleType;           // at 0x2C
-    void* arenaLo;             // at 0x30
-    void* arenaHi;             // at 0x34
-    void* fstStart;            // at 0x38
-    u32 fstSize;               // at 0x3C
-    OSBootDebugInfo debugInfo; // at 0x40
+    u32 rvlDiscMagic; // at 0x18
+    u32 gcDiscMagic;  // at 0x1C
+    u32 bootMagic;    // at 0x20
+    u32 aplVersion;   // at 0x24
+    u32 physMemSize;  // at 0x28
+    u32 consoleType;  // at 0x2C
+    void* arenaLo;    // at 0x30
+    void* arenaHi;    // at 0x34
+    void* fstStart;   // at 0x38
+    u32 fstSize;      // at 0x3C
 } OSBootInfo;
+
+typedef struct OSDebugInterface {
+    BOOL usingDebugger;    // at 0x0
+    u32 exceptionMask;     // at 0x4
+    void* exceptionHook;   // at 0x8
+    void* exceptionHookLR; // at 0xC
+} OSDebugInterface;
 
 typedef struct OSBI2 {
     u32 dbgMonitorSize;   // at 0x0
@@ -88,23 +87,24 @@ typedef struct OSBI2 {
  * 0x80000000 - 0x80000100
  */
 // clang-format off
-OS_DEF_GLOBAL_VAR(OSBootInfo, BOOT_INFO,            0x80000000);
-OS_DEF_GLOBAL_ARR(u8, DB_INTEGRATOR_HOOK, [0x24],   0x80000060);
-OS_DEF_GLOBAL_VAR(OSContext*, CURRENT_CONTEXT_PHYS, 0x800000C0);
-OS_DEF_GLOBAL_VAR(u32, PREV_INTR_MASK,              0x800000C4);
-OS_DEF_GLOBAL_VAR(u32, CURRENT_INTR_MASK,           0x800000C8);
-OS_DEF_GLOBAL_VAR(u32, TV_MODE,                     0x800000CC);
-OS_DEF_GLOBAL_VAR(u32, ARAM_SIZE,                   0x800000D0);
-OS_DEF_GLOBAL_VAR(OSContext*, CURRENT_CONTEXT,      0x800000D4);
-OS_DEF_GLOBAL_VAR(OSContext*, CURRENT_FPU_CONTEXT,  0x800000D8);
-OS_DEF_GLOBAL_VAR(OSThreadQueue, THREAD_QUEUE,      0x800000DC);
-OS_DEF_GLOBAL_VAR(OSThread*, CURRENT_THREAD,        0x800000E4);
-OS_DEF_GLOBAL_VAR(u32, DEBUG_MONITOR_SIZE,          0x800000E8);
-OS_DEF_GLOBAL_VAR(void*, DEBUG_MONITOR,             0x800000EC);
-OS_DEF_GLOBAL_VAR(u32, SIMULATED_MEM_SIZE,          0x800000F0);
-OS_DEF_GLOBAL_VAR(OSBI2*, DVD_BI2,                  0x800000F4);
-OS_DEF_GLOBAL_VAR(u32, BUS_CLOCK_SPEED,             0x800000F8);
-OS_DEF_GLOBAL_VAR(u32, CPU_CLOCK_SPEED,             0x800000FC);
+OS_DEF_GLOBAL_VAR(OSBootInfo, BOOT_INFO,             0x80000000);
+OS_DEF_GLOBAL_VAR(OSDebugInterface, DEBUG_INTERFACE, 0x80000040);
+OS_DEF_GLOBAL_ARR(u8, DB_INTEGRATOR_HOOK, [0x24],    0x80000060);
+OS_DEF_GLOBAL_VAR(OSContext*, CURRENT_CONTEXT_PHYS,  0x800000C0);
+OS_DEF_GLOBAL_VAR(u32, PREV_INTR_MASK,               0x800000C4);
+OS_DEF_GLOBAL_VAR(u32, CURRENT_INTR_MASK,            0x800000C8);
+OS_DEF_GLOBAL_VAR(u32, TV_MODE,                      0x800000CC);
+OS_DEF_GLOBAL_VAR(u32, ARAM_SIZE,                    0x800000D0);
+OS_DEF_GLOBAL_VAR(OSContext*, CURRENT_CONTEXT,       0x800000D4);
+OS_DEF_GLOBAL_VAR(OSContext*, CURRENT_FPU_CONTEXT,   0x800000D8);
+OS_DEF_GLOBAL_VAR(OSThreadQueue, THREAD_QUEUE,       0x800000DC);
+OS_DEF_GLOBAL_VAR(OSThread*, CURRENT_THREAD,         0x800000E4);
+OS_DEF_GLOBAL_VAR(u32, DEBUG_MONITOR_SIZE,           0x800000E8);
+OS_DEF_GLOBAL_VAR(void*, DEBUG_MONITOR,              0x800000EC);
+OS_DEF_GLOBAL_VAR(u32, SIMULATED_MEM_SIZE,           0x800000F0);
+OS_DEF_GLOBAL_VAR(OSBI2*, DVD_BI2,                   0x800000F4);
+OS_DEF_GLOBAL_VAR(u32, BUS_CLOCK_SPEED,              0x800000F8);
+OS_DEF_GLOBAL_VAR(u32, CPU_CLOCK_SPEED,              0x800000FC);
 // clang-format on
 
 /**
