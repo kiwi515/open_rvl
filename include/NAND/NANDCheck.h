@@ -6,6 +6,13 @@
 extern "C" {
 #endif
 
+typedef enum {
+    NAND_CHECK_TOO_MANY_APP_BLOCKS = (1 << 0),
+    NAND_CHECK_TOO_MANY_APP_FILES = (1 << 1),
+    NAND_CHECK_TOO_MANY_USER_BLOCKS = (1 << 2),
+    NAND_CHECK_TOO_MANY_USER_FILES = (1 << 3),
+} NANDCheckFlags;
+
 NANDResult NANDCheck(u32, u32, u32*);
 
 #ifdef __cplusplus

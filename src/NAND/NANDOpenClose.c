@@ -27,7 +27,7 @@ static IPCResult nandOpen(const char* path, u8 mode, NANDCommandBlock* block,
     nandGenerateAbsPath(absPath, path);
 
     if (!priv && nandIsPrivatePath(absPath)) {
-        return IPC_RESULT_NO_PRIVATE_AUTH;
+        return IPC_RESULT_ACCESS;
     }
 
     switch (mode) {
@@ -196,8 +196,8 @@ static NANDResult nandSafeOpenAsync(const char* path, NANDFileInfo* info,
         block->WORD_0x7C = 0;
         block->buffer = buffer;
         block->bufferSize = bufferSize;
-        result = ISFS_CreateDirAsync("/tmp/sys", 0x0, 0x3, 0x3, 0x3,
-                                     nandSafeOpenCallback, block);
+        result = ISFS_CreateDirAsync("/tmp/sys", 0, IPC_OPEN_RW, IPC_OPEN_RW,
+                                     IPC_OPEN_RW, nandSafeOpenCallback, block);
         return (result == IPC_RESULT_OK) ? NAND_RESULT_OK
                                          : nandConvertErrorCode(result);
     }
@@ -213,9 +213,9 @@ static void nandSafeOpenCallback(IPCResult result, void* arg) {
     char tempPath[64];
     char relativeName[12];
 
-    if (result >= 0 || (result == -0x69 && block->WORD_0x7C == 0)) {
+    if (result >= 0 || (result == IPC_RESULT_EXISTS && block->WORD_0x7C == 0)) {
         NANDFileInfo* info = block->info;
-        myResult = -0x75;
+        myResult = (IPCResult)-117;
 
         if (block->WORD_0x7C == 0) {
             info->BYTE_0x89 = 1;
@@ -225,9 +225,10 @@ static void nandSafeOpenCallback(IPCResult result, void* arg) {
 
         if (block->WORD_0x7C == 1) {
             myResult = ISFS_GetAttrAsync(
-                info->openPath, &block->attrObj, &block->attrObj.BYTE_0x4,
-                &block->WORD_0x20, &block->perm0, &block->perm1, &block->perm2,
-                nandSafeOpenCallback, block);
+                info->openPath, &block->fileAttrObj.ownerId,
+                &block->fileAttrObj.groupId, &block->attr, &block->ownerPerm,
+                &block->groupPerm, &block->otherPerm, nandSafeOpenCallback,
+                block);
         } else if (block->WORD_0x7C == 2) {
             myResult = ISFS_OpenAsync(info->openPath, IPC_OPEN_READ,
                                       nandSafeOpenCallback, block);
@@ -236,16 +237,18 @@ static void nandSafeOpenCallback(IPCResult result, void* arg) {
             block->tempDirId = nandGetUniqueNumber();
             info->WORD_0x4 = result;
             sprintf(tempPath, "%s/%08x", "/tmp/sys", block->tempDirId);
-            myResult = ISFS_CreateDirAsync(tempPath, 0x0, 0x3, 0x0, 0x0,
-                                           nandSafeOpenCallback, block);
+            myResult =
+                ISFS_CreateDirAsync(tempPath, 0, IPC_OPEN_RW, IPC_OPEN_NONE,
+                                    IPC_OPEN_NONE, nandSafeOpenCallback, block);
         } else if (block->WORD_0x7C == 4) {
             info->BYTE_0x89 = 3;
             nandGetRelativeName(relativeName, info->openPath);
             sprintf(info->renamePath, "%s/%08x/%s", "/tmp/sys",
                     block->tempDirId, relativeName);
-            myResult = ISFS_CreateFileAsync(
-                info->renamePath, block->WORD_0x20, block->perm0, block->perm1,
-                block->perm2, nandSafeOpenCallback, block);
+            myResult = ISFS_CreateFileAsync(info->renamePath, block->attr,
+                                            block->ownerPerm, block->groupPerm,
+                                            block->otherPerm,
+                                            nandSafeOpenCallback, block);
         } else if (block->WORD_0x7C == 5) {
             info->BYTE_0x89 = 4;
             if (info->access == NAND_ACCESS_WRITE) {
@@ -255,7 +258,7 @@ static void nandSafeOpenCallback(IPCResult result, void* arg) {
                 myResult = ISFS_OpenAsync(info->renamePath, IPC_OPEN_RW,
                                           nandSafeOpenCallback, block);
             } else {
-                myResult = -0x75;
+                myResult = (IPCResult)-117;
             }
         } else if (block->WORD_0x7C == 6) {
             info->fd = result;
@@ -342,7 +345,7 @@ static inline NANDResult nandSafeCloseAsync(NANDFileInfo* info,
         block->WORD_0x7C = 10;
         result = ISFS_CloseAsync(info->fd, nandSafeCloseCallback, block);
     } else {
-        result = -0x65;
+        result = IPC_RESULT_INVALID;
     }
 
     return nandConvertErrorCode(result);
@@ -354,7 +357,7 @@ static void nandSafeCloseCallback(IPCResult result, void* arg) {
 
     if (result == IPC_RESULT_OK) {
         NANDFileInfo* info = block->info;
-        myResult = -0x75;
+        myResult = (IPCResult)-117;
 
         block->WORD_0x7C++;
 

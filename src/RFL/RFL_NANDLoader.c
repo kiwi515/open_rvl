@@ -220,7 +220,8 @@ static u32 getNANDLength_(RFLLoader* loader, u32 resIdx, u16 fileIdx) {
     tmpBuf = RFLiAlloc32(scTmpSize);
     res = &loader->resources[resIdx];
 
-    if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) == 0) {
+    if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) ==
+        NAND_RESULT_OK) {
         const u32 readSize = ROUND_UP(res->numFiles * 4 + 4, 32);
         NANDSeek(&file, res->offset, NAND_SEEK_BEG);
 
@@ -283,7 +284,8 @@ static void* getNANDFile_(void* dst, RFLLoader* loader, u32 resIdx,
     res = &loader->resources[resIdx];
     tmpBuf = RFLiAlloc32(scTmpSize);
 
-    if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) == 0) {
+    if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) ==
+        NAND_RESULT_OK) {
         u32 resBufSize;
         s32 seekOffset;
         u32 resSize;

@@ -10,21 +10,21 @@ extern "C" {
 
 typedef void (*FSAsyncCallback)(IPCResult, void*);
 
+typedef struct FSStats {
+    char UNK_0x0[0x1C];
+} FSStats;
+
 // Could be more fields, but not larger than 32B
 typedef struct FSFileStats {
-    u32 length; // at 0x0
-    u32 WORD_0x4;
+    u32 length;   // at 0x0
+    u32 position; // at 0x4
 } FSFileStats ALIGN(32);
 
 typedef struct FSFileAttr {
-    u8 BYTE_0x0;
-    u8 BYTE_0x1;
-    u8 BYTE_0x2;
-    u8 BYTE_0x3;
-    u8 BYTE_0x4;
-    u8 BYTE_0x5;
-    u8 BYTE_0x6;
-    u8 perm; // at 0x7
+    u32 ownerId; // at 0x0
+    u16 groupId; // at 0x4
+    u8 attr;     // at 0x6
+    u8 perm;     // at 0x7
 } FSFileAttr;
 
 IPCResult ISFS_OpenLib(void);
@@ -33,9 +33,9 @@ IPCResult ISFS_CreateDirAsync(const char*, u32, u32, u32, u32, FSAsyncCallback,
                               void*);
 IPCResult ISFS_ReadDir(const char*, char*, u32*);
 IPCResult ISFS_ReadDirAsync(const char*, char*, u32*, FSAsyncCallback, void*);
-IPCResult ISFS_GetAttr(const char*, FSFileAttr*, u8*, u32*, u32*, u32*, u32*);
-IPCResult ISFS_GetAttrAsync(const char*, FSFileAttr*, u8*, u32*, u32*, u32*,
-                            u32*, FSAsyncCallback, void*);
+IPCResult ISFS_GetAttr(const char*, u32*, u16*, u32*, u32*, u32*, u32*);
+IPCResult ISFS_GetAttrAsync(const char*, u32*, u16*, u32*, u32*, u32*, u32*,
+                            FSAsyncCallback, void*);
 IPCResult ISFS_Delete(const char*);
 IPCResult ISFS_DeleteAsync(const char*, FSAsyncCallback, void*);
 IPCResult ISFS_Rename(const char*, const char*);

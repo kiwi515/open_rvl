@@ -45,6 +45,27 @@ typedef enum {
     NAND_ACCESS_RW
 } NANDAccessType;
 
+typedef enum {
+    NAND_FILE_TYPE_NONE,
+    NAND_FILE_TYPE_FILE,
+    NAND_FILE_TYPE_DIR,
+} NANDFileType;
+
+typedef enum {
+    // Read/write by owner
+    NAND_PERM_RUSR = (NAND_ACCESS_READ << 4),
+    NAND_PERM_WUSR = (NAND_ACCESS_WRITE << 4),
+    // Read/write by group
+    NAND_PERM_RGRP = (NAND_ACCESS_READ << 2),
+    NAND_PERM_WGRP = (NAND_ACCESS_WRITE << 2),
+    // Read/write by other
+    NAND_PERM_ROTH = (NAND_ACCESS_READ << 0),
+    NAND_PERM_WOTH = (NAND_ACCESS_WRITE << 0),
+    // Read/write by all
+    NAND_PERM_RALL = NAND_PERM_RUSR | NAND_PERM_RGRP | NAND_PERM_ROTH,
+    NAND_PERM_WALL = NAND_PERM_WUSR | NAND_PERM_WGRP | NAND_PERM_WOTH,
+} NANDPermission;
+
 typedef struct NANDCommandBlock;
 typedef void (*NANDAsyncCallback)(NANDResult, struct NANDCommandBlock*);
 
@@ -64,20 +85,20 @@ typedef struct NANDCommandBlock {
     NANDAsyncCallback callback; // at 0x4
     NANDFileInfo* info;         // at 0x8
     char UNK_0xC[0x14 - 0xC];
-    FSFileAttr* attr;   // at 0x14
-    FSFileAttr attrObj; // at 0x18
-    u32 WORD_0x20;
-    u32 perm0; // at 0x24
-    u32 perm1; // at 0x28
-    u32 perm2; // at 0x2C
-    u32 WORD_0x30;
+    FSFileAttr* fileAttr;   // at 0x14
+    FSFileAttr fileAttrObj; // at 0x18
+    u32 attr;               // at 0x20
+    u32 ownerPerm;          // at 0x24
+    u32 groupPerm;          // at 0x28
+    u32 otherPerm;          // at 0x2C
+    u32 dirFileCount;       // at 0x30
     char path[FS_MAX_PATH]; // at 0x34
-    u32* pLength;           // at 0x74
-    u32* PTR_0x78;
+    u32* lengthOut;         // at 0x74
+    u32* positionOut;       // at 0x8
     s32 WORD_0x7C;
     void* buffer;   // at 0x80
     u32 bufferSize; // at 0x84
-    u8* pType;      // at 0x88
+    u8* typeOut;    // at 0x88
     u32 tempDirId;  // at 0x8C
     char UNK_0x90[0xB8 - 0x90];
 } NANDCommandBlock;

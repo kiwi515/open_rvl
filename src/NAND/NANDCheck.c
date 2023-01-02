@@ -14,20 +14,22 @@ static const char* USER_DIR_LIST[] = {"/meta",
                                       NULL,
                                       NULL};
 
-static IPCResult nandCalcUsage(s32* r3, s32* r4, const char** dirList) {
-    IPCResult result = -0x75;
-    *r3 = 0;
-    *r4 = 0;
+static IPCResult nandCalcUsage(s32* blockCountOut, s32* fileCountOut,
+                               const char** dirList) {
+    IPCResult result = (IPCResult)-117;
+
+    *blockCountOut = 0;
+    *fileCountOut = 0;
 
     for (; *dirList != NULL; dirList++) {
-        s32 sp0C = 0;
-        s32 sp08 = 0;
+        s32 blockCount = 0;
+        s32 fileCount = 0;
 
-        result = ISFS_GetUsage(*dirList, &sp0C, &sp08);
+        result = ISFS_GetUsage(*dirList, &blockCount, &fileCount);
         if (result == IPC_RESULT_OK) {
-            *r3 += sp0C;
-            *r4 += sp08;
-        } else if (result == -0x6A) {
+            *blockCountOut += blockCount;
+            *fileCountOut += fileCount;
+        } else if (result == IPC_RESULT_NOEXISTS) {
             result = IPC_RESULT_OK;
         } else {
             break;
@@ -37,53 +39,57 @@ static IPCResult nandCalcUsage(s32* r3, s32* r4, const char** dirList) {
     return result;
 }
 
-static IPCResult nandCalcUserUsage(s32* r3, s32* r4) {
-    return nandCalcUsage(r3, r4, USER_DIR_LIST);
+static IPCResult nandCalcUserUsage(s32* blockCountOut, s32* fileCountOut) {
+    return nandCalcUsage(blockCountOut, fileCountOut, USER_DIR_LIST);
 }
 
-static u32 nandCheck(u32 fsBlock, u32 iNode, u32 r5, u32 r6, u32 r7, u32 r8) {
+static u32 nandCheck(u32 neededBlocks, u32 neededFiles, u32 homeDirBlocks,
+                     u32 homeDirFiles, u32 userBlocks, u32 userFiles) {
     u32 answer = 0;
 
-    if (r5 + fsBlock > 0x400) {
-        answer |= 0x1;
+    if (homeDirBlocks + neededBlocks > 0x400) {
+        answer |= NAND_CHECK_TOO_MANY_APP_BLOCKS;
     }
 
-    if (r6 + iNode > 0x21) {
-        answer |= 0x2;
+    if (homeDirFiles + neededFiles > 0x21) {
+        answer |= NAND_CHECK_TOO_MANY_APP_FILES;
     }
 
-    if (r7 + fsBlock > 0x4400) {
-        answer |= 0x4;
+    if (userBlocks + neededBlocks > 0x4400) {
+        answer |= NAND_CHECK_TOO_MANY_USER_BLOCKS;
     }
 
-    if (r8 + iNode > 0xFA0) {
-        answer |= 0x8;
+    if (userFiles + neededFiles > 0xFA0) {
+        answer |= NAND_CHECK_TOO_MANY_USER_FILES;
     }
 
     return answer;
 }
 
-NANDResult NANDCheck(u32 fsBlock, u32 iNode, u32* answer) {
+NANDResult NANDCheck(u32 neededBlocks, u32 neededFiles, u32* answer) {
     IPCResult result;
-    s32 sp14 = -1;
-    s32 sp10 = -1;
-    s32 sp0C = -1;
-    s32 sp08 = -1;
+
+    s32 homeDirBlocks = -1;
+    s32 homeDirFiles = -1;
+    s32 userBlocks = -1;
+    s32 userFiles = -1;
 
     if (!nandIsInitialized()) {
         return NAND_RESULT_FATAL_ERROR;
     }
 
-    result = ISFS_GetUsage(nandGetHomeDir(), &sp14, &sp10);
+    result = ISFS_GetUsage(nandGetHomeDir(), &homeDirBlocks, &homeDirFiles);
     if (result != IPC_RESULT_OK) {
         return nandConvertErrorCode(result);
     }
 
-    result = nandCalcUserUsage(&sp0C, &sp08);
+    result = nandCalcUserUsage(&userBlocks, &userFiles);
     if (result != IPC_RESULT_OK) {
         return nandConvertErrorCode(result);
     }
 
-    *answer = nandCheck(fsBlock, iNode, sp14, sp10, sp0C, sp08);
+    *answer = nandCheck(neededBlocks, neededFiles, homeDirBlocks, homeDirFiles,
+                        userBlocks, userFiles);
+
     return NAND_RESULT_OK;
 }

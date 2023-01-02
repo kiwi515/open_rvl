@@ -931,8 +931,8 @@ RFLResult RFLiDeleteAsync(RFLAccessType type, RFLAccessCallback callback) {
 
 static void createDirCommon_(const char* dir, NANDAsyncCallback callback) {
     NANDCommandBlock* block = RFLiSetCommandBlock(RFL_ACCESS_DB, 18);
-    NANDResult reason =
-        NANDPrivateCreateDirAsync(dir, 0x3F, 0x0, callback, block);
+    NANDResult reason = NANDPrivateCreateDirAsync(
+        dir, NAND_PERM_RALL | NAND_PERM_WALL, 0, callback, block);
     switch (reason) {
     case NAND_RESULT_OK:
         break;
