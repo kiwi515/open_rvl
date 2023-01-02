@@ -2,7 +2,7 @@
 #include "OSInterrupt.h"
 
 #include <BASE/PPCArch.h>
-#include <NdevExi2AD/db.h>
+#include <DB/db.h>
 
 asm void DCEnable(void) {
     // clang-format off

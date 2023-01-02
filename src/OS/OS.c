@@ -24,7 +24,7 @@
 #include <DVD/dvdfs.h>
 #include <EXI/EXIBios.h>
 #include <IPC/ipcclt.h>
-#include <NdevExi2AD/db.h>
+#include <DB/db.h>
 #include <PAD/Pad.h>
 #include <SC/scsystem.h>
 #include <SI/SIBios.h>

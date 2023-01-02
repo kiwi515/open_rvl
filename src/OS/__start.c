@@ -3,7 +3,7 @@
 #include "OSReset.h"
 #include "__ppc_eabi_init.h"
 
-#include <NdevExi2AD/db.h>
+#include <DB/db.h>
 #include <TRK/dolphin_trk.h>
 
 #include <string.h>

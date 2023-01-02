@@ -5,7 +5,7 @@
 #include "OSInterrupt.h"
 
 #include <BASE/PPCArch.h>
-#include <NdevExi2AD/db.h>
+#include <DB/db.h>
 
 static asm void __OSLoadFPUContext(UNKWORD unused, register OSContext* ctx) {
     // clang-format off
