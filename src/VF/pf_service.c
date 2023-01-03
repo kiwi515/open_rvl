@@ -6,10 +6,8 @@ void VFiPF_LE16_TO_U16_STR(u8* str, u32 n) {
     u32 i;
 
     for (i = 0; i < n; i += sizeof(u16)) {
-        const u8 tmp = str[i];
-
+        const char tmp = str[i];
         str[i] = str[i + 1];
-        // Required to match
-        str[i + 1] = (0, tmp);
+        str[i + 1] = tmp;
     }
 }
