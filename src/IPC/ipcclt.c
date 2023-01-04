@@ -24,6 +24,8 @@ static struct {
     IPCRequestEx* queue[IPC_QUEUE_CAPACITY]; // at 0x10
 } __responses;
 
+size_t strnlen(const char* s, size_t maxlen);
+
 size_t strnlen(const char* s, size_t maxlen) {
     const u8* p = (const u8*)s;
     while (*p && maxlen-- > 0) {

@@ -1,4 +1,5 @@
 #include "EXIBios.h"
+#include "EXIUart.h"
 
 #include <OS/OS.h>
 #include <OS/OSGlobals.h>
@@ -11,6 +12,8 @@ const char* __EXIVersion =
     "<< RVL_SDK - EXI \trelease build: Nov 30 2006 03:26:56 (0x4199_60831) >>";
 static EXIData Ecb[EXI_MAX_CHAN];
 static u32 IDSerialPort1;
+
+static BOOL __EXIProbe(EXIChannel chan);
 
 static void SetExiInterruptMask(EXIChannel chan, EXIData* exi) {
     EXIData* exi2 = &Ecb[EXI_CHAN_2];

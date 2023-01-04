@@ -1,7 +1,6 @@
 #include "exi2.h"
 
 #include <EXI/EXIBios.h>
-#include <EXI/EXICommon.h>
 #include <OS/OSInterrupt.h>
 
 static BOOL __EXI2Select(void) {

@@ -387,17 +387,6 @@ typedef enum _GXTexWrapMode {
 
 typedef enum _GXTlutFmt { GX_TLUT_FMT_0 } GXTlutFmt;
 
-typedef enum _GXTvMode {
-    GX_TV_MODE_INT,
-    GX_TV_MODE_DS,
-    GX_TV_MODE_PROG,
-} GXTvMode;
-
-typedef enum _GXXfbMode {
-    GX_XFB_MODE_SF,
-    GX_XFB_MODE_DF,
-} GXXfbMode;
-
 #ifdef __cplusplus
 }
 #endif

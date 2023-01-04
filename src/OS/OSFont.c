@@ -1,11 +1,13 @@
 #include "OSFont.h"
 #include "OS.h"
+#include "OSCache.h"
 #include "OSGlobals.h"
 #include "OSRtc.h"
 #include "OSUtf.h"
 
 #include <GX/GXTypes.h>
 #include <VI/vi.h>
+#include <VI/vihardware.h>
 
 #define ROM_FONT_SJIS_START ((void*)0x001AFF00)
 #define ROM_FONT_SJIS_SIZE 0x0004D000
@@ -152,10 +154,11 @@ u16 OSGetFontEncode(void) {
         return FontEncode;
     }
 
-    switch (*(u32*)OSPhysicalToCached(OS_PHYS_TV_MODE)) {
+    switch (*(u32*)OSPhysicalToCached(OS_PHYS_TV_FORMAT)) {
     case VI_TV_FMT_NTSC:
-        FontEncode = ((OS_VI_VISEL & 2) != 0) ? OS_FONT_ENCODE_SJIS
-                                              : OS_FONT_ENCODE_ANSI;
+        FontEncode = ((VI_HW_REGS[VI_REG_VISEL] & 2) != 0)
+                         ? OS_FONT_ENCODE_SJIS
+                         : OS_FONT_ENCODE_ANSI;
         break;
     case VI_TV_FMT_PAL:
     case VI_TV_FMT_MPAL:

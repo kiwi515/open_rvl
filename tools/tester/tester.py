@@ -13,7 +13,7 @@ from src.fixer import Fixer
 # Can be overridden per unit test
 DEFAULT_CC_ARCH = "GC"
 DEFAULT_CC_VERSION = "3.0"
-DEFAULT_CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults -w unused,missingreturn,err"
+DEFAULT_CFLAGS = "-msgstyle gcc -lang c -enum int -inline auto -ipa file -Cpp_exceptions off -RTTI off -proc gekko -fp hard -I- -Iinclude -ir include -nodefaults -w unused,missingreturn,err -requireprotos"
 DEFAULT_OPT = "-O4,p"
 
 AS = "tools\\powerpc-eabi-as.exe"

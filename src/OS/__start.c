@@ -10,6 +10,7 @@
 
 static u8 Debug_BBA;
 
+DECL_SECTION(".init") DECL_WEAK void __start(void);
 int main(int argc, char** argv);
 
 DECL_SECTION(".init") static void __init_registers(void);
@@ -25,7 +26,7 @@ DECL_SECTION(".init") static void __set_debug_bba(void) { Debug_BBA = TRUE; }
 
 DECL_SECTION(".init") static BOOL __get_debug_bba(void) { return Debug_BBA; }
 
-DECL_SECTION(".init") DECL_WEAK asm void __start(void) {
+asm void __start(void) {
     // clang-format off
     nofralloc
 

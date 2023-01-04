@@ -6,14 +6,8 @@
 extern "C" {
 #endif
 
-// Merge format/mode to one value for tvInfo field
-#define GX_RM_TV_INFO(format, mode) ((format << 2) | mode)
-
 typedef struct _GXRenderModeObj {
-    // Bits 0-29: VI TV format
-    // Bits 30-31: GX TV mode
-    u32 tvInfo; // at 0x0
-
+    u32 tvInfo;    // at 0x0
     u16 fbWidth;   // at 0x4
     u16 efbHeight; // at 0x6
     u16 xfbHeight; // at 0x8

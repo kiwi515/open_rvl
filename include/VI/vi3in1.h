@@ -7,6 +7,8 @@ extern "C" {
 
 void __VISetRGBModeImm(void);
 
+void __VISetRevolutionModeSimple(void);
+
 #ifdef __cplusplus
 }
 #endif

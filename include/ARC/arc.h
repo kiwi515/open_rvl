@@ -79,6 +79,7 @@ typedef struct ARCDir {
     u32 path_end;      // at 0xC
 } ARCDir;
 
+BOOL ARCGetCurrentDir(ARCHandle*, char*, u32);
 BOOL ARCInitHandle(void*, ARCHandle*);
 BOOL ARCOpen(ARCHandle*, const char*, ARCFileInfo*);
 BOOL ARCFastOpen(ARCHandle*, s32, ARCFileInfo*);

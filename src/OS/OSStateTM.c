@@ -6,6 +6,7 @@
 #include "OSInterrupt.h"
 
 #include <IPC/ipcclt.h>
+#include <VI/vihardware.h>
 
 static u8 StmEhInBuf[32] ALIGN(32);
 static u8 StmEhOutBuf[32] ALIGN(32);
@@ -108,7 +109,7 @@ exit:
 void __OSShutdownToSBY(void) {
 #define in_args ((u32*)StmImInBuf)
 
-    OS_VI_DCR = 0;
+    VI_HW_REGS[VI_REG_DCR] = 0;
 
 #line 275
     OSAssert(StmReady,
@@ -123,13 +124,13 @@ void __OSShutdownToSBY(void) {
 }
 
 void __OSHotReset(void) {
-    OS_VI_DCR = 0;
+    VI_HW_REGS[VI_REG_DCR] = 0;
 
 #line 340
     OSAssert(StmReady, "Error: The firmware doesn't support reboot feature.\n");
 
-    IOS_Ioctl(StmImDesc, IPC_IOCTL_HOT_RESET, StmImInBuf,
-              sizeof(StmImInBuf), StmImOutBuf, sizeof(StmImOutBuf));
+    IOS_Ioctl(StmImDesc, IPC_IOCTL_HOT_RESET, StmImInBuf, sizeof(StmImInBuf),
+              StmImOutBuf, sizeof(StmImOutBuf));
     LockUp();
 }
 

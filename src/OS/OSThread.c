@@ -952,5 +952,4 @@ void OSSleepTicks(s64 ticks) {
     OSRestoreInterrupts(enabled);
 }
 
-// Needed to instantiate IdleThread
-OSThread* __OSThread_c_UNUSED(void) { return &IdleThread; }
+CW_FORCE_BSS(OSThread_c, IdleThread);

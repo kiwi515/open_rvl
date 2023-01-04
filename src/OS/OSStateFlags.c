@@ -1,5 +1,6 @@
 #include "OSStateFlags.h"
 
+#include <NAND/NANDOpenClose.h>
 #include <NAND/nand.h>
 #include <TRK/__mem.h>
 

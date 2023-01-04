@@ -60,6 +60,7 @@ void __OSInterruptInit(void);
 
 u32 __OSMaskInterrupts(u32);
 u32 __OSUnmaskInterrupts(u32);
+void __OSDispatchInterrupt(u8, OSContext*);
 
 void __RAS_OSDisableInterrupts_begin(void);
 void __RAS_OSDisableInterrupts_end(void);

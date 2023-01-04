@@ -149,12 +149,12 @@ BOOL nandIsInitialized(void) {
 }
 
 // Stubbed for release
-void nandReportErrorCode(IPCResult result) {
+void nandReportErrorCode(IPCResult result){
 #pragma unused(result)
 }
 
 // Padding for the string table in order to match NANDInit
-const char* NANDCore_c_PADDING() { return "ABCDEFGH"; }
+CW_FORCE_STRINGS(NANDCore_c, "ABCDEFGH");
 
 NANDResult nandConvertErrorCode(IPCResult result) {
     int i;

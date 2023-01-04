@@ -66,8 +66,8 @@ static u32 RecordCheckSum(const OSPlayRecord* playRec) {
     return checksum;
 }
 
-// Probably because of __OSCreatePlayRecord
-void __OSPlayRecord_c_BSS_ORDER(void) { (void)RecordCheckSum(&PlayRecord); }
+// Likely a result of __OSCreatePlayRecord
+CW_FORCE_BSS(OSPlayRecord_c, PlayRecord);
 
 static void PlayRecordAlarmCallback(OSAlarm* alarm, OSContext* ctx) {
 #pragma unused(alarm)

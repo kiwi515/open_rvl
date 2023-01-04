@@ -105,7 +105,7 @@ void __OSInterruptInit(void) {
     __OSSetExceptionHandler(OS_ERR_EXT_INTERRUPT, ExternalInterruptHandler);
 }
 
-u32 SetInterruptMask(u32 type, u32 mask) {
+static u32 SetInterruptMask(u32 type, u32 mask) {
     u32 miIntr;
     u32 dspIntr;
     u32 aiIntr;

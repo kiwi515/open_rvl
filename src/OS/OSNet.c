@@ -38,14 +38,7 @@ void __OSInitNet(void) {
     }
 }
 
-// Unused strings
-void __OSNet_c_UNUSED() {
-    OSReport("NWC24iPrepareShutdown");
-    OSReport("/dev/net/kd/request");
-    OSReport("NWC24SuspendScheduler");
-    OSReport("NWC24ResumeScheduler");
-    OSReport("NWC24iRequestShutdown");
-    OSReport("NWC24Shutdown_: Give up!\n");
-    OSReport("NWC24iSetRtcCounter_");
-    OSReport("/dev/net/kd/time");
-}
+CW_FORCE_STRINGS(OSNet_c, "NWC24iPrepareShutdown", "/dev/net/kd/request",
+                 "NWC24SuspendScheduler", "NWC24ResumeScheduler",
+                 "NWC24iRequestShutdown", "NWC24Shutdown_: Give up!\n",
+                 "NWC24iSetRtcCounter_", "/dev/net/kd/time");

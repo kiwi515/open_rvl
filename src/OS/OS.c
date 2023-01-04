@@ -20,11 +20,11 @@
 #include "__ppc_eabi_init.h"
 
 #include <BASE/PPCArch.h>
+#include <DB/db.h>
 #include <DVD/dvd.h>
 #include <DVD/dvdfs.h>
 #include <EXI/EXIBios.h>
 #include <IPC/ipcclt.h>
-#include <DB/db.h>
 #include <PAD/Pad.h>
 #include <SC/scsystem.h>
 #include <SI/SIBios.h>
@@ -58,7 +58,7 @@ const char* __OSVersion =
 
 static void OSExceptionInit(void);
 
-void __OS_c_BSS_ORDER(void) { __OSGetExecParams(&__OSRebootParams); }
+CW_FORCE_BSS(OS_c, __OSRebootParams);
 
 asm void __OSFPRInit(void) {
     // clang-format off

@@ -194,7 +194,7 @@ end:
     return ret;
 }
 
-IPCResult _isfsFuncCb(IPCResult result, void* arg) {
+static IPCResult _isfsFuncCb(IPCResult result, void* arg) {
     FSCommandBlock* block = (FSCommandBlock*)arg;
 
     if (result >= IPC_RESULT_OK) {

@@ -17,10 +17,9 @@
 #include <GX/GXFrameBuf.h>
 #include <GX/GXMisc.h>
 #include <VI/vi.h>
+#include <VI/vihardware.h>
 
 #include <string.h>
-
-#define CLAMP_F32(min, max, x) ((x > max) ? max : (x < min ? min : x))
 
 /**
  * Framebuffer formatted as 32-bits per two pixels
@@ -141,27 +140,27 @@ static void ConfigureVideo(u16 width, u16 height) {
     switch (VIGetTvFormat()) {
     case VI_TV_FMT_NTSC:
     case VI_TV_FMT_MPAL:
-        if (OS_VI_VICLK & 1) {
+        if (VI_HW_REGS[VI_REG_VICLK] & VI_VICLK_54MHZ) {
             // Progressive mode
-            rmode.tvInfo = GX_RM_TV_INFO(VI_TV_FMT_NTSC, GX_TV_MODE_PROG);
+            rmode.tvInfo = VI_TV_INFO(VI_TV_FMT_NTSC, VI_SCAN_MODE_PROG);
             rmode.viYOrigin = 0;
-            rmode.xfbMode = GX_XFB_MODE_SF;
+            rmode.xfbMode = VI_XFB_MODE_SF;
         } else {
             // Non-progressive mode
-            rmode.tvInfo = GX_RM_TV_INFO(VI_TV_FMT_NTSC, GX_TV_MODE_INT);
+            rmode.tvInfo = VI_TV_INFO(VI_TV_FMT_NTSC, VI_SCAN_MODE_NON_INT);
             rmode.viYOrigin = 0;
-            rmode.xfbMode = GX_XFB_MODE_DF;
+            rmode.xfbMode = VI_XFB_MODE_DF;
         }
         break;
     case VI_TV_FMT_EURGB60:
-        rmode.tvInfo = GX_RM_TV_INFO(VI_TV_FMT_EURGB60, GX_TV_MODE_INT);
+        rmode.tvInfo = VI_TV_INFO(VI_TV_FMT_EURGB60, VI_SCAN_MODE_NON_INT);
         rmode.viYOrigin = 0;
-        rmode.xfbMode = GX_XFB_MODE_DF;
+        rmode.xfbMode = VI_XFB_MODE_DF;
         break;
     case VI_TV_FMT_PAL:
-        rmode.tvInfo = GX_RM_TV_INFO(VI_TV_FMT_PAL, GX_TV_MODE_INT);
+        rmode.tvInfo = VI_TV_INFO(VI_TV_FMT_PAL, VI_SCAN_MODE_NON_INT);
         rmode.viYOrigin = 47;
-        rmode.xfbMode = GX_XFB_MODE_DF;
+        rmode.xfbMode = VI_XFB_MODE_DF;
         break;
     }
 
@@ -180,9 +179,9 @@ static GXColor RGB2YUV(GXColor rgb) {
     const f32 cr =
         (0.439f * rgb.r - 0.368f * rgb.g - 0.071f * rgb.b + 128.0f) + 0.5f;
 
-    yuv.r = CLAMP_F32(16.0f, 235.0f, y);
-    yuv.g = CLAMP_F32(16.0f, 240.0f, cb);
-    yuv.b = CLAMP_F32(16.0f, 240.0f, cr);
+    yuv.r = CLAMP(16.0f, 235.0f, y);
+    yuv.g = CLAMP(16.0f, 240.0f, cb);
+    yuv.b = CLAMP(16.0f, 240.0f, cr);
     yuv.a = 0;
 
     return yuv;

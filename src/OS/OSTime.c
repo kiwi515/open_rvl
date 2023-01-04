@@ -1,4 +1,5 @@
 #include "OSTime.h"
+#include "OSInterrupt.h"
 
 #define USEC_MAX 1000
 #define MSEC_MAX 1000
