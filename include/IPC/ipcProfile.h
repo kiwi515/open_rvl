@@ -7,9 +7,9 @@ extern "C" {
 #endif
 
 void IPCiProfInit(void);
-void IPCiProfQueueReq(IPCRequestEx*, s32);
+void IPCiProfQueueReq(IPCRequestEx* req, s32 fd);
 void IPCiProfAck(void);
-void IPCiProfReply(IPCRequestEx*, s32);
+void IPCiProfReply(IPCRequestEx* req, s32 fd);
 
 #ifdef __cplusplus
 }
