@@ -998,7 +998,7 @@ IPCResult ISFS_CloseAsync(s32 fd, FSAsyncCallback callback, void* callbackArg) {
 IPCResult ISFS_ShutdownAsync(FSAsyncCallback callback, void* callbackArg) {
     FSCommandBlock* block;
 
-    // @bug Memory allocation result is not validates
+    // @bug Memory allocation result is not validated
     block = (FSCommandBlock*)iosAllocAligned(hId, sizeof(FSCommandBlock), 32);
     if (__fsFd < 0) {
         return IPC_RESULT_INVALID;
