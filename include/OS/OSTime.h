@@ -1,6 +1,5 @@
 #ifndef RVL_SDK_OS_TIME_H
 #define RVL_SDK_OS_TIME_H
-#include "OS.h"
 #include "OSGlobals.h"
 #include <types.h>
 #ifdef __cplusplus

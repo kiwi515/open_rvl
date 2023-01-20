@@ -1,5 +1,6 @@
 #include "OSRtc.h"
 #include "OSCache.h"
+#include "OSContext.h"
 #include "OSInterrupt.h"
 
 #include <EXI/EXIBios.h>

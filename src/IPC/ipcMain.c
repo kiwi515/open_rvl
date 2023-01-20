@@ -1,6 +1,6 @@
 #include "ipcMain.h"
 
-#include <OS/OSIpc.h>
+#include <OS.h>
 
 static u8 Initialized = FALSE;
 static void* IPCCurrentBufferLo = NULL;

@@ -3,7 +3,7 @@
 #include <IPC/ipcMain.h>
 #include <IPC/ipcclt.h>
 #include <IPC/memory.h>
-#include <OS/OSError.h>
+#include <OS.h>
 
 #include <string.h>
 

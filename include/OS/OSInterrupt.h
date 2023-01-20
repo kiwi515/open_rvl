@@ -1,10 +1,15 @@
 #ifndef RVL_SDK_OS_INTERRUPT_H
 #define RVL_SDK_OS_INTERRUPT_H
-#include "OSContext.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// Forward declarations
+typedef struct OSContext;
+
+// Create mask from interrupt ID
+#define OS_INTR_MASK(intr) (1 << (31 - intr))
 
 typedef enum {
     OS_INTR_MEM_0,
@@ -43,7 +48,7 @@ typedef enum {
     OS_INTR_MAX
 } OSInterruptType;
 
-typedef void (*OSInterruptHandler)(s16, OSContext*);
+typedef void (*OSInterruptHandler)(s16, struct OSContext*);
 
 extern u32 __OSLastInterruptSrr0;
 extern s16 __OSLastInterrupt;
@@ -60,7 +65,7 @@ void __OSInterruptInit(void);
 
 u32 __OSMaskInterrupts(u32);
 u32 __OSUnmaskInterrupts(u32);
-void __OSDispatchInterrupt(u8, OSContext*);
+void __OSDispatchInterrupt(u8, struct OSContext*);
 
 void __RAS_OSDisableInterrupts_begin(void);
 void __RAS_OSDisableInterrupts_end(void);

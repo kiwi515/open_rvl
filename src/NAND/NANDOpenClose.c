@@ -1,7 +1,8 @@
 #include "NANDOpenClose.h"
 #include "NANDCore.h"
 
-#include <OS/OSInterrupt.h>
+#include <OS.h>
+
 #include <stdio.h>
 
 static void nandOpenCallback(IPCResult, void*);

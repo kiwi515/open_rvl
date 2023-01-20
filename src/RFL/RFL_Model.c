@@ -2,9 +2,8 @@
 #include "RFL_MakeTex.h"
 #include "RFL_NANDLoader.h"
 
+#include <OS.h>
 #include <TRK/__mem.h>
-
-#include <OS/OSCache.h>
 
 #include <GX/GXAttr.h>
 #include <GX/GXBump.h>

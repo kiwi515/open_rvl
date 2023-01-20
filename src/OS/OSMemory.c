@@ -23,7 +23,9 @@ static BOOL OnShutdown(u32 arg0, u32 arg1) {
 
     if (arg0 != 0) {
         OS_MI_CC004010 = 0xFF;
-        __OSMaskInterrupts(0xF0000000);
+        __OSMaskInterrupts(
+            OS_INTR_MASK(OS_INTR_MEM_0) | OS_INTR_MASK(OS_INTR_MEM_1) |
+            OS_INTR_MASK(OS_INTR_MEM_2) | OS_INTR_MASK(OS_INTR_MEM_3));
     }
 
     return TRUE;
@@ -502,7 +504,9 @@ void __OSInitMemoryProtection(void) {
     OS_MI_CC004020 = 0;
     OS_MI_CC004010 = 0xFF;
 
-    __OSMaskInterrupts(0xF0000000);
+    __OSMaskInterrupts(
+        OS_INTR_MASK(OS_INTR_MEM_0) | OS_INTR_MASK(OS_INTR_MEM_1) |
+        OS_INTR_MASK(OS_INTR_MEM_2) | OS_INTR_MASK(OS_INTR_MEM_3));
     __OSSetInterruptHandler(OS_INTR_MEM_0, MEMIntrruptHandler);
     __OSSetInterruptHandler(OS_INTR_MEM_1, MEMIntrruptHandler);
     __OSSetInterruptHandler(OS_INTR_MEM_2, MEMIntrruptHandler);
@@ -511,7 +515,7 @@ void __OSInitMemoryProtection(void) {
     OSRegisterShutdownFunction(&ShutdownFunctionInfo);
 
     BATConfig();
-    __OSUnmaskInterrupts(0x8000000);
+    __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_MEM_ADDRESS));
 
     OSRestoreInterrupts(enabled);
 }

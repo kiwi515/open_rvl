@@ -1,10 +1,7 @@
 #include "EXIBios.h"
 #include "EXIUart.h"
 
-#include <OS/OS.h>
-#include <OS/OSGlobals.h>
-#include <OS/OSInterrupt.h>
-#include <OS/OSTime.h>
+#include <OS.h>
 
 #include <string.h>
 
@@ -22,24 +19,26 @@ static void SetExiInterruptMask(EXIChannel chan, EXIData* exi) {
     case EXI_CHAN_0:
         if (exi->exiCallback == NULL && exi2->exiCallback == NULL ||
             exi->state & EXI_STATE_LOCKED) {
-            __OSMaskInterrupts(0x410000);
+            __OSMaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_0_EXI) |
+                               OS_INTR_MASK(OS_INTR_EXI_2_EXI));
         } else {
-            __OSUnmaskInterrupts(0x410000);
+            __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_0_EXI) |
+                                 OS_INTR_MASK(OS_INTR_EXI_2_EXI));
         }
         break;
     case EXI_CHAN_1:
         if (exi->exiCallback == NULL || exi->state & EXI_STATE_LOCKED) {
-            __OSMaskInterrupts(0x80000);
+            __OSMaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_1_EXI));
         } else {
-            __OSUnmaskInterrupts(0x80000);
+            __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_1_EXI));
         }
         break;
     case EXI_CHAN_2:
         if (__OSGetInterruptHandler(OS_INTR_PI_DEBUG) == NULL ||
             exi->state & EXI_STATE_LOCKED) {
-            __OSMaskInterrupts(0x40);
+            __OSMaskInterrupts(OS_INTR_MASK(OS_INTR_PI_DEBUG));
         } else {
-            __OSUnmaskInterrupts(0x40);
+            __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_PI_DEBUG));
         }
     }
 }
@@ -77,7 +76,7 @@ BOOL EXIImm(EXIChannel chan, void* buf, s32 len, u32 type,
 
     exi->tcCallback = callback;
     if (callback != NULL) {
-        u32 mask = 0x200000;
+        u32 mask = OS_INTR_MASK(OS_INTR_EXI_0_TC);
         EXIClearInterrupts(chan, FALSE, TRUE, FALSE);
         __OSUnmaskInterrupts(mask >> (chan * 3));
     }
@@ -133,7 +132,7 @@ BOOL EXIDma(EXIChannel chan, void* buf, s32 len, u32 type,
 
     exi->tcCallback = callback;
     if (callback != NULL) {
-        u32 mask = 0x200000;
+        u32 mask = OS_INTR_MASK(OS_INTR_EXI_0_TC);
         EXIClearInterrupts(chan, FALSE, TRUE, FALSE);
         __OSUnmaskInterrupts(mask >> (chan * 3));
     }
@@ -295,7 +294,7 @@ static BOOL __EXIAttach(EXIChannel chan, EXICallback callback) {
 
     EXIClearInterrupts(chan, TRUE, FALSE, FALSE);
     exi->extCallback = callback;
-    mask = 0x100000;
+    mask = OS_INTR_MASK(OS_INTR_EXI_0_EXT);
     __OSUnmaskInterrupts(mask >> (chan * 3));
     exi->state |= EXI_STATE_ATTACHED;
     OSRestoreInterrupts(enabled);
@@ -337,7 +336,7 @@ BOOL EXIDetach(EXIChannel chan) {
     }
 
     exi->state &= ~EXI_STATE_ATTACHED;
-    mask = 0x500000;
+    mask = OS_INTR_MASK(OS_INTR_EXI_0_EXI) | OS_INTR_MASK(OS_INTR_EXI_0_EXT);
     __OSMaskInterrupts(mask >> (chan * 3));
     OSRestoreInterrupts(enabled);
     return TRUE;
@@ -369,10 +368,10 @@ BOOL EXISelect(EXIChannel chan, u32 dev, u32 freq) {
     if (exi->state & EXI_STATE_ATTACHED) {
         switch (chan) {
         case EXI_CHAN_0:
-            __OSMaskInterrupts(0x100000);
+            __OSMaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_0_EXT));
             break;
         case EXI_CHAN_1:
-            __OSMaskInterrupts(0x20000);
+            __OSMaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_1_EXT));
             break;
         }
     }
@@ -400,10 +399,10 @@ BOOL EXIDeselect(EXIChannel chan) {
     if (exi->state & EXI_STATE_ATTACHED) {
         switch (chan) {
         case EXI_CHAN_0:
-            __OSUnmaskInterrupts(0x100000);
+            __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_0_EXT));
             break;
         case EXI_CHAN_1:
-            __OSUnmaskInterrupts(0x20000);
+            __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_1_EXT));
             break;
         }
     }
@@ -470,7 +469,7 @@ static void EXTIntrruptHandler(s16 intr, OSContext* ctx) {
     u32 mask;
 
     chan = (EXIChannel)((intr - OS_INTR_EXI_0_EXT) / 3);
-    mask = 0x500000;
+    mask = OS_INTR_MASK(OS_INTR_EXI_0_EXI) | OS_INTR_MASK(OS_INTR_EXI_0_EXT);
     __OSMaskInterrupts(mask >> (chan * 3));
 
     exi = &Ecb[chan];
@@ -496,7 +495,11 @@ void EXIInit(void) {
     } while ((EXI_CD006800[EXI_CHAN_1].WORD_0xC & 1) == 1 ||
              (EXI_CD006800[EXI_CHAN_2].WORD_0xC & 1) == 1);
 
-    __OSMaskInterrupts(0x7F8000);
+    __OSMaskInterrupts(
+        OS_INTR_MASK(OS_INTR_EXI_0_EXI) | OS_INTR_MASK(OS_INTR_EXI_0_TC) |
+        OS_INTR_MASK(OS_INTR_EXI_0_EXT) | OS_INTR_MASK(OS_INTR_EXI_1_EXI) |
+        OS_INTR_MASK(OS_INTR_EXI_1_TC) | OS_INTR_MASK(OS_INTR_EXI_1_EXT) |
+        OS_INTR_MASK(OS_INTR_EXI_2_EXI) | OS_INTR_MASK(OS_INTR_EXI_2_TC));
 
     EXI_CD006800[EXI_CHAN_0].WORD_0x0 = 0;
     EXI_CD006800[EXI_CHAN_1].WORD_0x0 = 0;

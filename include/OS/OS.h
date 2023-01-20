@@ -67,7 +67,6 @@ extern BOOL __OSInIPL;
 extern BOOL __OSInNandBoot;
 extern BOOL __OSIsGcam;
 extern s64 __OSStartTime;
-extern const char* __OSVersion;
 extern OSExecParams __OSRebootParams;
 
 void __OSFPRInit(void);

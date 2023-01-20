@@ -1,6 +1,6 @@
 #include "arc.h"
 
-#include <OS/OSError.h>
+#include <OS.h>
 
 #include <ctype.h>
 

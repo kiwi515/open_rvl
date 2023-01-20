@@ -5,8 +5,7 @@
 #include <string.h>
 
 #include <MEM/mem_expHeap.h>
-#include <OS/OSInterrupt.h>
-#include <OS/OSTime.h>
+#include <OS.h>
 #include <TRK/__mem.h>
 
 static const char* scFileNames[RFL_ACCESS_MAX] = {

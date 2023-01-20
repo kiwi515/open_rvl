@@ -13,13 +13,13 @@ static asm void __OSLoadFPUContext(UNKWORD unused, register OSContext* ctx) {
 
     lhz r5, ctx->SHORT_0x1A2
     clrlwi. r5, r5, 31
-    beq exit
+    beq _exit
     
     lfd f0, ctx->fpscr_tmp
     mtfs f0
     mfspr r5, 0x398
     rlwinm. r5, r5, 3, 31, 31
-    beq load_fprs
+    beq _load_fprs
     
     psq_l f0, 0x1C8(ctx), 0, 0
     psq_l f1, 0x1D0(ctx), 0, 0
@@ -54,7 +54,7 @@ static asm void __OSLoadFPUContext(UNKWORD unused, register OSContext* ctx) {
     psq_l f30, 0x2B8(ctx), 0, 0
     psq_l f31, 0x2C0(ctx), 0, 0
 
-load_fprs:
+_load_fprs:
     lfd f0, ctx->fprs[0]
     lfd f1, ctx->fprs[1]
     lfd f2, ctx->fprs[2]
@@ -88,7 +88,7 @@ load_fprs:
     lfd f30, ctx->fprs[30]
     lfd f31, ctx->fprs[31]
 
-exit:
+_exit:
     blr
     // clang-format on
 }
@@ -140,7 +140,7 @@ static asm void __OSSaveFPUContext(UNKWORD unused, UNKWORD unused1,
     lfd f0, ctx->fprs[0]
     mfspr r3, 0x398
     rlwinm. r3, r3, 3, 31, 31
-    beq exit
+    beq _exit
 
     psq_st f0, 0x1C8(ctx), 0, 0
     psq_st f1, 0x1D0(ctx), 0, 0
@@ -175,7 +175,7 @@ static asm void __OSSaveFPUContext(UNKWORD unused, UNKWORD unused1,
     psq_st f30, 0x2B8(ctx), 0, 0
     psq_st f31, 0x2C0(ctx), 0, 0
 
-exit:
+_exit:
     blr
     // clang-format on
 }
@@ -201,7 +201,7 @@ asm void OSSetCurrentContext(register OSContext* ctx) {
 
     lwz r5, OS_CURRENT_FPU_CONTEXT@l(r4)
     cmpw r5, ctx
-    bne not_current_fpu_ctx
+    bne _not_current_fpu_ctx
 
     lwz r6, ctx->srr1
     ori r6, r6, 0x2000
@@ -211,7 +211,7 @@ asm void OSSetCurrentContext(register OSContext* ctx) {
     mtmsr r6
     blr
 
-not_current_fpu_ctx:
+_not_current_fpu_ctx:
     lwz r6, ctx->srr1
     rlwinm r6, r6, 0, 19, 17
     stw r6, ctx->srr1
@@ -285,30 +285,30 @@ asm void OSLoadContext(register OSContext* ctx) {
     lwz r6, ctx->srr0
     addi r5, r4, __RAS_OSDisableInterrupts_begin@l
     cmplw r6, r5
-    ble srr0_not_in_disableintr
+    ble _srr0_not_in_disableintr
     lis r4, __RAS_OSDisableInterrupts_end@ha
     addi r0, r4, __RAS_OSDisableInterrupts_end@l
     cmplw r6, r0
-    bge srr0_not_in_disableintr
+    bge _srr0_not_in_disableintr
     stw r5, ctx->srr0
         
-srr0_not_in_disableintr:
+_srr0_not_in_disableintr:
     lwz r0, ctx->gprs[0]
     lwz r1, ctx->gprs[1]
     lwz r2, ctx->gprs[2]
     lhz r4, ctx->SHORT_0x1A2
     rlwinm. r5, r4, 0, 30, 30
-    beq load_saved_gprs
+    beq _load_saved_gprs
 
     rlwinm r4, r4, 0, 31, 29
     sth r4, ctx->SHORT_0x1A2
     lmw r5, ctx->gprs[5]
-    b load_special_regs
+    b _load_special_regs
     
-load_saved_gprs:
+_load_saved_gprs:
     lmw r13, ctx->gprs[13]
     
-load_special_regs:
+_load_special_regs:
     lwz r4, ctx->gqrs[1]
     mtgqr1 r4
     lwz r4, ctx->gqrs[2]
@@ -555,15 +555,15 @@ static asm void OSSwitchFPUContext(register u8 err, register OSContext* ctx) {
     lwz r5, OS_CURRENT_FPU_CONTEXT@l(r3)
     stw ctx, OS_CURRENT_FPU_CONTEXT@l(r3)
     cmpw r5, ctx
-    beq ctx_is_curr_fpu_ctx
+    beq _ctx_is_curr_fpu_ctx
     cmpwi r5, 0
-    beq ctx_is_null
+    beq _ctx_is_null
     bl __OSSaveFPUContext
 
-ctx_is_null:
+_ctx_is_null:
     bl __OSLoadFPUContext
 
-ctx_is_curr_fpu_ctx:
+_ctx_is_curr_fpu_ctx:
     lwz r3, ctx->cr
     mtcr r3
     lwz r3, ctx->lr

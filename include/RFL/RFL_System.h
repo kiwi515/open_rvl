@@ -3,7 +3,7 @@
 #include "RFL_Icon.h"
 #include <MEM/mem_heapCommon.h>
 #include <NAND/NANDOpenClose.h>
-#include <OS/OSAlarm.h>
+#include <OS.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

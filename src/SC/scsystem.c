@@ -1,9 +1,7 @@
 #include "scsystem.h"
 #include "scapi_prdinfo.h"
 
-#include <OS/OS.h>
-#include <OS/OSAddress.h>
-#include <OS/OSInterrupt.h>
+#include <OS.h>
 
 #include <NAND/NANDCore.h>
 #include <NAND/NANDOpenClose.h>

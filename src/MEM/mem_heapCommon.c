@@ -1,7 +1,7 @@
 #include "mem_heapCommon.h"
 #include "mem_list.h"
 
-#include <OS/OSMutex.h>
+#include <OS.h>
 
 static BOOL sRootListInitialized;
 static MEMList sRootList;

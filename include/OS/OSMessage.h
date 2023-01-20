@@ -6,6 +6,7 @@
 extern "C" {
 #endif
 
+// General-purpose typedef
 typedef void* OSMessage;
 
 typedef enum { OS_MSG_PERSISTENT = (1 << 0) } OSMessageFlags;

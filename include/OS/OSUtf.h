@@ -1,6 +1,5 @@
 #ifndef RVL_SDK_OS_UTF_H
 #define RVL_SDK_OS_UTF_H
-#include "OS.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

@@ -2,10 +2,7 @@
 #include "ODEMU.h"
 #include "exi2.h"
 
-#include <OS/OS.h>
-#include <OS/OSContext.h>
-#include <OS/OSGlobals.h>
-#include <OS/OSInterrupt.h>
+#include <OS.h>
 
 static u32 __DBRecvDataSize;
 static u32 __DBRecvMail;
@@ -62,11 +59,12 @@ void DBInitComm(u8** flagOut, OSInterruptHandler mtrCb) {
 #error DBInitInterrupts has not yet been matched. (// https://decomp.me/scratch/YjmTr)
 #endif
 void DBInitInterrupts(void) {
-    __OSMaskInterrupts(0x18000);
-    __OSMaskInterrupts(0x40);
+    __OSMaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_2_EXI) |
+                       OS_INTR_MASK(OS_INTR_EXI_2_TC));
+    __OSMaskInterrupts(OS_INTR_MASK(OS_INTR_PI_DEBUG));
     __DBDbgCallback = __DBMtrHandler;
     __OSSetInterruptHandler(OS_INTR_PI_DEBUG, __DBIntrHandler);
-    __OSUnmaskInterrupts(0x40);
+    __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_PI_DEBUG));
 }
 
 u32 DBQueryData(void) {

@@ -1,6 +1,6 @@
 #include "PPCArch.h"
 
-#include <OS/OSError.h>
+#include <OS.h>
 
 asm u32 PPCMfmsr(void) {
     // clang-format off

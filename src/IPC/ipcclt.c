@@ -3,10 +3,7 @@
 #include "ipcProfile.h"
 #include "memory.h"
 
-#include <OS/OSAddress.h>
-#include <OS/OSCache.h>
-#include <OS/OSContext.h>
-#include <OS/OSInterrupt.h>
+#include <OS.h>
 
 #define IPC_QUEUE_CAPACITY 16
 
@@ -240,7 +237,7 @@ IPCResult IPCCltInit(void) {
             hid = iosCreateHeap(lo, 0x800);
             IPCSetBufferLo((char*)lo + 0x800);
             __OSSetInterruptHandler(OS_INTR_PI_ACR, IPCInterruptHandler);
-            __OSUnmaskInterrupts(0x10);
+            __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_PI_ACR));
             IPCWriteReg(1, 0x38);
             IPCiProfInit();
         }

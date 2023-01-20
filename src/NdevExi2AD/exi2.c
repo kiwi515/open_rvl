@@ -1,7 +1,7 @@
 #include "exi2.h"
 
 #include <EXI/EXIBios.h>
-#include <OS/OSInterrupt.h>
+#include <OS.h>
 
 static BOOL __EXI2Select(void) {
     u32 temp = EXI_CD006800[EXI_CHAN_2].WORD_0x0;
@@ -53,7 +53,8 @@ BOOL __EXI2Imm(void* mem, int size, EXIType type) {
 void __DBEXIInit(void) {
     u32 val0, val1;
 
-    __OSMaskInterrupts(0x18000);
+    __OSMaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_2_EXI) |
+                       OS_INTR_MASK(OS_INTR_EXI_2_TC));
     while ((EXI_CD006800[EXI_CHAN_2].WORD_0xC & 1) == 1U) {
     }
     EXI_CD006800[EXI_CHAN_2].WORD_0x0 = 0;

@@ -1,6 +1,6 @@
 #include "mem_frameHeap.h"
 
-#include <OS/OSInterrupt.h>
+#include <OS.h>
 
 #define MEM_FRM_HEAP_HEAD_SIZE (sizeof(MEMiHeapHead) + sizeof(MEMiFrmHeapHead))
 

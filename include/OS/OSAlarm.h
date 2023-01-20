@@ -1,14 +1,15 @@
 #ifndef RVL_SDK_OS_ALARM_H
 #define RVL_SDK_OS_ALARM_H
-#include "OSContext.h"
-#include "OSThread.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+// Forward declarations
 typedef struct OSAlarm;
-typedef void (*OSAlarmHandler)(struct OSAlarm*, OSContext*);
+typedef struct OSContext;
+
+typedef void (*OSAlarmHandler)(struct OSAlarm*, struct OSContext*);
 
 typedef struct OSAlarm {
     OSAlarmHandler handler; // at 0x0

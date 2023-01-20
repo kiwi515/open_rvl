@@ -2,7 +2,7 @@
 #define RVL_SDK_SC_SCSYSTEM_H
 #include <FS/fs.h>
 #include <NAND/nand.h>
-#include <OS/OSThread.h>
+#include <OS.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

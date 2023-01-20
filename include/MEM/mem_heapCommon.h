@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_MEM_HEAP_COMMON_H
 #define RVL_SDK_MEM_HEAP_COMMON_H
 #include "mem_list.h"
-#include <OS/OSMutex.h>
+#include <OS.h>
 #include <string.h>
 #include <types.h>
 #ifdef __cplusplus

@@ -1,7 +1,7 @@
 #include "cnt.h"
 
 #include <ESP/esp.h>
-#include <OS/OSError.h>
+#include <OS.h>
 
 static s32 __CNTConvertErrorCode(s32 error) {
     int i;

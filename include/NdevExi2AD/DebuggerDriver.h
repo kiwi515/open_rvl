@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_NDEV_EXI2AD_DEBUGGER_DRIVER_H
 #define RVL_SDK_NDEV_EXI2AD_DEBUGGER_DRIVER_H
-#include <OS/OSInterrupt.h>
+#include <OS.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

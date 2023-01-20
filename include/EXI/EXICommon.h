@@ -1,10 +1,12 @@
 #ifndef RVL_SDK_EXI_COMMON_H
 #define RVL_SDK_EXI_COMMON_H
-#include <OS/OSContext.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// Forward declarations
+typedef struct OSContext;
 
 typedef enum {
     EXI_STATE_DMA_ACCESS = (1 << 0),
@@ -20,7 +22,7 @@ typedef enum { EXI_CHAN_0, EXI_CHAN_1, EXI_CHAN_2, EXI_MAX_CHAN } EXIChannel;
 
 typedef enum { EXI_READ, EXI_WRITE, EXI_TYPE_2, EXI_MAX_TYPE } EXIType;
 
-typedef void (*EXICallback)(EXIChannel, OSContext*);
+typedef void (*EXICallback)(EXIChannel, struct OSContext*);
 
 extern const u32 __EXIFreq;
 

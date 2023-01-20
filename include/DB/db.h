@@ -1,12 +1,14 @@
 #ifndef RVL_SDK_NDEV_EXI2AD_DB_H
 #define RVL_SDK_NDEV_EXI2AD_DB_H
-#include <OSGlobals.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern OSDebugInterface* __DBInterface;
+// Forward declarations
+typedef struct OSDebugInterface;
+
+extern struct OSDebugInterface* __DBInterface;
 extern BOOL DBVerbose;
 
 void DBInit(void);

@@ -4,7 +4,7 @@
 #include "GXInit.h"
 #include "GXMisc.h"
 
-#include <OS/OSInterrupt.h>
+#include <OS.h>
 #include <TRK/__mem.h>
 
 static GXFifoObj DisplayListFifo;

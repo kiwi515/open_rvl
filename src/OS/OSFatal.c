@@ -202,7 +202,7 @@ void OSFatal(GXColor textColor, GXColor bgColor, const char* msg) {
     __OSStopAudioSystem();
 
     VIInit();
-    __OSUnmaskInterrupts(0x80);
+    __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_PI_VI));
     VISetBlack(TRUE);
     VIFlush();
     VISetPreRetraceCallback(NULL);

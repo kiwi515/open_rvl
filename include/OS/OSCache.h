@@ -1,10 +1,12 @@
 #ifndef RVL_SDK_OS_CACHE_H
 #define RVL_SDK_OS_CACHE_H
-#include "OSError.h"
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// Forward declarations
+typedef struct OSContext;
 
 void DCEnable(void);
 void DCInvalidateRange(void*, u32);
@@ -30,7 +32,7 @@ void L2Enable(void);
 void L2Disable(void);
 void L2GlobalInvalidate(void);
 
-void DMAErrorHandler(u8, OSContext*, u32, u32, ...);
+void DMAErrorHandler(u8, struct OSContext*, u32, u32, ...);
 
 void __OSCacheInit(void);
 

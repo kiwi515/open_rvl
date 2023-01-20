@@ -12,8 +12,7 @@
 #include "RFL_NANDLoader.h"
 
 #include <MEM/mem_expHeap.h>
-#include <OS/OS.h>
-#include <OS/OSError.h>
+#include <OS.h>
 #include <TRK/__mem.h>
 
 static const char* __RFLVersion =

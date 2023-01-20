@@ -5,11 +5,7 @@
 #include <string.h>
 #include <wchar.h>
 
-#include <OS/OS.h>
-#include <OS/OSError.h>
-#include <OS/OSInterrupt.h>
-#include <OS/OSReset.h>
-#include <OS/OSTime.h>
+#include <OS.h>
 
 #include <ESP/esp.h>
 

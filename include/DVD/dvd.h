@@ -1,10 +1,12 @@
 #ifndef RVL_SDK_DVD_H
 #define RVL_SDK_DVD_H
-#include <OS/OSAlarm.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// Forward declarations
+typedef struct OSAlarm;
 
 typedef struct DVDDriveBlock {
     char UNK_0x0[0xC];
@@ -27,7 +29,7 @@ BOOL DVDInquiryAsync(DVDDriveBlock*, DVDDriveInfo*, DVDInquiryCallback);
 u32 __DVDGetCoverStatus(void);
 
 void __DVDPrepareReset(void);
-BOOL __DVDTestAlarm(OSAlarm*);
+BOOL __DVDTestAlarm(struct OSAlarm*);
 
 #ifdef __cplusplus
 }

@@ -1,8 +1,7 @@
 #include "db.h"
 
 #include <BASE/PPCArch.h>
-#include <OS/OSContext.h>
-#include <OS/OSError.h>
+#include <OS.h>
 
 BOOL DBVerbose;
 OSDebugInterface* __DBInterface;
