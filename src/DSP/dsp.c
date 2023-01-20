@@ -1,8 +1,4 @@
-#include "dsp.h"
-#include "dsp_debug.h"
-#include "dsp_hardware.h"
-#include "dsp_task.h"
-
+#include <DSP.h>
 #include <OS.h>
 
 const char* __DSPVersion =

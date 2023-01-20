@@ -1,5 +1,4 @@
-#include "OSMutex.h"
-#include "OSInterrupt.h"
+#include <OS.h>
 
 void OSInitMutex(OSMutex* mutex) {
     OSInitThreadQueue(&mutex->queue);

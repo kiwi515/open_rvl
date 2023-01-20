@@ -1,10 +1,6 @@
-#include "OSCache.h"
-#include "OSContext.h"
-#include "OSError.h"
-#include "OSInterrupt.h"
-
 #include <BASE/PPCArch.h>
 #include <DB/db.h>
+#include <OS.h>
 
 asm void DCEnable(void) {
     // clang-format off

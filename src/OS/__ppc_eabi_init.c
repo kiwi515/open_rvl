@@ -1,8 +1,5 @@
-#include "__ppc_eabi_init.h"
-#include "OS.h"
-#include "OSCache.h"
-
 #include <BASE/PPCArch.h>
+#include <OS.h>
 
 #pragma section ".ctors$00"
 DECL_SECTION(".ctors$00") extern funcptr_t _ctors[];

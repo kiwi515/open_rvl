@@ -1,5 +1,4 @@
-#include "OSMessage.h"
-#include "OSInterrupt.h"
+#include <OS.h>
 
 void OSInitMessageQueue(OSMessageQueue* queue, OSMessage* buffer,
                         s32 capacity) {

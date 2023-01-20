@@ -1,7 +1,5 @@
-#include "OSExec.h"
-#include "OSGlobals.h"
-
 #include <IPC/ipcclt.h>
+#include <OS.h>
 
 #include <string.h>
 

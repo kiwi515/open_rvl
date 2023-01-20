@@ -1,18 +1,5 @@
-#include "OSReset.h"
-#include "OS.h"
-#include "OSAudioSystem.h"
-#include "OSCache.h"
-#include "OSError.h"
-#include "OSExec.h"
-#include "OSGlobals.h"
-#include "OSInterrupt.h"
-#include "OSPlayRecord.h"
-#include "OSRtc.h"
-#include "OSStateFlags.h"
-#include "OSStateTM.h"
-#include "OSThread.h"
-
 #include <DVD/dvd.h>
+#include <OS.h>
 #include <PAD/Pad.h>
 #include <SC/scapi.h>
 #include <SC/scsystem.h>

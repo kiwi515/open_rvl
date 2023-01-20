@@ -1,11 +1,5 @@
-#include "OSError.h"
-#include "OS.h"
-#include "OSContext.h"
-#include "OSInterrupt.h"
-#include "OSThread.h"
-#include "OSTime.h"
-
 #include <BASE/PPCArch.h>
+#include <OS.h>
 #include <TRK/printf.h>
 
 OSErrorHandler __OSErrorTable[OS_ERR_MAX];

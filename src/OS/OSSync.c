@@ -1,7 +1,4 @@
-#include "OSSync.h"
-#include "OSCache.h"
-#include "OSGlobals.h"
-
+#include <OS.h>
 #include <TRK/__mem.h>
 
 #define OS_PHYS_SYSCALL_INTR 0xC00

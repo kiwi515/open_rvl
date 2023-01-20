@@ -1,14 +1,6 @@
-#include "OSAlarm.h"
-#include "OS.h"
-#include "OSContext.h"
-#include "OSError.h"
-#include "OSInterrupt.h"
-#include "OSReset.h"
-#include "OSThread.h"
-#include "OSTime.h"
-
 #include <BASE/PPCArch.h>
 #include <DVD/dvd.h>
+#include <OS.h>
 
 static BOOL OnReset(u32, u32);
 static void DecrementerExceptionHandler(u8, OSContext*);

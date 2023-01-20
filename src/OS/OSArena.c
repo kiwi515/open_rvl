@@ -1,4 +1,4 @@
-#include "OSArena.h"
+#include <OS.h>
 
 static void* __OSArenaLo = (void*)-1;
 static void* s_mem2ArenaLo = (void*)-1;

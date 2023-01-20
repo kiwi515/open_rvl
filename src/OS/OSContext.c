@@ -1,11 +1,6 @@
-#include "OSContext.h"
-#include "OS.h"
-#include "OSError.h"
-#include "OSGlobals.h"
-#include "OSInterrupt.h"
-
 #include <BASE/PPCArch.h>
 #include <DB/db.h>
+#include <OS.h>
 
 static asm void __OSLoadFPUContext(UNKWORD unused, register OSContext* ctx) {
     // clang-format off

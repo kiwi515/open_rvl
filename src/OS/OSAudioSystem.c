@@ -1,8 +1,4 @@
-#include "OSAudioSystem.h"
-#include "OS.h"
-#include "OSArena.h"
-#include "OSCache.h"
-#include "OSTime.h"
+#include <OS.h>
 
 #include <string.h>
 

@@ -1,11 +1,7 @@
-#include "OSPlayRecord.h"
-#include "OSAlarm.h"
-#include "OSInterrupt.h"
-#include "OSTime.h"
-
 #include <NAND/NANDCore.h>
 #include <NAND/NANDOpenClose.h>
 #include <NAND/nand.h>
+#include <OS.h>
 
 // Why?!? :(
 #define MY_SEC_TO_TICKS(x) (x * (s64)OS_SEC_TO_TICKS(1))

@@ -1,9 +1,5 @@
-#include "OS.h"
-#include "OSGlobals.h"
-#include "OSReset.h"
-#include "__ppc_eabi_init.h"
-
 #include <DB/db.h>
+#include <OS.h>
 #include <TRK/dolphin_trk.h>
 
 #include <string.h>

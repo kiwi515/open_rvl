@@ -1,4 +1,4 @@
-#include "dsp_debug.h"
+#include <DSP.h>
 
 // Stubbed for release
 void __DSP_debug_printf(const char* fmt, ...) {

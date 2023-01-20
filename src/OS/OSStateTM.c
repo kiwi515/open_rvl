@@ -1,11 +1,5 @@
-#include "OSStateTM.h"
-#include "OS.h"
-#include "OSCache.h"
-#include "OSError.h"
-#include "OSGlobals.h"
-#include "OSInterrupt.h"
-
 #include <IPC/ipcclt.h>
+#include <OS.h>
 #include <VI/vihardware.h>
 
 static u8 StmEhInBuf[32] ALIGN(32);

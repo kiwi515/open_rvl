@@ -1,13 +1,7 @@
-#include "OSInterrupt.h"
-#include "EXIBios.h"
-#include "OS.h"
-#include "OSError.h"
-#include "OSGlobals.h"
-#include "OSInterrupt.h"
-#include "OSMemory.h"
-#include "OSTime.h"
-
 #include <BASE/PPCArch.h>
+#include <EXI/EXIBios.h>
+#include <EXI/EXICommon.h>
+#include <OS.h>
 #include <TRK/__mem.h>
 
 static OSInterruptHandler* InterruptHandlerTable;

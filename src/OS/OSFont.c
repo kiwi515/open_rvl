@@ -1,11 +1,5 @@
-#include "OSFont.h"
-#include "OS.h"
-#include "OSCache.h"
-#include "OSGlobals.h"
-#include "OSRtc.h"
-#include "OSUtf.h"
-
 #include <GX/GXTypes.h>
+#include <OS.h>
 #include <VI/vi.h>
 #include <VI/vihardware.h>
 

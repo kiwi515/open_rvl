@@ -1,10 +1,4 @@
-#include "OSMemory.h"
-#include "OS.h"
-#include "OSCache.h"
-#include "OSError.h"
-#include "OSGlobals.h"
-#include "OSInterrupt.h"
-#include "OSReset.h"
+#include <OS.h>
 
 static BOOL OnShutdown(u32, u32);
 static OSShutdownFunctionInfo ShutdownFunctionInfo = {OnShutdown, 127, NULL,

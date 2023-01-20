@@ -1,21 +1,8 @@
-#include "OSFatal.h"
-#include "OS.h"
-#include "OSAddress.h"
-#include "OSArena.h"
-#include "OSAudioSystem.h"
-#include "OSCache.h"
-#include "OSContext.h"
-#include "OSError.h"
-#include "OSFont.h"
-#include "OSInterrupt.h"
-#include "OSReset.h"
-#include "OSThread.h"
-#include "OSTime.h"
-
 #include <BASE/PPCArch.h>
 #include <EXI/EXIBios.h>
 #include <GX/GXFrameBuf.h>
 #include <GX/GXMisc.h>
+#include <OS.h>
 #include <VI/vi.h>
 #include <VI/vihardware.h>
 

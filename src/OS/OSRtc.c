@@ -1,9 +1,5 @@
-#include "OSRtc.h"
-#include "OSCache.h"
-#include "OSContext.h"
-#include "OSInterrupt.h"
-
 #include <EXI/EXIBios.h>
+#include <OS.h>
 
 #define OS_SRAM_SIZE (sizeof(OSSram) + sizeof(OSSramEx))
 
