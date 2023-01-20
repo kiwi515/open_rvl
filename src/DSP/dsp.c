@@ -84,7 +84,7 @@ DSPTask* DSPAddTask(DSPTask* task) {
     enabled = OSDisableInterrupts();
 
     __DSP_insert_task(task);
-    task->state = DSP_TASK_STATE_INIT;
+    task->state = DSP_TASK_STATE_0;
     task->flags = DSP_TASK_ACTIVE;
 
     OSRestoreInterrupts(enabled);
@@ -108,7 +108,7 @@ DSPTask* DSPAssertTask(DSPTask* task) {
         return task;
     }
 
-    if (task->WORD_0x4 < __DSP_curr_task->WORD_0x4) {
+    if (task->prio < __DSP_curr_task->prio) {
         __DSP_rude_task_pending = TRUE;
         __DSP_rude_task = task;
 
