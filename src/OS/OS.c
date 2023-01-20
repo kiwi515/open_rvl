@@ -1,5 +1,5 @@
-#include <BASE/PPCArch.h>
-#include <DB/db.h>
+#include <BASE.h>
+#include <DB.h>
 #include <DVD/dvd.h>
 #include <DVD/dvdfs.h>
 #include <EXI/EXIBios.h>

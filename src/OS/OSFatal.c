@@ -1,4 +1,4 @@
-#include <BASE/PPCArch.h>
+#include <BASE.h>
 #include <EXI/EXIBios.h>
 #include <GX/GXFrameBuf.h>
 #include <GX/GXMisc.h>

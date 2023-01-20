@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_CNT_H
 #define RVL_SDK_CNT_H
-#include <ARC/arc.h>
+#include <ARC.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

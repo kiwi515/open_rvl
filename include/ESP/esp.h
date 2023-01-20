@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_ESP_H
 #define RVL_SDK_ESP_H
-#include <ARC/arc.h>
+#include <ARC.h>
 #include <IPC/ipcclt.h>
 #include <types.h>
 #ifdef __cplusplus

@@ -1,5 +1,5 @@
-#include <BASE/PPCArch.h>
-#include <DB/db.h>
+#include <BASE.h>
+#include <DB.h>
 #include <OS.h>
 
 static asm void __OSLoadFPUContext(UNKWORD unused, register OSContext* ctx) {

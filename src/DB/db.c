@@ -1,6 +1,5 @@
-#include "db.h"
-
-#include <BASE/PPCArch.h>
+#include <BASE.h>
+#include <DB.h>
 #include <OS.h>
 
 BOOL DBVerbose;

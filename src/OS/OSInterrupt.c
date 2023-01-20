@@ -1,4 +1,4 @@
-#include <BASE/PPCArch.h>
+#include <BASE.h>
 #include <EXI/EXIBios.h>
 #include <EXI/EXICommon.h>
 #include <OS.h>

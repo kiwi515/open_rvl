@@ -1,4 +1,4 @@
-#include <BASE/PPCArch.h>
+#include <BASE.h>
 #include <OS.h>
 
 #pragma section ".ctors$00"
