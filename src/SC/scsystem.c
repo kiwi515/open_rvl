@@ -3,8 +3,7 @@
 
 #include <OS.h>
 
-#include <NAND/NANDCore.h>
-#include <NAND/NANDOpenClose.h>
+#include <NAND.h>
 
 #include <string.h>
 

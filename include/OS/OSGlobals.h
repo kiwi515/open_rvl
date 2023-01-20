@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_OS_GLOBALS_H
 #define RVL_SDK_OS_GLOBALS_H
-#include "OSAddress.h"
-#include "OSThread.h"
+#include <OS/OSAddress.h>
+#include <OS/OSThread.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

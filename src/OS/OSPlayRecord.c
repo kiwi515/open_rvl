@@ -1,6 +1,4 @@
-#include <NAND/NANDCore.h>
-#include <NAND/NANDOpenClose.h>
-#include <NAND/nand.h>
+#include <NAND.h>
 #include <OS.h>
 
 // Why?!? :(

@@ -1,6 +1,4 @@
-#include "NANDOpenClose.h"
-#include "NANDCore.h"
-
+#include <NAND.h>
 #include <OS.h>
 
 #include <stdio.h>

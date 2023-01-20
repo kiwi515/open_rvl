@@ -1,13 +1,11 @@
-#include "NANDCore.h"
-
+#include <ESP/esp.h>
+#include <NAND.h>
+#include <OS.h>
 #include <TRK/__mem.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <wchar.h>
-
-#include <OS.h>
-
-#include <ESP/esp.h>
 
 #define NAND_BANNER_HEADER_MAGIC 'WIBN'
 

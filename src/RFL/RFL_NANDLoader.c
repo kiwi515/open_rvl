@@ -1,7 +1,7 @@
 #include "RFL_NANDLoader.h"
 #include "RFL_NANDAccess.h"
 
-#include <NAND/nand.h>
+#include <NAND.h>
 #include <TRK/__mem.h>
 
 static const u32 scTmpSize = 0x400;

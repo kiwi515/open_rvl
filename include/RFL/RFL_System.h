@@ -2,7 +2,7 @@
 #define RVL_SDK_RFL_SYSTEM_H
 #include "RFL_Icon.h"
 #include <MEM/mem_heapCommon.h>
-#include <NAND/NANDOpenClose.h>
+#include <NAND.h>
 #include <OS.h>
 #include <types.h>
 #ifdef __cplusplus

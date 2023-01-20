@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_OS_MESSAGE_H
 #define RVL_SDK_OS_MESSAGE_H
-#include "OSThread.h"
+#include <OS/OSThread.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

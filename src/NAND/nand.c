@@ -1,7 +1,6 @@
-#include "nand.h"
-#include "NANDCore.h"
+#include <FS.h>
+#include <NAND.h>
 
-#include <FS/fs.h>
 #include <stdio.h>
 #include <string.h>
 

@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_DSP_H
 #define RVL_SDK_DSP_H
-#include "dsp_task.h"
+#include <DSP/dsp_task.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_NAND_CORE_H
 #define RVL_SDK_NAND_CORE_H
-#include "nand.h"
+#include <NAND/nand.h>
 #include <types.h>
 #ifdef __cplusplus
 extern "C" {

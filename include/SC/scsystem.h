@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_SC_SCSYSTEM_H
 #define RVL_SDK_SC_SCSYSTEM_H
-#include <FS/fs.h>
-#include <NAND/nand.h>
+#include <FS.h>
+#include <NAND.h>
 #include <OS.h>
 #include <types.h>
 #ifdef __cplusplus

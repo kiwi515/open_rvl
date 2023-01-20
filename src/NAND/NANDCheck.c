@@ -1,5 +1,4 @@
-#include "NANDCheck.h"
-#include "NANDCore.h"
+#include <NAND.h>
 
 static const char* USER_DIR_LIST[] = {"/meta",
                                       "/ticket",
