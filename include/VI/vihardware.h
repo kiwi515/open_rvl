@@ -13,8 +13,6 @@ volatile u16 VI_HW_REGS[] : 0xCC002000;
 
 /**
  * Hardware register indexes
- * Enum values with multiple names/offsets represent registers that contain
- * multiple values (usually two 16-bit values)
  */
 typedef enum {
     VI_REG_VTR,    //!< 0xCC002000
