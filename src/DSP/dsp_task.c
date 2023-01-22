@@ -42,12 +42,12 @@ typedef enum {
     MAIL_CONTINUE = (TASK_MAIL_TO_DSP | 0x0003)
 } DSPUCode;
 
-BOOL __DSP_rude_task_pending;
-DSPTask* __DSP_rude_task;
-DSPTask* __DSP_tmp_task;
-DSPTask* __DSP_last_task;
-DSPTask* __DSP_first_task;
 DSPTask* __DSP_curr_task;
+DSPTask* __DSP_first_task;
+DSPTask* __DSP_last_task;
+DSPTask* __DSP_tmp_task;
+DSPTask* __DSP_rude_task;
+BOOL __DSP_rude_task_pending;
 
 void __DSPHandler(s16 intr, OSContext* ctx) {
 #pragma unused(intr)
