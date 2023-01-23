@@ -4,8 +4,25 @@
 
 #include <stdio.h>
 
+/**
+ * Documentation from WiiBrew:
+ * https://wiibrew.org/wiki//dev/usb/oh0
+ */
+
 #define USB_HEAP_SIZE 0x1000
 #define USB_MAX_NCLEAN 8
+
+typedef enum {
+    USB_IOCTLV_CTRLMSG,
+    USB_IOCTLV_BLKMSG,
+    USB_IOCTLV_INTRMSG,
+    USB_IOCTLV_LBLKMSG = 10
+} USBIoctl;
+
+typedef struct USBMsg {
+    void* buffer; // at 0x0
+    u16 length;   // at 0x4
+} USBMsg;
 
 typedef struct USBCommandBlock {
     USBCallback callback; // at 0x0
@@ -14,7 +31,10 @@ typedef struct USBCommandBlock {
     void* clean[USB_MAX_NCLEAN]; // at 0xC
     u32 nclean;                  // at 0x2C
     char UNK_0x30[0x40 - 0x30];
-    char path[FS_MAX_PATH]; // at 0x40
+    union {
+        char path[FS_MAX_PATH];
+        USBMsg msg;
+    }; // at 0x40
 } USBCommandBlock;
 
 static s32 hId = -1;
@@ -23,6 +43,9 @@ static void* hi;
 static void* lo;
 
 static u8 s_usb_log = FALSE;
+
+void USB_LOG(const char* fmt, ...);
+void USB_ERR(const char* fmt, ...);
 
 void USB_LOG(const char* fmt, ...) {
     va_list list;
@@ -135,7 +158,7 @@ static IPCResult _intrBlkCtrlCb(IPCResult result, void* arg) {
     return result;
 }
 
-IPCResult IUSB_OpenDeviceIds(const char* module, u16 vid, u16 pid,
+IPCResult IUSB_OpenDeviceIds(const char* interface, u16 vid, u16 pid,
                              IPCResult* resultOut) {
     IPCResult result;
     USBCommandBlock* block;
@@ -154,8 +177,8 @@ IPCResult IUSB_OpenDeviceIds(const char* module, u16 vid, u16 pid,
         goto end;
     }
 
-    snprintf(block->path, sizeof(block->path), "/dev/usb/%s/%x/%x", module, vid,
-             pid);
+    snprintf(block->path, sizeof(block->path), "/dev/usb/%s/%x/%x", interface,
+             vid, pid);
     USB_LOG("OpenDevice - %s\n", block->path);
 
     result = IOS_Open(block->path, IPC_OPEN_NONE);
@@ -197,11 +220,118 @@ end:
     return result;
 }
 
-static IPCResult __IntrBlkMsgInt(s32 fd, UNKWORD arg2, u32 size, void* buffer,
-                                 USBCallback callback, void* callbackArg);
+static IPCResult __IntrBlkMsgInt(s32 fd, u32 endpoint, u32 length, void* buffer,
+                                 u8 ioctl, USBCallback callback,
+                                 void* callbackArg, u8 async) {
+    IPCResult result;
+    IPCIOVector* vectors;
+    u8* endpointWork;
+    u16* lengthWork;
+    USBCommandBlock* block;
 
-// IUSB_ReadIntrMsgAsync
-// IUSB_ReadBlkMsgAsync
-// IUSB_WriteBlkMsgAsync
-// __CtrlMsgInt
-// IUSB_WriteCtrlMsgAsync
+    vectors = (IPCIOVector*)IOSAlloc(0x60);
+    endpointWork = (u8*)IOSAlloc(32);
+    lengthWork = (u16*)IOSAlloc(32);
+
+    if (vectors == NULL || endpointWork == NULL || lengthWork == NULL) {
+        USB_ERR("__IntrBlkMsgInt: Not enough memory\n");
+        result = IPC_RESULT_ALLOC_FAILED;
+        goto end;
+    }
+
+    *endpointWork = (u8)endpoint;
+    *lengthWork = (u16)length;
+
+    // Input vector 1: Transfer endpoint
+    vectors[0].base = endpointWork;
+    vectors[0].length = sizeof(u8);
+
+    // Input vector 2: Transfer length
+    vectors[1].base = lengthWork;
+    vectors[1].length = sizeof(u16);
+
+    // Output vector 1: Transfer data
+    vectors[2].base = buffer;
+    vectors[2].length = length;
+
+    DCFlushRange(endpointWork, 32);
+    DCFlushRange(lengthWork, 32);
+    DCFlushRange(vectors, 0x60);
+
+    if (!async) {
+        result = IOS_Ioctlv(fd, ioctl, 2, 1, vectors);
+        USB_LOG("intr/blk ioctl returned: %d\n", result);
+        goto end;
+    }
+
+    block = IOSAlloc(sizeof(USBCommandBlock));
+    if (block == NULL) {
+        USB_ERR("IntBlkMsgInt (async): Not enough memory\n");
+        result = IPC_RESULT_ALLOC_FAILED;
+        goto end;
+    }
+
+    block->callback = callback;
+    block->callbackArg = callbackArg;
+    USB_LOG("intrblkmsg: cb = 0x%x cbArg = 0x%x\n", block->callback,
+            block->callbackArg);
+
+    // Mark memory for deletion
+    block->nclean = 3;
+    block->clean[0] = endpointWork;
+    block->clean[1] = lengthWork;
+    block->clean[2] = vectors;
+
+    block->msg.buffer = buffer;
+    block->msg.length = length;
+
+    result = IOS_IoctlvAsync(fd, ioctl, 2, 1, vectors, _intrBlkCtrlCb, block);
+    if (result >= IPC_RESULT_OK) {
+        goto end_async;
+    }
+
+    IOSFree(block);
+
+// Non-async (or unsuccessful async) means we must manually free memory
+end:
+    IOSFree(endpointWork);
+    IOSFree(lengthWork);
+    IOSFree(vectors);
+
+// Async callback automatically freed the memory marked in block->clean
+end_async:
+    return result;
+}
+
+IPCResult IUSB_ReadIntrMsgAsync(s32 fd, u32 endpoint, u32 length, void* buffer,
+                                USBCallback callback, void* callbackArg) {
+    DCInvalidateRange(buffer, length);
+    return __IntrBlkMsgInt(fd, endpoint, length, buffer, USB_IOCTLV_INTRMSG,
+                           callback, callbackArg, TRUE);
+}
+
+IPCResult IUSB_ReadBlkMsgAsync(s32 fd, u32 endpoint, u32 length, void* buffer,
+                               USBCallback callback, void* callbackArg) {
+    DCInvalidateRange(buffer, length);
+    return __IntrBlkMsgInt(fd, endpoint, length, buffer, USB_IOCTLV_BLKMSG,
+                           callback, callbackArg, TRUE);
+}
+
+IPCResult IUSB_WriteBlkMsgAsync(s32 fd, u32 endpoint, u32 length,
+                                const void* buffer, USBCallback callback,
+                                void* callbackArg) {
+    DCFlushRange(buffer, length);
+    return __IntrBlkMsgInt(fd, endpoint, length, (void*)buffer,
+                           USB_IOCTLV_BLKMSG, callback, callbackArg, TRUE);
+}
+
+// https://decomp.me/scratch/OuGMg
+static IPCResult __CtrlMsgInt(s32 fd, u8 requestType, u8 request, u16 value,
+                              u16 index, u16 length, void* buffer,
+                              USBCallback callback, void* callbackArg,
+                              u8 async) {
+    ;
+    ;
+}
+
+IPCResult IUSB_WriteCtrlMsgAsync(void);

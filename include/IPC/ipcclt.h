@@ -113,15 +113,15 @@ typedef struct IPCSeekArgs {
 } IPCSeekArgs;
 
 typedef struct IPCIoctlArgs {
-    IPCIoctlType type; // at 0x0
-    void* in;          // at 0x4
-    s32 inSize;        // at 0x8
-    void* out;         // at 0xC
-    s32 outSize;       // at 0x10
+    s32 type;    // at 0x0
+    void* in;    // at 0x4
+    s32 inSize;  // at 0x8
+    void* out;   // at 0xC
+    s32 outSize; // at 0x10
 } IPCIoctlArgs;
 
 typedef struct IPCIoctlvArgs {
-    IPCIoctlType type;    // at 0x0
+    s32 type;             // at 0x0
     u32 inCount;          // at 0x4
     u32 ioCount;          // at 0x8
     IPCIOVector* vectors; // at 0xC
@@ -160,13 +160,13 @@ IPCResult IOS_WriteAsync(s32, const void*, s32, IPCAsyncCallback, void*);
 IPCResult IOS_Write(s32, const void*, s32);
 IPCResult IOS_SeekAsync(s32, s32, IPCSeekMode, IPCAsyncCallback, void*);
 IPCResult IOS_Seek(s32, s32, IPCSeekMode);
-IPCResult IOS_IoctlAsync(s32, IPCIoctlType, void*, s32, void*, s32,
-                         IPCAsyncCallback, void*);
-IPCResult IOS_Ioctl(s32, IPCIoctlType, void*, s32, void*, s32);
-IPCResult IOS_IoctlvAsync(s32, IPCIoctlType, s32, s32, IPCIOVector*,
-                          IPCAsyncCallback, void*);
-IPCResult IOS_Ioctlv(s32, IPCIoctlType, s32, s32, IPCIOVector*);
-IPCResult IOS_IoctlvReboot(s32, IPCIoctlType, s32, s32, IPCIOVector*);
+IPCResult IOS_IoctlAsync(s32, s32, void*, s32, void*, s32, IPCAsyncCallback,
+                         void*);
+IPCResult IOS_Ioctl(s32, s32, void*, s32, void*, s32);
+IPCResult IOS_IoctlvAsync(s32, s32, s32, s32, IPCIOVector*, IPCAsyncCallback,
+                          void*);
+IPCResult IOS_Ioctlv(s32, s32, s32, s32, IPCIOVector*);
+IPCResult IOS_IoctlvReboot(s32, s32, s32, s32, IPCIOVector*);
 
 #ifdef __cplusplus
 }

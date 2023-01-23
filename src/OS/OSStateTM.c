@@ -1,4 +1,4 @@
-#include <IPC/ipcclt.h>
+#include <IPC.h>
 #include <OS.h>
 #include <VI/vihardware.h>
 

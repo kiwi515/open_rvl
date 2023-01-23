@@ -15,7 +15,7 @@ asm void DCEnable(void) {
     // clang-format on
 }
 
-asm void DCInvalidateRange(register void* buf, register u32 len) {
+asm void DCInvalidateRange(register const void* buf, register u32 len) {
     // clang-format off
     nofralloc
     
@@ -37,7 +37,7 @@ do_invalidate:
     // clang-format on
 }
 
-asm void DCFlushRange(register void* buf, register u32 len) {
+asm void DCFlushRange(register const void* buf, register u32 len) {
     // clang-format off
     nofralloc
     
@@ -60,7 +60,7 @@ do_flush:
     // clang-format on
 }
 
-asm void DCStoreRange(register void* buf, register u32 len) {
+asm void DCStoreRange(register const void* buf, register u32 len) {
     // clang-format off
     nofralloc
     
@@ -83,7 +83,7 @@ do_store:
     // clang-format on
 }
 
-asm void DCFlushRangeNoSync(register void* buf, register u32 len) {
+asm void DCFlushRangeNoSync(register const void* buf, register u32 len) {
     // clang-format off
     nofralloc
     
@@ -105,7 +105,7 @@ do_flush:
     // clang-format on
 }
 
-asm void DCStoreRangeNoSync(register void* buf, register u32 len) {
+asm void DCStoreRangeNoSync(register const void* buf, register u32 len) {
     // clang-format off
     nofralloc
     
@@ -127,7 +127,7 @@ do_store:
     // clang-format on
 }
 
-asm void DCZeroRange(register void* buf, register u32 len) {
+asm void DCZeroRange(register const void* buf, register u32 len) {
     // clang-format off
     nofralloc
     
@@ -149,7 +149,7 @@ do_zero:
     // clang-format on
 }
 
-asm void ICInvalidateRange(register void* buf, register u32 len) {
+asm void ICInvalidateRange(register const void* buf, register u32 len) {
     // clang-format off
     nofralloc
     
@@ -292,7 +292,7 @@ do_invalidate:
     // clang-format on
 }
 
-asm void LCLoadBlocks(register void* dst, register void* src,
+asm void LCLoadBlocks(register void* dst, register const void* src,
                       register u32 len) {
     // clang-format off
     nofralloc
@@ -310,7 +310,7 @@ asm void LCLoadBlocks(register void* dst, register void* src,
     // clang-format on
 }
 
-asm void LCStoreBlocks(register void* dst, register void* src,
+asm void LCStoreBlocks(register void* dst, register const void* src,
                        register u32 len){
     // clang-format off
     nofralloc
@@ -328,7 +328,7 @@ asm void LCStoreBlocks(register void* dst, register void* src,
     // clang-format on
 }
 
-u32 LCStoreData(void* dst, void* src, u32 len) {
+u32 LCStoreData(void* dst, const void* src, u32 len) {
     u32 blocks = (len + 31) / 32;
     const u32 ret = (blocks + 127) / 128;
 
