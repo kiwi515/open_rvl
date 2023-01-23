@@ -8,7 +8,7 @@ extern "C" {
 s32 iosCreateHeap(void*, u32);
 
 void* iosAllocAligned(s32, u32, s32);
-void iosFree(s32, void*);
+s32 iosFree(s32, void*);
 
 #ifdef __cplusplus
 }
