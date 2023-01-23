@@ -136,7 +136,7 @@ end:
 
 IPCResult IUSB_CloseLib(void) { return IPC_RESULT_OK; }
 
-static IPCResult _intrBlkCtrlCb(IPCResult result, void* arg) {
+static IPCResult _intBlkCtrlCb(IPCResult result, void* arg) {
     int i;
     USBCommandBlock* block = (USBCommandBlock*)arg;
 
@@ -219,7 +219,7 @@ IPCResult IUSB_CloseDeviceAsync(s32 fd, USBCallback callback,
     block->callbackArg = callbackArg;
     block->nclean = USB_NCLEAN_CLOSEDEVICE;
 
-    result = IOS_CloseAsync(fd, _intrBlkCtrlCb, block);
+    result = IOS_CloseAsync(fd, _intBlkCtrlCb, block);
     USB_LOG("CloseDevice returned: %d\n", result);
 
     if (result < 0) {
@@ -298,7 +298,7 @@ static IPCResult __IntrBlkMsgInt(s32 fd, u32 endpoint, u32 length, void* buffer,
     block->msg.buffer = buffer;
     block->msg.length = length;
 
-    result = IOS_IoctlvAsync(fd, ioctl, 2, 1, vectors, _intrBlkCtrlCb, block);
+    result = IOS_IoctlvAsync(fd, ioctl, 2, 1, vectors, _intBlkCtrlCb, block);
     if (result >= IPC_RESULT_OK) {
         goto end_async;
     }
@@ -448,7 +448,7 @@ static IPCResult __CtrlMsgInt(s32 fd, u8 requestType, u8 request, u16 value,
     block->msg.length = length;
 
     result = IOS_IoctlvAsync(fd, USB_IOCTLV_CTRLMSG, 6, 1, vectors,
-                             _intrBlkCtrlCb, block);
+                             _intBlkCtrlCb, block);
     USB_LOG("Ctrl Msg async returned: %d\n", result);
 
     if (result >= IPC_RESULT_OK) {
