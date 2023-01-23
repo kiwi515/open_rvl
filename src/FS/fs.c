@@ -1,7 +1,5 @@
 #include <FS.h>
-#include <IPC/ipcMain.h>
-#include <IPC/ipcclt.h>
-#include <IPC/memory.h>
+#include <IPC.h>
 #include <OS.h>
 
 #include <string.h>
