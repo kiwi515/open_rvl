@@ -21,8 +21,7 @@ typedef enum {
 typedef enum {
     USB_IOCTLV_CTRLMSG,
     USB_IOCTLV_BLKMSG,
-    USB_IOCTLV_INTRMSG,
-    USB_IOCTLV_LBLKMSG = 10
+    USB_IOCTLV_INTRMSG
 } USBIoctl;
 
 typedef struct USBMsg {
