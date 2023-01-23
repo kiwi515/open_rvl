@@ -21,6 +21,9 @@ IPCResult IUSB_ReadBlkMsgAsync(s32 fd, u32 endpoint, u32 length, void* buffer,
 IPCResult IUSB_WriteBlkMsgAsync(s32 fd, u32 endpoint, u32 length,
                                 const void* buffer, USBCallback callback,
                                 void* callbackArg);
+IPCResult IUSB_WriteCtrlMsgAsync(s32 fd, u8 requestType, u8 request, u16 value,
+                                 u16 index, u16 length, void* buffer,
+                                 USBCallback callback, void* callbackArg);
 
 #ifdef __cplusplus
 }
