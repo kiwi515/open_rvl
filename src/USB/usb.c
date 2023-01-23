@@ -198,6 +198,10 @@ end:
     return result;
 }
 
+CW_FORCE_STRINGS(usb_c, "OpenDevice\n",
+                 "OpenDeviceIdsAsync: Not enough memory\n", "CloseDevice\n",
+                 "CloseDevice returned: %d\n");
+
 IPCResult IUSB_CloseDeviceAsync(s32 fd, USBCallback callback,
                                 void* callbackArg) {
     IPCResult result;
@@ -226,6 +230,9 @@ IPCResult IUSB_CloseDeviceAsync(s32 fd, USBCallback callback,
 end:
     return result;
 }
+
+CW_FORCE_STRINGS(usb_c_2, "openDevice: Not enough memory\n",
+                 "getDeviceList: Not enough memory\n");
 
 static IPCResult __IntrBlkMsgInt(s32 fd, u32 endpoint, u32 length, void* buffer,
                                  u8 ioctl, USBCallback callback,
@@ -257,7 +264,7 @@ static IPCResult __IntrBlkMsgInt(s32 fd, u32 endpoint, u32 length, void* buffer,
     vectors[1].base = lengthWork;
     vectors[1].length = sizeof(u16);
 
-    // Output vector 1: Transfer data
+    // Output vector 1: Transfer buffer
     vectors[2].base = buffer;
     vectors[2].length = length;
 
@@ -473,3 +480,19 @@ IPCResult IUSB_WriteCtrlMsgAsync(s32 fd, u8 requestType, u8 request, u16 value,
     return __CtrlMsgInt(fd, requestType, request, value, index, length, buffer,
                         callback, callbackArg, TRUE);
 }
+
+CW_FORCE_STRINGS(usb_c_3, "GetStrCb returned: %d\n",
+                 "GetStrCb: buf = 0x%x buflen = %u\n",
+                 "Failed to convert buffer from unicode 2 ascii\n",
+                 "calling cb 0x%x with arg 0x%x\n",
+                 "Failed __CtrlMsg: %d"
+                 "Failed to convert unicode 2 ascii\n",
+                 "GetStr - _GetStrCb\n",
+                 " GetAsciiStrAsync: Not enough memory\n",
+                 "__CtrlMsgInt failed %d\n", "GetDescrCb returned: %d\n",
+                 "GetDevDescr\n", "GetDevDescr: Not enough memory\n",
+                 "GetDevDescr: %d\n", "GetDevDescr - _GetDescrCb\n",
+                 "GetDevDescrAsync: Not enough memory\n",
+                 "DeviceRemovalNotifyAsync\n",
+                 "Invalid parameters for ISO transfer request\n",
+                 "IUSB_IsoMsgAsync: Not enough memory\n", "Open(%s) failed\n");
