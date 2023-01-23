@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_RFL_SYSTEM_H
 #define RVL_SDK_RFL_SYSTEM_H
 #include "RFL_Icon.h"
-#include <MEM/mem_heapCommon.h>
+#include <MEM.h>
 #include <NAND.h>
 #include <OS.h>
 #include <types.h>

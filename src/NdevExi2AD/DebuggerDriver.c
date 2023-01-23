@@ -55,7 +55,7 @@ void DBInitComm(u8** flagOut, OSInterruptHandler mtrCb) {
     OSRestoreInterrupts(enabled);
 }
 
-#ifdef NON_MATCHING
+#ifndef NON_MATCHING
 #error DBInitInterrupts has not yet been matched. (// https://decomp.me/scratch/YjmTr)
 #endif
 void DBInitInterrupts(void) {

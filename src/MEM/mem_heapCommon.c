@@ -1,6 +1,4 @@
-#include "mem_heapCommon.h"
-#include "mem_list.h"
-
+#include <MEM.h>
 #include <OS.h>
 
 static BOOL sRootListInitialized;

@@ -25,7 +25,7 @@ typedef struct MEMiHeapHead {
     union {
         u32 WORD_0x38;
         struct {
-            u32 WORD_0x38_0_3 : 24;
+            u32 WORD_0x38_0_24 : 24;
             u32 opt : 8;
         };
     }; // at 0x38
@@ -43,6 +43,14 @@ static inline void* AddU32ToPtr(const void* p, u32 ofs) {
 
 static inline void* SubU32ToPtr(const void* p, u32 ofs) {
     return (void*)(GetUIntPtr(p) - ofs);
+}
+
+static inline const void* AddU32ToCPtr(const void* p, u32 ofs) {
+    return (const void*)(GetUIntPtr(p) + ofs);
+}
+
+static inline const void* SubU32ToCPtr(const void* p, u32 ofs) {
+    return (const void*)(GetUIntPtr(p) - ofs);
 }
 
 static inline s32 GetOffsetFromPtr(const void* start, const void* end) {

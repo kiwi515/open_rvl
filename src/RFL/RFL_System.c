@@ -11,7 +11,7 @@
 #include "RFL_NANDAccess.h"
 #include "RFL_NANDLoader.h"
 
-#include <MEM/mem_expHeap.h>
+#include <MEM.h>
 #include <OS.h>
 #include <TRK/__mem.h>
 

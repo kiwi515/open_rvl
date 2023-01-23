@@ -6,8 +6,6 @@
 extern "C" {
 #endif
 
-#define MEM_FRM_HEAP_MAGIC 'FRMH'
-
 // Specify how to free memory
 typedef enum {
     MEM_FRM_HEAP_FREE_TO_HEAD = (1 << 0),

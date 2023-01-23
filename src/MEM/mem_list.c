@@ -1,4 +1,4 @@
-#include "mem_list.h"
+#include <MEM.h>
 
 void MEMInitList(MEMList* list, u16 offset) {
     list->head = NULL;

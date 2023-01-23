@@ -1,6 +1,7 @@
-#include "mem_frameHeap.h"
-
+#include <MEM.h>
 #include <OS.h>
+
+#define MEM_FRM_HEAP_MAGIC 'FRMH'
 
 #define MEM_FRM_HEAP_HEAD_SIZE (sizeof(MEMiHeapHead) + sizeof(MEMiFrmHeapHead))
 

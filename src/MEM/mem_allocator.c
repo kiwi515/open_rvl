@@ -1,6 +1,4 @@
-#include "mem_allocator.h"
-#include "mem_expHeap.h"
-#include "mem_frameHeap.h"
+#include <MEM.h>
 
 static void* AllocatorAllocForExpHeap_(MEMAllocator* allocator, u32 size) {
     return MEMAllocFromExpHeapEx(allocator->heap, size, allocator->align);

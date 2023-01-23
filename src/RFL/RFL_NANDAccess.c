@@ -4,7 +4,7 @@
 
 #include <string.h>
 
-#include <MEM/mem_expHeap.h>
+#include <MEM.h>
 #include <OS.h>
 #include <TRK/__mem.h>
 
