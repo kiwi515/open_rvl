@@ -14,7 +14,7 @@ const char* const __DVDErrorMessage[] = {
     "ら、本体の電源をOFFにして、本体の取扱説明書の\n"
     "指示に従ってください。",
 
-     // SC_LANG_EN
+    // SC_LANG_EN
     "\n\n\nAn error has occurred.\n"
     "Press the Eject Button, remove the\n"
     "Game Disc, and turn the power off.\n"
