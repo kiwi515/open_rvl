@@ -6,7 +6,7 @@
 #include <IPC.h>
 #include <OS.h>
 #include <PAD/Pad.h>
-#include <SC/scsystem.h>
+#include <SC.h>
 #include <SI/SIBios.h>
 #include <TRK/dolphin_trk.h>
 

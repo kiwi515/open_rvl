@@ -1,8 +1,7 @@
 #include <DVD/dvd.h>
 #include <OS.h>
 #include <PAD/Pad.h>
-#include <SC/scapi.h>
-#include <SC/scsystem.h>
+#include <SC.h>
 #include <VI/vi3in1.h>
 
 #include <string.h>
