@@ -2,39 +2,27 @@
 
 #include <string.h>
 
-#define GAME_NAME_LEN 4
-#define COMPANY_NAME_LEN 2
-#define DISK_NUM_LEN 1
-#define VER_NUM_LEN 1
-
-#define GAME_NAME_IDX 0
-#define COMPANY_NAME_IDX (GAME_NAME_IDX + GAME_NAME_LEN)
-#define DISK_NUM_IDX (COMPANY_NAME_IDX + COMPANY_NAME_LEN)
-#define VER_NUM_IDX (DISK_NUM_IDX + DISK_NUM_LEN)
-
-BOOL DVDCompareDiskID(const char* id1, const char* id2) {
+BOOL DVDCompareDiskID(const DVDDiskID* id1, const DVDDiskID* id2) {
     // Compare game name
-    if (id1[GAME_NAME_IDX] != '\0' && id2[GAME_NAME_IDX] != '\0' &&
-        strncmp(id1, id2, GAME_NAME_LEN) != 0) {
+    if (id1->game[0] != '\0' && id2->game[0] != '\0' &&
+        strncmp(id1->game, id2->game, sizeof(id1->game)) != 0) {
         return FALSE;
     }
 
     // Compare company name
-    if (id1[COMPANY_NAME_IDX] == '\0' || id2[COMPANY_NAME_IDX] == '\0' ||
-        strncmp(id1 + COMPANY_NAME_IDX, id2 + COMPANY_NAME_IDX,
-                COMPANY_NAME_LEN) != 0) {
+    if (id1->company[0] == '\0' || id2->company[0] == '\0' ||
+        strncmp(id1->company, id2->company, sizeof(id1->company)) != 0) {
         return FALSE;
     }
 
     // Compare disk number
-    if ((u8)id1[DISK_NUM_IDX] != 0xFF && (u8)id2[DISK_NUM_IDX] != 0xFF &&
-        (u8)id1[DISK_NUM_IDX] != (u8)id2[DISK_NUM_IDX]) {
+    if (id1->disk != 0xFF && id2->disk != 0xFF && id1->disk != id2->disk) {
         return FALSE;
     }
 
     // Compare version number
-    if ((u8)id1[VER_NUM_IDX] != 0xFF && (u8)id2[VER_NUM_IDX] != 0xFF &&
-        (u8)id1[VER_NUM_IDX] != (u8)id2[VER_NUM_IDX]) {
+    if (id1->version != 0xFF && id2->version != 0xFF &&
+        id1->version != id2->version) {
         return FALSE;
     }
 
