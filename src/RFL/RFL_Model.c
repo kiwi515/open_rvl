@@ -25,7 +25,7 @@ const RFLDrawCoreSetting cDefaultDrawCoreSetting2Tev = {
     .tevOutRegID = GX_TEVPREV,
     .mtxId = 0,
     .BYTE_0x20 = 0
-    // TO-DO: UNK_0x21
+    // TODO: UNK_0x21
 };
 
 const RFLDrawCoreSetting cDefaultDrawCoreSetting1Tev = {
@@ -38,7 +38,7 @@ const RFLDrawCoreSetting cDefaultDrawCoreSetting1Tev = {
     .tevOutRegID = GX_TEVPREV,
     .mtxId = 0,
     .BYTE_0x20 = 0
-    // TO-DO: UNK_0x21
+    // TODO: UNK_0x21
 };
 
 static const GXColor cFacelineColor[RFL_FACELINE_MAX] = {

@@ -11,7 +11,7 @@ extern "C" {
  * here. Everything is organized in alphabetical order.
  */
 
-//! TO-DO: Many GX functions use 8-bit booleans.
+//! TODO: Many GX functions use 8-bit booleans.
 //! As those files are decompiled, update prototypes that use u8 -> Bool8,
 //! so TRUE/FALSE can be used in place of 0/1 by callers
 typedef unsigned char Bool8;

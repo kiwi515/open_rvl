@@ -116,7 +116,7 @@ void __OSShutdownDevices(u32 arg0) {
     KillThreads();
 }
 
-// TO-DO: There must be a better way....
+// TODO: There must be a better way....
 void __OSGetDiscState(u8* out) {
     u32 flags;
 

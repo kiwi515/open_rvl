@@ -115,7 +115,7 @@ typedef enum {
     RFL_SOURCE_MIDDLE_DB
 } RFLDataSource;
 
-// TO-DO
+// TODO
 typedef UNKTYPE (*RFLModelDrawDoneCallback)(UNKTYPE);
 typedef void (*RFLAccessCallback)(void);
 typedef void (*RFLAlarmCallback)(RFLAccessType);
@@ -142,7 +142,7 @@ typedef struct RFLLoader {
     u8 numResources;                    // at 0xA8
 } RFLLoader;
 
-// TO-DO: Size
+// TODO: Size
 typedef struct RFLHDBManager {
     u8 temp;
 } RFLHDBManager;
@@ -183,7 +183,7 @@ typedef struct RFLAccessInfo {
     u8 BYTE_0x1D8;
 } RFLAccessInfo;
 
-// TO-DO: Size
+// TODO: Size
 typedef struct RFLCtrlBufManager {
     u8 temp;
 } RFLCtrlBufManager;

@@ -82,7 +82,7 @@ static IPCResult _ES_InitLib(s32* fd) {
 static IPCResult _ES_GetTicketViews(s32* fd, u64 tid, void* pViews,
                                     u32* count) {
     IPCResult result;
-    // TO-DO: Hacky solution
+    // TODO: Hacky solution
     u8 work[0x120] ALIGN(32);
     IPCIOVector* pVectors = (IPCIOVector*)(work + 0x0);
     u64* pTid = (u64*)(work + 0x20);
@@ -131,7 +131,7 @@ static IPCResult _ES_GetTicketViews(s32* fd, u64 tid, void* pViews,
 }
 
 static IPCResult _ES_LaunchTitle(s32* fd, u64 tid, void* pViews) {
-    // TO-DO: Hacky solution
+    // TODO: Hacky solution
     u8 tidWork[256] ALIGN(32);
     u8 vectorWork[32] ALIGN(32);
     IPCIOVector* pVectors = (IPCIOVector*)vectorWork;

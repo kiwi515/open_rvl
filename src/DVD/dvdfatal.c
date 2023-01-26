@@ -5,6 +5,7 @@
 typedef void (*FatalFuncType)(void);
 static FatalFuncType FatalFunc = NULL;
 
+// TODO: Fix text formatting (SJIS)
 const char* const __DVDErrorMessage[] = {
     // clang-format off
 

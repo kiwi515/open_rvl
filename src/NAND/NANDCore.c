@@ -471,7 +471,7 @@ static IPCResult _ES_InitLib(s32* fd) {
 }
 
 static IPCResult _ES_GetDataDir(s32* fd, u64 tid, char* dirOut) {
-    // TO-DO: Hacky solution
+    // TODO: Hacky solution
     u8 tidWork[256] ALIGN(32);
     u8 vectorWork[32] ALIGN(32);
     IPCIOVector* pVectors = (IPCIOVector*)vectorWork;
@@ -499,7 +499,7 @@ static IPCResult _ES_GetDataDir(s32* fd, u64 tid, char* dirOut) {
 static IPCResult _ES_GetTitleId(s32* fd, u64* tidOut) {
     IPCResult result;
     u64* pTid;
-    // TO-DO: Hacky solution
+    // TODO: Hacky solution
     u8 tidWork[256] ALIGN(32);
     u8 vectorWork[32] ALIGN(32);
     IPCIOVector* pVectors = (IPCIOVector*)vectorWork;

@@ -771,7 +771,7 @@ static void closecallback_(NANDResult result, NANDCommandBlock* block) {
     }
 }
 
-// TO-DO: Fakematch
+// TODO: Fakematch
 RFLResult RFLiCloseAsync(RFLAccessType type, RFLAccessCallback callback) {
     int new_var;
     RFLAccessInfo* info = RFLiGetAccInfo(type);

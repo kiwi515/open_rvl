@@ -445,7 +445,7 @@ const char* OSGetFontTexel(const char* str, void* dst, s32 xOfs, s32 arg3,
     }
 
     if (widthOut != NULL) {
-        // TO-DO: Permuter fake(?)match
+        // TODO: Permuter fake(?)match
         font_u8 = (u8*)font;
         *widthOut = (font_u8 + font->charWidthTblOfs)[code];
     }
@@ -556,7 +556,7 @@ const char* OSGetFontTexture(const char* str, void** texOut, u32* xOut,
     *texOut = (font->texSize * sheet) + ((u8*)font + font->fontSheetOfs);
 
     // Number of succeeding textures on the sheet
-    // TO-DO: Permuter fake(?)match
+    // TODO: Permuter fake(?)match
     tmp = font->texNumRow;
     numRestTex = code - (sheet * (font->texNumCol * tmp));
 
@@ -570,7 +570,7 @@ const char* OSGetFontTexture(const char* str, void** texOut, u32* xOut,
     *yOut = row * font->cellHeight;
 
     if (widthOut != NULL) {
-        // TO-DO: Permuter fake(?)match
+        // TODO: Permuter fake(?)match
         font_u8 = (u8*)font;
         *widthOut = (font_u8 + font->charWidthTblOfs)[code];
     }
@@ -587,7 +587,7 @@ const char* OSGetFontWidth(const char* str, u32* widthOut) {
                                    &code);
 
     if (widthOut != NULL) {
-        // TO-DO: Permuter fake(?)match
+        // TODO: Permuter fake(?)match
         font_u8 = (u8*)font;
         *widthOut = (font_u8 + font->charWidthTblOfs)[code];
     }

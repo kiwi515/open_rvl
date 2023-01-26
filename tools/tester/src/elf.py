@@ -54,7 +54,7 @@ class ELFSection():
         self.sh_addralign = strm.get_u32()
         self.sh_entsize = strm.get_u32()
 
-        # TO-DO: Actually fix BSS
+        # TODO: Actually fix BSS
         try:
             # Read section data
             if self.sh_size > 0:
