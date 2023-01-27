@@ -1,4 +1,4 @@
-#include "dvdfatal.h"
+#include <DVD.h>
 #include <OS.h>
 #include <SC.h>
 

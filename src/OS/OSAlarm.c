@@ -1,5 +1,5 @@
 #include <BASE.h>
-#include <DVD/dvd.h>
+#include <DVD.h>
 #include <OS.h>
 
 static BOOL OnReset(u32, u32);

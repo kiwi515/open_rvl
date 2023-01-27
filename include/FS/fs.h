@@ -8,7 +8,7 @@ extern "C" {
 
 #define FS_MAX_PATH 64
 
-typedef void (*FSAsyncCallback)(IPCResult, void*);
+typedef void (*FSAsyncCallback)(s32, void*);
 
 typedef struct FSStats {
     char UNK_0x0[0x1C];

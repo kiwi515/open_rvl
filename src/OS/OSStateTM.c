@@ -25,11 +25,11 @@ static BOOL StmReady;
 static BOOL ResetDown;
 
 static s32 AccessVIDimRegs(void);
-static IPCResult __OSVIDimReplyHandler(IPCResult, void*);
+static s32 __OSVIDimReplyHandler(s32, void*);
 static void __OSRegisterStateEvent(void);
 static void __OSDefaultResetCallback(void);
 static void __OSDefaultPowerCallback(void);
-static IPCResult __OSStateEventHandler(IPCResult, void*);
+static s32 __OSStateEventHandler(s32, void*);
 static void LockUp(void);
 
 OSStateCallback OSSetResetCallback(OSStateCallback callback) {
@@ -211,7 +211,7 @@ static s32 AccessVIDimRegs(void) {
     return result != IPC_RESULT_OK ? result : 1;
 }
 
-static IPCResult __OSVIDimReplyHandler(IPCResult result, void* arg) {
+static s32 __OSVIDimReplyHandler(s32 result, void* arg) {
 #pragma unused(result)
 #pragma unused(arg)
 
@@ -237,7 +237,7 @@ static void __OSDefaultResetCallback(void) {}
 
 static void __OSDefaultPowerCallback(void) {}
 
-static IPCResult __OSStateEventHandler(IPCResult result, void* arg) {
+static s32 __OSStateEventHandler(s32 result, void* arg) {
 #pragma unused(result)
 #pragma unused(arg)
 

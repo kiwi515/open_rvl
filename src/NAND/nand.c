@@ -5,8 +5,8 @@
 #include <string.h>
 
 static void nandSplitPerm(u8, u32*, u32*, u32*);
-static void nandGetStatusCallback(IPCResult, void*);
-static void nandGetFileStatusAsyncCallback(IPCResult, void*);
+static void nandGetStatusCallback(s32, void*);
+static void nandGetFileStatusAsyncCallback(s32, void*);
 static BOOL nandInspectPermission(u8);
 
 static IPCResult nandCreate(const char* path, u8 perm, u8 attr,
@@ -323,7 +323,7 @@ static IPCResult nandGetFileStatusAsync(s32 fd, NANDCommandBlock* block) {
                                   nandGetFileStatusAsyncCallback, block);
 }
 
-static void nandGetFileStatusAsyncCallback(IPCResult result, void* arg) {
+static void nandGetFileStatusAsyncCallback(s32 result, void* arg) {
     // Implicit cast required
     NANDCommandBlock* block = arg;
     // Work buffer???
@@ -454,7 +454,7 @@ static IPCResult nandGetStatus(const char* path, FSFileAttr* fileAttr,
     }
 }
 
-static void nandGetStatusCallback(IPCResult result, void* arg) {
+static void nandGetStatusCallback(s32 result, void* arg) {
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
     FSFileAttr* fileAttr;
 

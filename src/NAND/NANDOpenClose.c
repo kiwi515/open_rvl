@@ -3,16 +3,16 @@
 
 #include <stdio.h>
 
-static void nandOpenCallback(IPCResult, void*);
+static void nandOpenCallback(s32, void*);
 static NANDResult nandSafeOpenAsync(const char*, NANDFileInfo*, u8, void*, u32,
                                     NANDAsyncCallback, NANDCommandBlock*, BOOL);
-static void nandSafeOpenCallback(IPCResult, void*);
-static void nandReadOpenCallback(IPCResult, void*);
+static void nandSafeOpenCallback(s32, void*);
+static void nandReadOpenCallback(s32, void*);
 static NANDResult nandSafeCloseAsync(NANDFileInfo*, NANDAsyncCallback,
                                      NANDCommandBlock*);
-static void nandSafeCloseCallback(IPCResult, void*);
-static void nandReadCloseCallback(IPCResult, void*);
-static void nandCloseCallback(IPCResult, void*);
+static void nandSafeCloseCallback(s32, void*);
+static void nandReadCloseCallback(s32, void*);
+static void nandCloseCallback(s32, void*);
 static u32 nandGetUniqueNumber(void);
 
 static IPCResult nandOpen(const char* path, u8 mode, NANDCommandBlock* block,
@@ -105,7 +105,7 @@ NANDResult NANDPrivateOpenAsync(const char* path, NANDFileInfo* info, u8 mode,
     return nandConvertErrorCode(nandOpen(path, mode, block, TRUE, TRUE));
 }
 
-static void nandOpenCallback(IPCResult result, void* arg) {
+static void nandOpenCallback(s32 result, void* arg) {
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
 
     if (result >= 0) {
@@ -204,7 +204,7 @@ static NANDResult nandSafeOpenAsync(const char* path, NANDFileInfo* info,
     return NAND_RESULT_INVALID;
 }
 
-static void nandSafeOpenCallback(IPCResult result, void* arg) {
+static void nandSafeOpenCallback(s32 result, void* arg) {
 // Why???
 #define block ((NANDCommandBlock*)arg)
 
@@ -300,7 +300,7 @@ static void nandSafeOpenCallback(IPCResult result, void* arg) {
 #undef block
 }
 
-static void nandReadOpenCallback(IPCResult result, void* arg) {
+static void nandReadOpenCallback(s32 result, void* arg) {
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
 
     if (result >= 0) {
@@ -350,7 +350,7 @@ static inline NANDResult nandSafeCloseAsync(NANDFileInfo* info,
     return nandConvertErrorCode(result);
 }
 
-static void nandSafeCloseCallback(IPCResult result, void* arg) {
+static void nandSafeCloseCallback(s32 result, void* arg) {
     IPCResult myResult;
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
 
@@ -391,7 +391,7 @@ static void nandSafeCloseCallback(IPCResult result, void* arg) {
     block->callback(nandConvertErrorCode(result), block);
 }
 
-static void nandReadCloseCallback(IPCResult result, void* arg) {
+static void nandReadCloseCallback(s32 result, void* arg) {
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
 
     if (result == IPC_RESULT_OK) {
@@ -402,7 +402,7 @@ static void nandReadCloseCallback(IPCResult result, void* arg) {
     block->callback(nandConvertErrorCode(result), block);
 }
 
-static void nandCloseCallback(IPCResult result, void* arg) {
+static void nandCloseCallback(s32 result, void* arg) {
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
 
     if (result == IPC_RESULT_OK) {
