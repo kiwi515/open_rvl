@@ -15,6 +15,9 @@
 #define DVD_LOW_CMD_MAX 4
 #define DVD_LOW_CTX_MAGIC 0xFEEBDAED
 
+// Your guess is as good as mine
+#define DVD_LOW_CTX_IN_USE(ctx) ((u8)((ctx).inUse != FALSE))
+
 // Unpadded sizes
 #define ESP_TICKET_SIZE 0x2A4
 #define ESP_TMD_SIZE 0x49E4
@@ -99,7 +102,7 @@ static void* ddrAllocAligned32(size_t size) {
     u8* lo = IPCGetBufferLo();
     u8* hi = IPCGetBufferHi();
 
-    // @bug Incorrect rounding results in pointer mod 32
+    // @bug Incorrect rounding (& 31) results in pointer mod 32
     if ((u32)lo % 32 != 0) {
         lo = (u8*)(((u32)lo + 31) & 31);
     }
@@ -282,21 +285,16 @@ BOOL DVDLowReadDiskID(DVDDiskID* out, DVDLowCallback callback) {
 }
 
 static inline void nextCommandBuf(void) {
-    freeCommandBuf++;
-
-    if (freeCommandBuf >= DVD_LOW_CMD_MAX) {
+    if (++freeCommandBuf >= DVD_LOW_CMD_MAX) {
         freeCommandBuf = 0;
     }
 }
 
 static inline DVDLowContext* newContext(DVDLowCallback callback, UNKWORD arg2) {
     s32 id;
-    u32 inUse;
-
-    inUse = dvdContexts[freeDvdContext].inUse != FALSE;
 
     // The last operation somehow did not complete
-    if (inUse == TRUE) {
+    if (DVD_LOW_CTX_IN_USE(dvdContexts[freeDvdContext]) == TRUE) {
         OSReport("(newContext) ERROR: freeDvdContext.inUse (#%d) is true\n",
                  freeDvdContext);
         OSReport("(newContext) Now spinning in infinite loop\n");
@@ -322,8 +320,7 @@ static inline DVDLowContext* newContext(DVDLowCallback callback, UNKWORD arg2) {
 
     id = freeDvdContext;
 
-    freeDvdContext++;
-    if (freeDvdContext >= DVD_LOW_CTX_MAX) {
+    if (++freeDvdContext >= DVD_LOW_CTX_MAX) {
         freeDvdContext = 0;
     }
 
@@ -384,7 +381,7 @@ BOOL DVDLowOpenPartition(u32 offset, const ESPTicket* ticket, u32 certsSize,
 
     // Output vector 2: Ticket error
     ioVec[4].base = &lastTicketError;
-    ioVec[4].length = 32;
+    ioVec[4].length = sizeof(lastTicketError);
 
     result = IOS_IoctlvAsync(DiFD, DVD_IOCTLV_OPEN_PARTITION, 3, 2, ioVec,
                              doTransactionCallback, ctx);
