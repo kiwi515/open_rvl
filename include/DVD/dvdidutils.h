@@ -10,6 +10,7 @@ typedef struct DVDDiskID {
     char company[2]; // at 0x4
     u8 disk;         // at 0x6
     u8 version;      // at 0x7
+    char padding[32 - 0x8];
 } DVDDiskID;
 
 BOOL DVDCompareDiskID(const DVDDiskID* id1, const DVDDiskID* id2);

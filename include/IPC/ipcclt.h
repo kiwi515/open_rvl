@@ -32,6 +32,7 @@ typedef enum {
     IPC_RESULT_ECC_CRIT_INTERNAL = -12,
     IPC_RESULT_BUSY_INTERNAL = -8,
     IPC_RESULT_NOEXISTS_INTERNAL = -6,
+    IPC_RESULT_CONN_MAX_INTERNAL = -5,
     IPC_RESULT_INVALID_INTERNAL = -4,
     IPC_RESULT_EXISTS_INTERNAL = -2,
     IPC_RESULT_ACCESS_INTERNAL = -1,
@@ -90,7 +91,7 @@ typedef enum {
     IPC_SEEK_END,
 } IPCSeekMode;
 
-typedef IPCResult (*IPCAsyncCallback)(IPCResult, void*);
+typedef s32 (*IPCAsyncCallback)(s32, void*);
 
 typedef struct IPCIOVector {
     void* base; // at 0x0

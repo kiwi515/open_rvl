@@ -9,8 +9,8 @@
 
 #define NAND_BANNER_HEADER_MAGIC 'WIBN'
 
-static void nandShutdownCallback(IPCResult, void*);
-static void nandGetTypeCallback(IPCResult, void*);
+static void nandShutdownCallback(s32, void*);
+static void nandGetTypeCallback(s32, void*);
 static BOOL nandOnShutdown(u32, u32);
 static IPCResult _ES_InitLib(s32*);
 static IPCResult _ES_GetDataDir(s32*, u64, char*) __attribute__((never_inline));
@@ -323,7 +323,7 @@ static BOOL nandOnShutdown(u32 r3, u32 r4) {
     return TRUE;
 }
 
-static void nandShutdownCallback(IPCResult result, void* arg) {
+static void nandShutdownCallback(s32 result, void* arg) {
 #pragma unused(result)
 
     *(BOOL*)arg = TRUE;
@@ -351,7 +351,7 @@ NANDResult NANDGetHomeDir(char* out) {
     return NAND_RESULT_OK;
 }
 
-void nandCallback(IPCResult result, void* arg) {
+void nandCallback(s32 result, void* arg) {
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
     block->callback(nandConvertErrorCode(result), block);
 }
@@ -417,7 +417,7 @@ NANDResult NANDPrivateGetTypeAsync(const char* path, u8* type,
     return nandConvertErrorCode(nandGetType(path, type, block, TRUE, TRUE));
 }
 
-static void nandGetTypeCallback(IPCResult result, void* arg) {
+static void nandGetTypeCallback(s32 result, void* arg) {
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
 
     if (result == IPC_RESULT_OK || result == IPC_RESULT_ACCESS) {

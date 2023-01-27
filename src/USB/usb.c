@@ -136,7 +136,7 @@ end:
 
 IPCResult IUSB_CloseLib(void) { return IPC_RESULT_OK; }
 
-static IPCResult _intBlkCtrlCb(IPCResult result, void* arg) {
+static s32 _intBlkCtrlCb(s32 result, void* arg) {
     int i;
     USBCommandBlock* block = (USBCommandBlock*)arg;
 

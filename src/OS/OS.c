@@ -1,7 +1,6 @@
 #include <BASE.h>
 #include <DB.h>
-#include <DVD/dvd.h>
-#include <DVD/dvdfs.h>
+#include <DVD.h>
 #include <EXI/EXIBios.h>
 #include <IPC.h>
 #include <OS.h>
@@ -319,7 +318,7 @@ static void InquiryCallback(s32 arg0, DVDDriveBlock* block) {
 #pragma unused(arg0)
     switch (block->WORD_0xC) {
     case 0:
-        OS_DVD_DEVICE_CODE_ADDR = DriveInfo.deviceCodeAddr | 0x8000;
+        OS_DVD_DEVICE_CODE_ADDR = DriveInfo.deviceCode | 0x8000;
         break;
     default:
         OS_DVD_DEVICE_CODE_ADDR = 0x0001;

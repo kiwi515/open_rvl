@@ -26,7 +26,7 @@ void nandGetParentDirectory(char*, const char*);
 NANDResult NANDInit(void);
 NANDResult NANDGetCurrentDir(char*);
 NANDResult NANDGetHomeDir(char*);
-void nandCallback(IPCResult, void*);
+void nandCallback(s32, void*);
 NANDResult NANDGetType(const char*, u8*);
 NANDResult NANDPrivateGetTypeAsync(const char*, u8*, NANDAsyncCallback,
                                    NANDCommandBlock*);

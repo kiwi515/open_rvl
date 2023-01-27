@@ -15,9 +15,10 @@ typedef struct DVDDriveBlock {
 } DVDDriveBlock;
 
 typedef struct DVDDriveInfo {
-    char UNK_0x0[0x2];
-    u16 deviceCodeAddr; // at 0x2
-    char UNK_0x4[0x20 - 0x4];
+    u16 revision;    // at 0x0
+    u16 deviceCode;  // at 0x2
+    u32 releaseDate; // at 0x4
+    char padding[32 - 0x8];
 } DVDDriveInfo;
 
 typedef void (*DVDInquiryCallback)(s32, DVDDriveBlock*);
