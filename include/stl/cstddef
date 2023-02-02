@@ -7,7 +7,6 @@ using ::intptr_t;
 using ::ptrdiff_t;
 using ::size_t;
 using ::uintptr_t;
-using ::wchar_t;
 } // namespace std
 
 #endif
