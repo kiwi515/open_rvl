@@ -46,7 +46,7 @@ static NANDFileInfo FileInfo;
 static NANDCommandBlock Block;
 static OSAlarm PlayRecordAlarm;
 
-static void PlayRecordCallback(NANDResult, NANDCommandBlock*);
+static void PlayRecordCallback(s32, NANDCommandBlock*);
 
 static u32 RecordCheckSum(const OSPlayRecord* playRec) {
     int i;
@@ -70,7 +70,7 @@ static void PlayRecordAlarmCallback(OSAlarm* alarm, OSContext* ctx) {
     PlayRecordCallback(NAND_RESULT_OK, NULL);
 }
 
-static void PlayRecordCallback(NANDResult result, NANDCommandBlock* block) {
+static void PlayRecordCallback(s32 result, NANDCommandBlock* block) {
 #pragma unused(block)
 
     NANDResult error = NAND_RESULT_OK;

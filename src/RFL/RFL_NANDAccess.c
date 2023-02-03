@@ -26,19 +26,19 @@ static const u8 scFileAttributes[RFL_ACCESS_MAX] = {
     0x0  //!< RFL_ACCESS_RES
 };
 
-static void opencallback_(NANDResult, NANDCommandBlock*);
-static void createcallback_(NANDResult, NANDCommandBlock*);
-static void close2opencallback_(NANDResult, NANDCommandBlock*);
-static void readcallback_(NANDResult, NANDCommandBlock*);
-static void writecallback_(NANDResult, NANDCommandBlock*);
-static void readseekcallback_(NANDResult, NANDCommandBlock*);
-static void writecallback_(NANDResult, NANDCommandBlock*);
-static void writeseekcallback_(NANDResult, NANDCommandBlock*);
-static void closecallback_(NANDResult, NANDCommandBlock*);
-static void getlengthcallback_(NANDResult, NANDCommandBlock*);
-static void deletecallback_(NANDResult, NANDCommandBlock*);
-static void createdircallback1_(NANDResult, NANDCommandBlock*);
-static void createdircallback2_(NANDResult, NANDCommandBlock*)
+static void opencallback_(s32, NANDCommandBlock*);
+static void createcallback_(s32, NANDCommandBlock*);
+static void close2opencallback_(s32, NANDCommandBlock*);
+static void readcallback_(s32, NANDCommandBlock*);
+static void writecallback_(s32, NANDCommandBlock*);
+static void readseekcallback_(s32, NANDCommandBlock*);
+static void writecallback_(s32, NANDCommandBlock*);
+static void writeseekcallback_(s32, NANDCommandBlock*);
+static void closecallback_(s32, NANDCommandBlock*);
+static void getlengthcallback_(s32, NANDCommandBlock*);
+static void deletecallback_(s32, NANDCommandBlock*);
+static void createdircallback1_(s32, NANDCommandBlock*);
+static void createdircallback2_(s32, NANDCommandBlock*)
     __attribute__((never_inline));
 
 void RFLiInitAccessInfo(MEMiHeapHead* heap) {
@@ -167,7 +167,7 @@ static void retry_(RFLAccessType type, u8 val, RFLAlarmCallback callback) {
     }
 }
 
-static void opencallback_(NANDResult result, NANDCommandBlock* block) {
+static void opencallback_(s32 result, NANDCommandBlock* block) {
     BOOL doCallback = TRUE;
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
@@ -220,7 +220,7 @@ static void opencallback_(NANDResult result, NANDCommandBlock* block) {
     }
 }
 
-static void createcallback_(NANDResult result, NANDCommandBlock* block) {
+static void createcallback_(s32 result, NANDCommandBlock* block) {
     NANDResult reason;
     NANDCommandBlock* openBlock;
     BOOL doCallback = TRUE;
@@ -276,7 +276,7 @@ static void createcallback_(NANDResult result, NANDCommandBlock* block) {
     }
 }
 
-static void close2opencallback_(NANDResult result, NANDCommandBlock* block) {
+static void close2opencallback_(s32 result, NANDCommandBlock* block) {
     NANDResult reason;
     NANDCommandBlock* openBlock;
     BOOL doCallback = TRUE;
@@ -404,7 +404,7 @@ RFLResult RFLiOpenAsync(RFLAccessType rflAccess, u8 nandAccess,
     return RFLGetAsyncStatus();
 }
 
-static void readcallback_(NANDResult result, NANDCommandBlock* block) {
+static void readcallback_(s32 result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
     BOOL error = FALSE;
@@ -449,7 +449,7 @@ static void readcallback_(NANDResult result, NANDCommandBlock* block) {
     }
 }
 
-static void readseekcallback_(NANDResult result, NANDCommandBlock* block) {
+static void readseekcallback_(s32 result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
     BOOL doCallback = TRUE;
@@ -573,7 +573,7 @@ static void retryWrite_(RFLAccessType type) {
     }
 }
 
-static void writecallback_(NANDResult result, NANDCommandBlock* block) {
+static void writecallback_(s32 result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
 
@@ -662,7 +662,7 @@ static void writeseekcallback_inline(RFLAccessType type) {
     }
 }
 
-static void writeseekcallback_(NANDResult result, NANDCommandBlock* block) {
+static void writeseekcallback_(s32 result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* rflInfo = RFLiGetAccInfo(type);
     BOOL doCallback = TRUE;
@@ -743,7 +743,7 @@ static NANDResult closecore_(RFLAccessType type) {
     return NANDSafeCloseAsync(info, closecallback_, block);
 }
 
-static void closecallback_(NANDResult result, NANDCommandBlock* block) {
+static void closecallback_(s32 result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
 
@@ -803,7 +803,7 @@ RFLResult RFLiCloseAsync(RFLAccessType type, RFLAccessCallback callback) {
     return RFLGetAsyncStatus();
 }
 
-static void getlengthcallback_(NANDResult result, NANDCommandBlock* block) {
+static void getlengthcallback_(s32 result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
 
@@ -864,7 +864,7 @@ RFLResult RFLiGetLengthAsync(RFLAccessType type, u32* out,
     return RFLGetAsyncStatus();
 }
 
-static void deletecallback_(NANDResult result, NANDCommandBlock* block) {
+static void deletecallback_(s32 result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
 
@@ -955,7 +955,7 @@ static void createDirCommon_(const char* dir, NANDAsyncCallback callback) {
     }
 }
 
-static void createdircallback2_(NANDResult result, NANDCommandBlock* block) {
+static void createdircallback2_(s32 result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
 
@@ -985,7 +985,7 @@ static void createdircallback2_(NANDResult result, NANDCommandBlock* block) {
     }
 }
 
-static void createdircallback1_(NANDResult result, NANDCommandBlock* block) {
+static void createdircallback1_(s32 result, NANDCommandBlock* block) {
     RFLAccessType type = RFLiGetType(block);
     RFLAccessInfo* info = RFLiGetAccInfo(type);
 

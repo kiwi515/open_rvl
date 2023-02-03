@@ -67,7 +67,7 @@ typedef enum {
 } NANDPermission;
 
 typedef struct NANDCommandBlock;
-typedef void (*NANDAsyncCallback)(NANDResult, struct NANDCommandBlock*);
+typedef void (*NANDAsyncCallback)(s32, struct NANDCommandBlock*);
 
 typedef struct NANDFileInfo {
     s32 fd; // at 0x0
