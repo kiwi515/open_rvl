@@ -77,7 +77,6 @@ typedef struct NANDFileInfo {
     u8 access;                    // at 0x88
     u8 BYTE_0x89;
     u8 state; // at 0x8A
-    u8 BYTE_0x8B;
 } NANDFileInfo;
 
 typedef struct NANDCommandBlock {
