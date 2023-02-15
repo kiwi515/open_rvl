@@ -268,7 +268,7 @@ void RFLLoadDrawSetting(const RFLDrawSetting* setting) {
         GXSetTevDirect(GX_TEV_STAGE_ID_1);
         GXSetTevSwapMode(GX_TEV_STAGE_ID_1, GX_TEV_SWAP_SEL_0,
                          GX_TEV_SWAP_SEL_0);
-        GXSetTevOrder(GX_TEV_STAGE_ID_1, GX_TEXCOORD_INVALID, GX_TEXMAP_INVALID,
+        GXSetTevOrder(GX_TEV_STAGE_ID_1, GX_TEXCOORD_INVALID, GX_TEXMAP_NULL,
                       GX_CHAN_RGBA_0);
         GXSetTevColorIn(GX_TEV_STAGE_ID_1, GX_TEV_COLOR_ARG_15,
                         GX_TEV_COLOR_ARG_0, GX_TEV_COLOR_ARG_10,
@@ -356,7 +356,7 @@ void RFLDrawOpaCore(const RFLCharModel* model,
 
     GXSetTexCoordGen(setting->txcID, GX_TEX_GEN_TYPE_1, GX_TEX_GEN_SRC_0, 0x3C);
     GXSetVtxDesc(GX_ATTR_VTX_TEX_COORD, GX_ATTR_0);
-    GXSetTevOrder(GX_TEV_STAGE_ID_0, GX_TEXCOORD_INVALID, GX_TEXMAP_INVALID,
+    GXSetTevOrder(GX_TEV_STAGE_ID_0, GX_TEXCOORD_INVALID, GX_TEXMAP_NULL,
                   GX_CHAN_INVALID);
     GXSetTevColorIn(GX_TEV_STAGE_ID_0, GX_TEV_COLOR_ARG_15, GX_TEV_COLOR_ARG_15,
                     GX_TEV_COLOR_ARG_15, GX_TEV_COLOR_ARG_14);

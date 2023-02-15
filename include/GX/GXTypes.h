@@ -373,9 +373,10 @@ typedef enum _GXTexMapID {
     GX_TEXMAP_5,
     GX_TEXMAP_6,
     GX_TEXMAP_7,
-
     GX_MAX_TEXMAP,
-    GX_TEXMAP_INVALID = 0xFF
+
+    GX_TEXMAP_NULL = 0xFF,
+    GX_TEX_DISABLE
 } GXTexMapID;
 
 typedef enum _GXTexWrapMode {
