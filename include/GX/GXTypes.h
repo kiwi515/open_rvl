@@ -314,11 +314,11 @@ typedef enum _GXTexCoordID {
 } GXTexCoordID;
 
 typedef enum _GXTexFilter {
-    GX_TEX_FILTER_0,
+    GX_NEAR,
     GX_LINEAR,
-    GX_TEX_FILTER_2,
-    GX_TEX_FILTER_3,
-    GX_TEX_FILTER_4,
+    GX_NEAR_MIP_NEAR,
+    GX_LIN_MIP_NEAR,
+    GX_NEAR_MIP_LIN,
     GX_LIN_MIP_LIN,
 } GXTexFilter;
 
