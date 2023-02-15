@@ -8,20 +8,20 @@
 #define ROM_FONT_ANSI_START ((void*)0x001FCF00)
 #define ROM_FONT_ANSI_SIZE 0x00003000
 
-typedef const u8* (*ParseStringFunc)(u16, const u8*, OSFontData**, u32*);
+typedef const u8* (*ParseStringFunc)(u16, const u8*, OSFontHeader**, u32*);
 
 static u16 FontEncode = 0xFFFF;
 
-static OSFontData* FontDataAnsi;
-static OSFontData* FontDataSjis;
+static OSFontHeader* FontDataAnsi;
+static OSFontHeader* FontDataSjis;
 static BOOL FixedPitch;
 static ParseStringFunc ParseString;
 
 extern u16 HankakuToCode[];
 extern u16 Zenkaku2Code[];
 
-static const u8* ParseStringS(u16, const u8*, OSFontData**, u32*);
-static const u8* ParseStringW(u16, const u8*, OSFontData**, u32*);
+static const u8* ParseStringS(u16, const u8*, OSFontHeader**, u32*);
+static const u8* ParseStringW(u16, const u8*, OSFontHeader**, u32*);
 
 static BOOL IsSjisLeadByte(u8 ch) {
     return (0x81 <= ch && ch <= 0x9F) || (0xE0 <= ch && ch <= 0xFC);
@@ -198,7 +198,7 @@ static void ReadROM(void* dst, s32 size, const void* src) {
     }
 }
 
-static u32 ReadFont(void* dst, u16 encode, OSFontData* font) {
+static u32 ReadFont(void* dst, u16 encode, OSFontHeader* font) {
     u8* tex;
     int i;
     u32 code;
@@ -230,22 +230,22 @@ static u32 ReadFont(void* dst, u16 encode, OSFontData* font) {
          */
         code = GetFontCode(encode, 'T');
         // Font sheet on which the texture resides
-        sheet = (s32)code / (font->texNumCol * font->texNumRow);
+        sheet = (s32)code / (font->sheetNumCol * font->sheetNumRow);
         // Number of succeeding textures on the sheet
-        numRestTex = code - (sheet * (font->texNumCol * font->texNumRow));
+        numRestTex = code - (sheet * (font->sheetNumCol * font->sheetNumRow));
         // Texture position on sheet
-        row = numRestTex / font->texNumCol;
-        col = numRestTex - row * font->texNumCol;
+        row = numRestTex / font->sheetNumCol;
+        col = numRestTex - row * font->sheetNumCol;
         // Texture position
         row *= font->cellHeight;
         col *= font->cellWidth;
         // Font code texture
-        tex = (u8*)font + font->fontSheetOfs;
-        tex += sheet * font->texSize / 2;
+        tex = (u8*)font + font->sheetImageOfs;
+        tex += sheet * font->sheetSize / 2;
 
         // Editing the texture at runtime?
         for (i = 4; i < 8; i++) {
-            tmp = tex + (((font->texWidth / 8) * 32) / 2) * ((row + i) / 8);
+            tmp = tex + (((font->sheetWidth / 8) * 32) / 2) * ((row + i) / 8);
             tmp += (col / 8) * 16;
             tmp += ((row + i) % 8) * 2;
             tmp += (col % 8) / 4;
@@ -256,7 +256,7 @@ static u32 ReadFont(void* dst, u16 encode, OSFontData* font) {
     return size;
 }
 
-u32 OSLoadFont(OSFontData* font, void* dst) {
+u32 OSLoadFont(OSFontHeader* font, void* dst) {
     u32 size;
 
     switch (OSGetFontEncode()) {
@@ -277,7 +277,7 @@ u32 OSLoadFont(OSFontData* font, void* dst) {
             break;
         }
 
-        FontDataSjis = (OSFontData*)((u8*)FontDataAnsi + size);
+        FontDataSjis = (OSFontHeader*)((u8*)FontDataAnsi + size);
         size += ReadFont(dst, OS_FONT_ENCODE_SJIS, FontDataSjis);
         break;
     case OS_FONT_ENCODE_2:
@@ -289,9 +289,9 @@ u32 OSLoadFont(OSFontData* font, void* dst) {
     return size;
 }
 
-static const u8* ParseStringS(u16 encode, const u8* str, OSFontData** fontOut,
+static const u8* ParseStringS(u16 encode, const u8* str, OSFontHeader** fontOut,
                               u32* codeOut) {
-    OSFontData* font;
+    OSFontHeader* font;
     u16 code = 0;
 
     switch (encode) {
@@ -322,9 +322,9 @@ static const u8* ParseStringS(u16 encode, const u8* str, OSFontData** fontOut,
     return str;
 }
 
-static const u8* ParseStringW(u16 encode, const u8* str, OSFontData** fontOut,
+static const u8* ParseStringW(u16 encode, const u8* str, OSFontHeader** fontOut,
                               u32* codeOut) {
-    OSFontData* font;
+    OSFontHeader* font;
     u16 code = 0;
     u32 utf32 = 0;
 
@@ -384,7 +384,7 @@ static const u8* ParseStringW(u16 encode, const u8* str, OSFontData** fontOut,
 
 const char* OSGetFontTexel(const char* str, void* dst, s32 xOfs, s32 arg3,
                            u32* widthOut) {
-    OSFontData* font;
+    OSFontHeader* font;
     s32 numRestTex;
     u8* local_24;
     s32 row;
@@ -402,29 +402,29 @@ const char* OSGetFontTexel(const char* str, void* dst, s32 xOfs, s32 arg3,
 
     str = (const char*)ParseString(OSGetFontEncode(), (const u8*)str, &font,
                                    &code);
-    local_4C = (u8*)font + sizeof(OSFontData);
+    local_4C = (u8*)font + sizeof(OSFontHeader);
 
     /**
      * Find font code texture (See OSGetFontTexture)
      */
     // Font sheet on which the texture resides
-    sheet = (s32)code / (font->texNumCol * font->texNumRow);
+    sheet = (s32)code / (font->sheetNumCol * font->sheetNumRow);
     // Number of succeeding textures on the sheet
-    numRestTex = code - (sheet * (font->texNumCol * font->texNumRow));
+    numRestTex = code - (sheet * (font->sheetNumCol * font->sheetNumRow));
     // Texture position on sheet
-    row = numRestTex / font->texNumCol;
-    col = numRestTex - row * font->texNumCol;
+    row = numRestTex / font->sheetNumCol;
+    col = numRestTex - row * font->sheetNumCol;
     // Texture position
     row *= font->cellHeight;
     col *= font->cellWidth;
     // Font code texture
-    tex = (u8*)font + font->fontSheetOfs;
-    tex += sheet * font->texSize / 2;
+    tex = (u8*)font + font->sheetImageOfs;
+    tex += sheet * font->sheetSize / 2;
 
     for (i = 0; i < font->cellHeight; i++) {
         for (j = 0; j < font->cellWidth; j++) {
             local_20 =
-                tex + (((font->texWidth / 8) * 32) / 2) * ((row + i) / 8);
+                tex + (((font->sheetWidth / 8) * 32) / 2) * ((row + i) / 8);
             local_20 += ((col + j) / 8) * 16;
             local_20 += ((row + i) % 8) * 2;
             local_20 += ((col + j) % 8) / 4;
@@ -447,25 +447,25 @@ const char* OSGetFontTexel(const char* str, void* dst, s32 xOfs, s32 arg3,
     if (widthOut != NULL) {
         // TODO: Permuter fake(?)match
         font_u8 = (u8*)font;
-        *widthOut = (font_u8 + font->charWidthTblOfs)[code];
+        *widthOut = (font_u8 + font->widthTableOfs)[code];
     }
 
     return str;
 }
 
-static void ExpandFontSheet(const OSFontData* font, u8* src, u8* dst) {
+static void ExpandFontSheet(const OSFontHeader* font, u8* src, u8* dst) {
     int i;
-    const u8* tmp = (const u8*)font + sizeof(OSFontData);
+    const u8* tmp = (const u8*)font + sizeof(OSFontHeader);
 
-    if (font->texFmt == GX_TF_I4) {
-        for (i = (s32)font->fontSheetSize / 2 - 1; i >= 0; i--) {
+    if (font->sheetFormat == GX_TF_I4) {
+        for (i = (s32)font->sheetFullSize / 2 - 1; i >= 0; i--) {
             dst[i * 2 + 0] =
                 tmp[src[i] >> 6 & 3] & 0xF0 | tmp[src[i] >> 4 & 3] & 0x0F;
             dst[i * 2 + 1] =
                 tmp[src[i] >> 2 & 3] & 0xF0 | tmp[src[i] >> 0 & 3] & 0x0F;
         }
-    } else if (font->texFmt == GX_TF_IA4) {
-        for (i = (s32)font->fontSheetSize / 4 - 1; i >= 0; i--) {
+    } else if (font->sheetFormat == GX_TF_IA4) {
+        for (i = (s32)font->sheetFullSize / 4 - 1; i >= 0; i--) {
             dst[i * 4 + 0] = tmp[src[i] >> 6 & 3];
             dst[i * 4 + 1] = tmp[src[i] >> 4 & 3];
             dst[i * 4 + 2] = tmp[src[i] >> 2 & 3];
@@ -473,10 +473,10 @@ static void ExpandFontSheet(const OSFontData* font, u8* src, u8* dst) {
         }
     }
 
-    DCStoreRange(dst, font->fontSheetSize);
+    DCStoreRange(dst, font->sheetFullSize);
 }
 
-BOOL OSInitFont(OSFontData* font) {
+BOOL OSInitFont(OSFontHeader* font) {
     u8* sheets;
 
     switch (OSGetFontEncode()) {
@@ -487,10 +487,10 @@ BOOL OSInitFont(OSFontData* font) {
             return FALSE;
         }
 
-        sheets = (u8*)FontDataAnsi + FontDataAnsi->fontSheetOfs;
-        FontDataAnsi->fontSheetOfs = ROUND_UP(FontDataAnsi->fontSheetOfs, 32);
+        sheets = (u8*)FontDataAnsi + FontDataAnsi->sheetImageOfs;
+        FontDataAnsi->sheetImageOfs = ROUND_UP(FontDataAnsi->sheetImageOfs, 32);
         ExpandFontSheet(FontDataAnsi, sheets,
-                        (u8*)FontDataAnsi + FontDataAnsi->fontSheetOfs);
+                        (u8*)FontDataAnsi + FontDataAnsi->sheetImageOfs);
         break;
     case OS_FONT_ENCODE_SJIS:
         FontDataSjis = font;
@@ -499,10 +499,10 @@ BOOL OSInitFont(OSFontData* font) {
             return FALSE;
         }
 
-        sheets = (u8*)FontDataSjis + FontDataSjis->fontSheetOfs;
-        FontDataSjis->fontSheetOfs = ROUND_UP(FontDataSjis->fontSheetOfs, 32);
+        sheets = (u8*)FontDataSjis + FontDataSjis->sheetImageOfs;
+        FontDataSjis->sheetImageOfs = ROUND_UP(FontDataSjis->sheetImageOfs, 32);
         ExpandFontSheet(FontDataSjis, sheets,
-                        (u8*)FontDataSjis + FontDataSjis->fontSheetOfs);
+                        (u8*)FontDataSjis + FontDataSjis->sheetImageOfs);
         break;
     case OS_FONT_ENCODE_2:
         break;
@@ -515,21 +515,21 @@ BOOL OSInitFont(OSFontData* font) {
             return FALSE;
         }
 
-        sheets = (u8*)FontDataAnsi + FontDataAnsi->fontSheetOfs;
-        FontDataAnsi->fontSheetOfs = ROUND_UP(FontDataAnsi->fontSheetOfs, 32);
+        sheets = (u8*)FontDataAnsi + FontDataAnsi->sheetImageOfs;
+        FontDataAnsi->sheetImageOfs = ROUND_UP(FontDataAnsi->sheetImageOfs, 32);
         ExpandFontSheet(FontDataAnsi, sheets,
-                        (u8*)FontDataAnsi + FontDataAnsi->fontSheetOfs);
+                        (u8*)FontDataAnsi + FontDataAnsi->sheetImageOfs);
 
-        FontDataSjis = (OSFontData*)((u8*)FontDataAnsi + 0x20120);
+        FontDataSjis = (OSFontHeader*)((u8*)FontDataAnsi + 0x20120);
         if (ReadFont((u8*)font + 0xF4020, OS_FONT_ENCODE_SJIS, FontDataSjis) ==
             0) {
             return FALSE;
         }
 
-        sheets = (u8*)FontDataSjis + FontDataSjis->fontSheetOfs;
-        FontDataSjis->fontSheetOfs = ROUND_UP(FontDataSjis->fontSheetOfs, 32);
+        sheets = (u8*)FontDataSjis + FontDataSjis->sheetImageOfs;
+        FontDataSjis->sheetImageOfs = ROUND_UP(FontDataSjis->sheetImageOfs, 32);
         ExpandFontSheet(FontDataSjis, sheets,
-                        (u8*)FontDataSjis + FontDataSjis->fontSheetOfs);
+                        (u8*)FontDataSjis + FontDataSjis->sheetImageOfs);
         break;
     }
 
@@ -538,7 +538,7 @@ BOOL OSInitFont(OSFontData* font) {
 
 const char* OSGetFontTexture(const char* str, void** texOut, u32* xOut,
                              u32* yOut, u32* widthOut) {
-    OSFontData* font;
+    OSFontHeader* font;
     s32 numRestTex;
     u8* font_u8;
     u32 code;
@@ -551,19 +551,19 @@ const char* OSGetFontTexture(const char* str, void** texOut, u32* xOut,
                                    &code);
 
     // Font sheet on which the texture resides
-    sheet = (s32)code / (font->texNumCol * font->texNumRow);
+    sheet = (s32)code / (font->sheetNumCol * font->sheetNumRow);
     // Font code texture
-    *texOut = (font->texSize * sheet) + ((u8*)font + font->fontSheetOfs);
+    *texOut = (font->sheetSize * sheet) + ((u8*)font + font->sheetImageOfs);
 
     // Number of succeeding textures on the sheet
     // TODO: Permuter fake(?)match
-    tmp = font->texNumRow;
-    numRestTex = code - (sheet * (font->texNumCol * tmp));
+    tmp = font->sheetNumRow;
+    numRestTex = code - (sheet * (font->sheetNumCol * tmp));
 
     // Sheet row on which the texure resides
-    row = numRestTex / font->texNumCol;
+    row = numRestTex / font->sheetNumCol;
     // Sheet column on which the texture resides
-    col = numRestTex - row * font->texNumCol;
+    col = numRestTex - row * font->sheetNumCol;
 
     // Texture position
     *xOut = col * font->cellWidth;
@@ -572,14 +572,14 @@ const char* OSGetFontTexture(const char* str, void** texOut, u32* xOut,
     if (widthOut != NULL) {
         // TODO: Permuter fake(?)match
         font_u8 = (u8*)font;
-        *widthOut = (font_u8 + font->charWidthTblOfs)[code];
+        *widthOut = (font_u8 + font->widthTableOfs)[code];
     }
 
     return str;
 }
 
 const char* OSGetFontWidth(const char* str, u32* widthOut) {
-    OSFontData* font;
+    OSFontHeader* font;
     u8* font_u8;
     u32 code;
 
@@ -589,7 +589,7 @@ const char* OSGetFontWidth(const char* str, u32* widthOut) {
     if (widthOut != NULL) {
         // TODO: Permuter fake(?)match
         font_u8 = (u8*)font;
-        *widthOut = (font_u8 + font->charWidthTblOfs)[code];
+        *widthOut = (font_u8 + font->widthTableOfs)[code];
     }
 
     return str;

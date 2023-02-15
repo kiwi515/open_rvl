@@ -238,7 +238,7 @@ void OSFatal(GXColor textColor, GXColor bgColor, const char* msg) {
 }
 
 static void Halt(void) {
-    OSFontData* msgFont;
+    OSFontHeader* msgFont;
     const char* msg;
     s32 retraceCount;
     size_t msgLen;
@@ -255,7 +255,7 @@ static void Halt(void) {
     msgBuf = OSAllocFromMEM1ArenaLo(msgLen, 32);
     params->msg = memmove(msgBuf, msg, msgLen);
 
-    msgFont = (OSFontData*)OSAllocFromMEM1ArenaLo(0xA1004, 32);
+    msgFont = (OSFontHeader*)OSAllocFromMEM1ArenaLo(0xA1004, 32);
     OSLoadFont(msgFont, OSGetArenaLo());
 
     fb = OSAllocFromMEM1ArenaLo(FATAL_FB_SIZE, 32);
@@ -270,7 +270,7 @@ static void Halt(void) {
     }
 
     ScreenReport(fb, FATAL_FB_W, FATAL_FB_H, RGB2YUV(params->textColor), 48,
-                 100, msgFont->lineFeed, params->msg);
+                 100, msgFont->leading, params->msg);
     DCFlushRange(fb, FATAL_FB_SIZE);
     VISetBlack(FALSE);
     VIFlush();
