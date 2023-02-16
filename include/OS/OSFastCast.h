@@ -8,10 +8,12 @@ extern "C" {
 static f32 __OSu16tof32(register const u16* arg) {
     register f32 ret;
 
+    // clang-format off
     asm
     {
 		psq_l ret, 0(arg), 1, 3
     }
+    // clang-format on
 
     return ret;
 }
@@ -22,10 +24,12 @@ static u16 __OSf32tou16(register f32 arg) {
     u16 ret[2];
     register u16* ptr = ret;
 
+    // clang-format off
     asm
     {
 		psq_st arg, 0(ptr), 1, 3
     }
+    // clang-format on
 
     return *ptr;
 }
@@ -35,10 +39,12 @@ static void OSf32tou16(const f32* in, u16* out) { *out = __OSf32tou16(*in); }
 static f32 __OSs16tof32(register const s16* arg) {
     register f32 ret;
 
+    // clang-format off
     asm
     {
 		psq_l ret, 0(arg), 1, 5
     }
+    // clang-format on
 
     return ret;
 }
@@ -49,10 +55,12 @@ static s16 __OSf32tos16(register f32 arg) {
     s16 ret[2];
     register s16* ptr = ret;
 
+    // clang-format off
     asm
     {
 		psq_st arg, 0(ptr), 1, 5
     }
+    // clang-format on
 
     return *ptr;
 }
