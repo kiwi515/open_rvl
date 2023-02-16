@@ -14,6 +14,7 @@ extern "C" {
 #include <OS/OSContext.h>
 #include <OS/OSError.h>
 #include <OS/OSExec.h>
+#include <OS/OSFastCast.h>
 #include <OS/OSFatal.h>
 #include <OS/OSFont.h>
 #include <OS/OSGlobals.h>
