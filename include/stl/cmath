@@ -21,9 +21,11 @@ using ::nan;
 using ::pow;
 using ::scalbn;
 using ::sin;
+using ::sinf;
 using ::sqrt;
 using ::sqrtf;
 using ::tan;
+using ::tanf;
 } // namespace std
 
 #endif
