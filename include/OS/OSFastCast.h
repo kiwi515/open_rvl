@@ -20,8 +20,9 @@ static f32 __OSu16tof32(register const u16* arg) {
 static void OSu16tof32(const u16* in, f32* out) { *out = __OSu16tof32(in); }
 
 static u16 __OSf32tou16(register f32 arg) {
-    u16 ret[2];
-    register u16* ptr = ret;
+    f32 a;
+    register f32* ptr = &a;
+    u16 r;
 
     // clang-format off
     asm {
@@ -29,7 +30,8 @@ static u16 __OSf32tou16(register f32 arg) {
     }
     // clang-format on
 
-    return *ptr;
+    r = *(u16*)ptr;
+    return r;
 }
 
 static void OSf32tou16(const f32* in, u16* out) { *out = __OSf32tou16(*in); }
@@ -49,8 +51,9 @@ static f32 __OSs16tof32(register const s16* arg) {
 static void OSs16tof32(const s16* in, f32* out) { *out = __OSs16tof32(in); }
 
 static s16 __OSf32tos16(register f32 arg) {
-    s16 ret[2];
-    register s16* ptr = ret;
+    f32 a;
+    register f32* ptr = &a;
+    s16 r;
 
     // clang-format off
     asm {
@@ -58,7 +61,8 @@ static s16 __OSf32tos16(register f32 arg) {
     }
     // clang-format on
 
-    return *ptr;
+    r = *(s16*)ptr;
+    return r;
 }
 
 static void OSf32tos16(const f32* in, s16* out) { *out = __OSf32tos16(*in); }
