@@ -209,14 +209,14 @@ RFLResult RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
     for (i = 0; i < RFL_EXPR_MAX; i++) {
         if (model2->maskTexObj[i] != NULL) {
             GXInitTexObj(model2->maskTexObj[i], maskImages[i], maskRes, maskRes,
-                         GX_TF_5, GX_TEXWRAPMODE_0, GX_TEXWRAPMODE_0, mipmap);
+                         GX_TF_RGB5A3, GX_CLAMP, GX_CLAMP, mipmap);
             if (mipmap) {
                 GXInitTexObjLOD(model2->maskTexObj[i], GX_LIN_MIP_LIN,
                                 GX_LINEAR, 0.0f, maxLod, 0.0f, 0, 0,
-                                GX_ANISOTROPY_0);
+                                GX_ANISO_1);
             } else {
                 GXInitTexObjLOD(model2->maskTexObj[i], GX_LINEAR, GX_LINEAR,
-                                0.0f, 0.0f, 0.0f, 0, 0, GX_ANISOTROPY_0);
+                                0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_1);
             }
             if (!setExpr) {
                 model2->expression = (RFLExpression)i;
@@ -254,10 +254,9 @@ GXColor RFLiGetFacelineColor(RFLCharInfo* info) {
 }
 
 void RFLLoadDrawSetting(const RFLDrawSetting* setting) {
-    GXSetAlphaCompare(GX_COMPARE_4, 0, GX_ALPHA_OP_1, GX_COMPARE_0, 0);
-    GXSetBlendMode(GX_BLEND_MODE_1, GX_BLEND_FACTOR_4, GX_BLEND_FACTOR_5,
-                   GX_LOGIC_OP_3);
-    GXSetZMode(1, GX_COMPARE_3, 1);
+    GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_OR, GX_NEVER, 0);
+    GXSetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_COPY);
+    GXSetZMode(1, GX_LEQUAL, 1);
     GXSetZCompLoc(setting->compLoc);
     GXSetColorUpdate(1);
     GXSetAlphaUpdate(1);
@@ -265,32 +264,29 @@ void RFLLoadDrawSetting(const RFLDrawSetting* setting) {
     GXSetDstAlpha(0, 0);
 
     if (setting->BOOL_0x0) {
-        GXSetTevDirect(GX_TEV_STAGE_ID_1);
-        GXSetTevSwapMode(GX_TEV_STAGE_ID_1, GX_TEV_SWAP_SEL_0,
-                         GX_TEV_SWAP_SEL_0);
-        GXSetTevOrder(GX_TEV_STAGE_ID_1, GX_TEXCOORD_INVALID, GX_TEXMAP_NULL,
-                      GX_CHAN_RGBA_0);
-        GXSetTevColorIn(GX_TEV_STAGE_ID_1, GX_TEV_COLOR_ARG_15,
-                        GX_TEV_COLOR_ARG_0, GX_TEV_COLOR_ARG_10,
-                        GX_TEV_COLOR_ARG_15);
-        GXSetTevColorOp(GX_TEV_STAGE_ID_1, GX_TEV_OP_0, GX_TEV_BIAS_0,
-                        GX_TEV_SCALE_0, 1, GX_TEVPREV);
-        GXSetTevAlphaIn(GX_TEV_STAGE_ID_1, GX_TEV_ALPHA_ARG_7,
-                        GX_TEV_ALPHA_ARG_7, GX_TEV_ALPHA_ARG_7,
-                        GX_TEV_ALPHA_ARG_0);
-        GXSetTevAlphaOp(GX_TEV_STAGE_ID_1, GX_TEV_OP_0, GX_TEV_BIAS_0,
-                        GX_TEV_SCALE_0, 1, GX_TEVPREV);
+        GXSetTevDirect(GX_TEVSTAGE1);
+        GXSetTevSwapMode(GX_TEVSTAGE1, GX_TEV_SWAP0, GX_TEV_SWAP0);
+        GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD_INVALID, GX_TEXMAP_NULL,
+                      GX_COLOR0A0);
+        GXSetTevColorIn(GX_TEVSTAGE1, GX_CC_ZERO, GX_CC_CPREV, GX_CC_RASC,
+                        GX_CC_ZERO);
+        GXSetTevColorOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_TEV_SCALE_0, 1,
+                        GX_TEVPREV);
+        GXSetTevAlphaIn(GX_TEVSTAGE1, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO,
+                        GX_CA_APREV);
+        GXSetTevAlphaOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_TEV_SCALE_0, 1,
+                        GX_TEVPREV);
 
         RFLLoadMaterialSetting(&cDefaultDrawCoreSetting2Tev);
         RFLLoadVertexSetting(&cDefaultDrawCoreSetting2Tev);
         GXSetNumChans(1);
 
-        GXSetChanCtrl(GX_CHAN_RGB_0, 1, GX_COLOR_SRC_0, GX_COLOR_SRC_0,
-                      setting->lightID, setting->diffuse, setting->attn);
-        GXSetChanCtrl(GX_CHAN_ALPHA_0, 0, GX_COLOR_SRC_0, GX_COLOR_SRC_0,
-                      GX_LIGHT_ID_0, GX_DIFFUSE_FN_0, GX_ATTN_FN_2);
-        GXSetChanAmbColor(GX_CHAN_RGB_0, setting->ambColor);
-        GXSetChanMatColor(GX_CHAN_RGB_0, cWhite);
+        GXSetChanCtrl(GX_COLOR0, 1, GX_SRC_REG, GX_SRC_REG, setting->lightID,
+                      setting->diffuse, setting->attn);
+        GXSetChanCtrl(GX_ALPHA0, 0, GX_SRC_REG, GX_SRC_REG, GX_LIGHT_NULL,
+                      GX_DF_NONE, GX_AF_NONE);
+        GXSetChanAmbColor(GX_COLOR0, setting->ambColor);
+        GXSetChanMatColor(GX_COLOR0, cWhite);
     } else {
         RFLLoadMaterialSetting(&cDefaultDrawCoreSetting1Tev);
         RFLLoadVertexSetting(&cDefaultDrawCoreSetting1Tev);
@@ -308,129 +304,126 @@ void RFLDrawXlu(const RFLCharModel* model) {
 
 void RFLLoadVertexSetting(const RFLDrawCoreSetting* setting) {
     GXClearVtxDesc();
-    GXSetVtxDesc(GX_ATTR_VTX, GX_ATTR_2);
-    GXSetVtxDesc(GX_ATTR_VTX_NRM, GX_ATTR_2);
-    GXSetVtxDesc(GX_ATTR_VTX_TEX_COORD, GX_ATTR_2);
-    GXSetVtxAttrFmt(0, GX_ATTR_VTX, 1, 3, 8);
-    GXSetVtxAttrFmt(0, GX_ATTR_VTX_NRM, 0, 3, 14);
-    GXSetVtxAttrFmt(0, GX_ATTR_VTX_TEX_COORD, 1, 3, 13);
+    GXSetVtxDesc(GX_VA_POS, GX_VA_TEX1MTXIDX);
+    GXSetVtxDesc(GX_VA_NRM, GX_VA_TEX1MTXIDX);
+    GXSetVtxDesc(GX_VA_TEX0, GX_VA_TEX1MTXIDX);
+    GXSetVtxAttrFmt(0, GX_VA_POS, 1, 3, 8);
+    GXSetVtxAttrFmt(0, GX_VA_NRM, 0, 3, 14);
+    GXSetVtxAttrFmt(0, GX_VA_TEX0, 1, 3, 13);
     GXSetNumTexGens(setting->txcGenNum);
 }
 
 void RFLLoadMaterialSetting(const RFLDrawCoreSetting* setting) {
-    GXSetTevSwapModeTable(setting->tevSwapTable, GX_TEV_COLOR_CHAN_0,
-                          GX_TEV_COLOR_CHAN_1, GX_TEV_COLOR_CHAN_2,
-                          GX_TEV_COLOR_CHAN_3);
-    GXSetTevSwapModeTable(setting->tevSwapTable + 1, GX_TEV_COLOR_CHAN_0,
-                          GX_TEV_COLOR_CHAN_3, GX_TEV_COLOR_CHAN_2,
-                          GX_TEV_COLOR_CHAN_1);
+    GXSetTevSwapModeTable(setting->tevSwapTable, GX_CH_RED, GX_CH_GREEN,
+                          GX_CH_BLUE, GX_CH_ALPHA);
+    GXSetTevSwapModeTable(setting->tevSwapTable + 1, GX_CH_RED, GX_CH_ALPHA,
+                          GX_CH_BLUE, GX_CH_GREEN);
     GXSetNumTevStages(setting->tevStageNum);
-    GXSetTevDirect(GX_TEV_STAGE_ID_0);
-    GXSetTevAlphaOp(GX_TEV_STAGE_ID_0, GX_TEV_OP_0, GX_TEV_BIAS_0,
-                    GX_TEV_SCALE_0, 1, setting->tevOutRegID);
-    GXSetTevColorOp(GX_TEV_STAGE_ID_0, GX_TEV_OP_0, GX_TEV_BIAS_0,
-                    GX_TEV_SCALE_0, 1, setting->tevOutRegID);
-    GXSetTevKColorSel(GX_TEV_STAGE_ID_0,
+    GXSetTevDirect(GX_TEVSTAGE0);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_TEV_SCALE_0, 1,
+                    setting->tevOutRegID);
+    GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_TEV_SCALE_0, 1,
+                    setting->tevOutRegID);
+    GXSetTevKColorSel(GX_TEVSTAGE0,
                       (GXTevKColorSel)(setting->tevKColorID + 12));
-    GXSetTevKAlphaSel(GX_TEV_STAGE_ID_0, GX_TEV_KALPHA_SEL_0);
+    GXSetTevKAlphaSel(GX_TEVSTAGE0, GX_TEV_KASEL_8_8);
 }
 
 void RFLDrawOpaCore(const RFLCharModel* model,
                     const RFLDrawCoreSetting* setting) {
     RFLCharModelRes* res = model->res;
 
-    GXSetTevAlphaIn(GX_TEV_STAGE_ID_0, GX_TEV_ALPHA_ARG_7, GX_TEV_ALPHA_ARG_7,
-                    GX_TEV_ALPHA_ARG_7, GX_TEV_ALPHA_ARG_6);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO,
+                    GX_CA_KONST);
 
     // Copy-paste error?
-    GXSetTevSwapMode(GX_TEV_STAGE_ID_0, setting->tevSwapTable,
+    GXSetTevSwapMode(GX_TEVSTAGE0, setting->tevSwapTable,
                      setting->tevSwapTable);
-    GXSetTevSwapMode(GX_TEV_STAGE_ID_0, setting->tevSwapTable,
+    GXSetTevSwapMode(GX_TEVSTAGE0, setting->tevSwapTable,
                      setting->tevSwapTable);
 
-    GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_MODE_1 : GX_CULL_MODE_2);
+    GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_FRONT : GX_CULL_BACK);
 
     GXLoadPosMtxImm(model->viewMtx, setting->mtxId);
     GXLoadNrmMtxImm(model->nrmMtx, setting->mtxId);
     GXSetCurrentMtx(setting->mtxId);
 
-    GXSetTexCoordGen(setting->txcID, GX_TEX_GEN_TYPE_1, GX_TEX_GEN_SRC_0, 0x3C);
-    GXSetVtxDesc(GX_ATTR_VTX_TEX_COORD, GX_ATTR_0);
-    GXSetTevOrder(GX_TEV_STAGE_ID_0, GX_TEXCOORD_INVALID, GX_TEXMAP_NULL,
-                  GX_CHAN_INVALID);
-    GXSetTevColorIn(GX_TEV_STAGE_ID_0, GX_TEV_COLOR_ARG_15, GX_TEV_COLOR_ARG_15,
-                    GX_TEV_COLOR_ARG_15, GX_TEV_COLOR_ARG_14);
+    GXSetTexCoordGen(setting->txcID, GX_TG_MTX2x4, GX_TG_POS, 0x3C);
+    GXSetVtxDesc(GX_VA_TEX0, GX_VA_PNMTXIDX);
+    GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_INVALID, GX_TEXMAP_NULL,
+                  GX_COLOR_NULL);
+    GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO,
+                    GX_CC_KONST);
 
     if (res->beardDlSize > 0) {
         GXSetTevKColor(setting->tevKColorID, cBeardColor[res->beardColor]);
-        GXSetArray(GX_ATTR_VTX, res->beardVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->beardVtxNrm, 6);
+        GXSetArray(GX_VA_POS, res->beardVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->beardVtxNrm, 6);
         GXCallDisplayList(res->beardDl, res->beardDlSize);
     }
 
     GXSetTevKColor(setting->tevKColorID, cFacelineColor[res->facelineColor]);
 
     if (res->noseDlSize > 0) {
-        GXSetArray(GX_ATTR_VTX, res->noseVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->noseVtxNrm, 6);
+        GXSetArray(GX_VA_POS, res->noseVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->noseVtxNrm, 6);
         GXCallDisplayList(res->noseDl, res->noseDlSize);
     }
 
     if (res->WORD_0x824C != 0) {
-        GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_MODE_2 : GX_CULL_MODE_1);
+        GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_BACK : GX_CULL_FRONT);
     }
 
     if (res->foreheadDlSize > 0) {
-        GXSetArray(GX_ATTR_VTX, res->foreheadVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->foreheadVtxNrm, 6);
+        GXSetArray(GX_VA_POS, res->foreheadVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->foreheadVtxNrm, 6);
         GXCallDisplayList(res->foreheadDl, res->foreheadDlSize);
     }
 
     if (res->hairDlSize > 0) {
         GXSetTevKColor(setting->tevKColorID, cHairColor[res->hairColor]);
-        GXSetArray(GX_ATTR_VTX, res->hairVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->hairVtxNrm, 6);
+        GXSetArray(GX_VA_POS, res->hairVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->hairVtxNrm, 6);
         GXCallDisplayList(res->hairDl, res->hairDlSize);
     }
 
-    GXSetTevOrder(GX_TEV_STAGE_ID_0, setting->txcID, setting->texMapID,
-                  GX_CHAN_INVALID);
-    GXSetTexCoordGen(setting->txcID, GX_TEX_GEN_TYPE_1, GX_TEX_GEN_SRC_4, 0x3C);
-    GXSetVtxDesc(GX_ATTR_VTX_TEX_COORD, GX_ATTR_2);
+    GXSetTevOrder(GX_TEVSTAGE0, setting->txcID, setting->texMapID,
+                  GX_COLOR_NULL);
+    GXSetTexCoordGen(setting->txcID, GX_TG_MTX2x4, GX_TG_TEX0, 0x3C);
+    GXSetVtxDesc(GX_VA_TEX0, GX_VA_TEX1MTXIDX);
 
     if (res->capDlSize > 0) {
-        GXSetTevColorIn(GX_TEV_STAGE_ID_0, GX_TEV_COLOR_ARG_15,
-                        GX_TEV_COLOR_ARG_14, GX_TEV_COLOR_ARG_8,
-                        GX_TEV_COLOR_ARG_14);
-        GXSetTevColorOp(GX_TEV_STAGE_ID_0, GX_TEV_OP_0, GX_TEV_BIAS_0,
-                        GX_TEV_SCALE_3, 1, setting->tevOutRegID);
+        GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_KONST, GX_CC_TEXC,
+                        GX_CC_KONST);
+        GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_TEV_SCALE_3, 1,
+                        setting->tevOutRegID);
         GXSetTevKColor(setting->tevKColorID,
                        cFavoriteColor[res->favoriteColor]);
 
         GXLoadTexObj(&res->capTexObj, setting->texMapID);
-        GXSetArray(GX_ATTR_VTX, res->capVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->capVtxNrm, 6);
-        GXSetArray(GX_ATTR_VTX_TEX_COORD, res->capVtxTxc, 4);
+        GXSetArray(GX_VA_POS, res->capVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->capVtxNrm, 6);
+        GXSetArray(GX_VA_TEX0, res->capVtxTxc, 4);
         GXCallDisplayList(res->capDl, res->capDlSize);
 
-        GXSetTevColorOp(GX_TEV_STAGE_ID_0, GX_TEV_OP_0, GX_TEV_BIAS_0,
-                        GX_TEV_SCALE_0, 1, setting->tevOutRegID);
+        GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_TEV_SCALE_0, 1,
+                        setting->tevOutRegID);
     }
 
-    GXSetTevColorIn(GX_TEV_STAGE_ID_0, GX_TEV_COLOR_ARG_14, GX_TEV_COLOR_ARG_8,
-                    GX_TEV_COLOR_ARG_9, GX_TEV_COLOR_ARG_15);
+    GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_KONST, GX_CC_TEXC, GX_CC_TEXA,
+                    GX_CC_ZERO);
     GXSetTevKColor(setting->tevKColorID, cFacelineColor[res->facelineColor]);
-    GXSetTevSwapMode(GX_TEV_STAGE_ID_0, setting->tevSwapTable,
+    GXSetTevSwapMode(GX_TEVSTAGE0, setting->tevSwapTable,
                      (GXTevSwapSel)(setting->tevSwapTable + 1));
 
     if (res->WORD_0x824C != 0) {
-        GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_MODE_1 : GX_CULL_MODE_2);
+        GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_FRONT : GX_CULL_BACK);
     }
 
     GXLoadTexObj(&res->mascaraTexObj, setting->texMapID);
-    GXSetArray(GX_ATTR_VTX, res->faceVtxPos, 6);
-    GXSetArray(GX_ATTR_VTX_NRM, res->faceVtxNrm, 6);
-    GXSetArray(GX_ATTR_VTX_TEX_COORD, res->faceVtxTxc, 4);
+    GXSetArray(GX_VA_POS, res->faceVtxPos, 6);
+    GXSetArray(GX_VA_NRM, res->faceVtxNrm, 6);
+    GXSetArray(GX_VA_TEX0, res->faceVtxTxc, 4);
     GXCallDisplayList(res->faceDl, res->faceDlSize);
 }
 
@@ -438,49 +431,47 @@ void RFLDrawXluCore(const RFLCharModel* model,
                     const RFLDrawCoreSetting* setting) {
     RFLCharModelRes* res = model->res;
 
-    GXSetTevOrder(GX_TEV_STAGE_ID_0, setting->txcID, setting->texMapID,
-                  GX_CHAN_INVALID);
-    GXSetTevAlphaIn(GX_TEV_STAGE_ID_0, GX_TEV_ALPHA_ARG_7, GX_TEV_ALPHA_ARG_7,
-                    GX_TEV_ALPHA_ARG_7, GX_TEV_ALPHA_ARG_4);
-    GXSetTevSwapMode(GX_TEV_STAGE_ID_0, setting->tevSwapTable,
+    GXSetTevOrder(GX_TEVSTAGE0, setting->txcID, setting->texMapID,
+                  GX_COLOR_NULL);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO,
+                    GX_CA_TEXA);
+    GXSetTevSwapMode(GX_TEVSTAGE0, setting->tevSwapTable,
                      setting->tevSwapTable);
 
     GXLoadPosMtxImm(model->viewMtx, setting->mtxId);
     GXLoadNrmMtxImm(model->nrmMtx, setting->mtxId);
     GXSetCurrentMtx(setting->mtxId);
 
-    GXSetTexCoordGen(setting->txcID, GX_TEX_GEN_TYPE_1, GX_TEX_GEN_SRC_4, 0x3C);
-    GXSetTevColorIn(GX_TEV_STAGE_ID_0, GX_TEV_COLOR_ARG_15, GX_TEV_COLOR_ARG_15,
-                    GX_TEV_COLOR_ARG_15, GX_TEV_COLOR_ARG_8);
-    GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_MODE_1 : GX_CULL_MODE_2);
+    GXSetTexCoordGen(setting->txcID, GX_TG_MTX2x4, GX_TG_TEX0, 0x3C);
+    GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO,
+                    GX_CC_TEXC);
+    GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_FRONT : GX_CULL_BACK);
 
     GXLoadTexObj(model->maskTexObj[model->expression], setting->texMapID);
-    GXSetArray(GX_ATTR_VTX, res->maskVtxPos, 6);
-    GXSetArray(GX_ATTR_VTX_NRM, res->maskVtxNrm, 6);
-    GXSetArray(GX_ATTR_VTX_TEX_COORD, res->maskVtxTxc, 4);
+    GXSetArray(GX_VA_POS, res->maskVtxPos, 6);
+    GXSetArray(GX_VA_NRM, res->maskVtxNrm, 6);
+    GXSetArray(GX_VA_TEX0, res->maskVtxTxc, 4);
     GXCallDisplayList(res->maskDl, res->maskDlSize);
 
     if (res->noselineDlSize > 0) {
-        GXSetTevColorIn(GX_TEV_STAGE_ID_0, GX_TEV_COLOR_ARG_15,
-                        GX_TEV_COLOR_ARG_15, GX_TEV_COLOR_ARG_15,
-                        GX_TEV_COLOR_ARG_15);
+        GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO,
+                        GX_CC_ZERO);
         GXLoadTexObj(&res->noseTexObj, setting->texMapID);
-        GXSetArray(GX_ATTR_VTX, res->noselineVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->noselineVtxNrm, 6);
-        GXSetArray(GX_ATTR_VTX_TEX_COORD, res->noselineVtxTxc, 4);
+        GXSetArray(GX_VA_POS, res->noselineVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->noselineVtxNrm, 6);
+        GXSetArray(GX_VA_TEX0, res->noselineVtxTxc, 4);
         GXCallDisplayList(res->noselineDl, res->noselineDlSize);
     }
 
     if (res->glassesDlSize > 0) {
         GXSetTevKColor(setting->tevKColorID, cGlassColor[res->glassesColor]);
-        GXSetCullMode(GX_CULL_MODE_0);
-        GXSetTevColorIn(GX_TEV_STAGE_ID_0, GX_TEV_COLOR_ARG_15,
-                        GX_TEV_COLOR_ARG_14, GX_TEV_COLOR_ARG_8,
-                        GX_TEV_COLOR_ARG_15);
+        GXSetCullMode(GX_CULL_NONE);
+        GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_KONST, GX_CC_TEXC,
+                        GX_CC_ZERO);
         GXLoadTexObj(&res->glassesTexObj, setting->texMapID);
-        GXSetArray(GX_ATTR_VTX, res->glassesVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->glassesVtxNrm, 6);
-        GXSetArray(GX_ATTR_VTX_TEX_COORD, res->glassesVtxTxc, 4);
+        GXSetArray(GX_VA_POS, res->glassesVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->glassesVtxNrm, 6);
+        GXSetArray(GX_VA_TEX0, res->glassesVtxTxc, 4);
         GXCallDisplayList(res->glassesDl, res->glassesDlSize);
     }
 }
@@ -663,7 +654,7 @@ void RFLiInitTexRes(GXTexObj* texObj, RFLPartShpTex part, u16 file,
     GXInitTexObj(texObj, buffer, tex->width, tex->height, tex->format,
                  tex->wrapS, tex->wrapT, 0);
     GXInitTexObjLOD(texObj, GX_LINEAR, GX_LINEAR, 0.0f, 0.0f, 0.0f, 0, 0,
-                    GX_ANISOTROPY_0);
+                    GX_ANISO_1);
     RFLiFree(tex);
 }
 
@@ -681,73 +672,73 @@ void RFLDrawShape(const RFLCharModel* model) {
     RFLCharModelRes* res = model->res;
 
     GXClearVtxDesc();
-    GXSetVtxDesc(GX_ATTR_VTX, GX_ATTR_2);
-    GXSetVtxDesc(GX_ATTR_VTX_NRM, GX_ATTR_2);
-    GXSetVtxAttrFmt(0, GX_ATTR_VTX, 1, 3, 8);
-    GXSetVtxAttrFmt(0, GX_ATTR_VTX_NRM, 0, 3, 14);
-    GXSetVtxAttrFmt(0, GX_ATTR_VTX_TEX_COORD, 1, 3, 13);
+    GXSetVtxDesc(GX_VA_POS, GX_VA_TEX1MTXIDX);
+    GXSetVtxDesc(GX_VA_NRM, GX_VA_TEX1MTXIDX);
+    GXSetVtxAttrFmt(0, GX_VA_POS, 1, 3, 8);
+    GXSetVtxAttrFmt(0, GX_VA_NRM, 0, 3, 14);
+    GXSetVtxAttrFmt(0, GX_VA_TEX0, 1, 3, 13);
 
     GXLoadPosMtxImm(model->viewMtx, 0);
     GXLoadNrmMtxImm(model->nrmMtx, 0);
     GXSetCurrentMtx(0);
 
     if (res->beardDlSize > 0) {
-        GXSetArray(GX_ATTR_VTX, res->beardVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->beardVtxNrm, 6);
+        GXSetArray(GX_VA_POS, res->beardVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->beardVtxNrm, 6);
         GXCallDisplayList(res->beardDl, res->beardDlSize);
     }
 
     if (res->noseDlSize > 0) {
-        GXSetArray(GX_ATTR_VTX, res->noseVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->noseVtxNrm, 6);
+        GXSetArray(GX_VA_POS, res->noseVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->noseVtxNrm, 6);
         GXCallDisplayList(res->noseDl, res->noseDlSize);
     }
 
     if (res->WORD_0x824C > 0) {
         GXGetCullMode(&cullMode);
         switch (cullMode) {
-        case GX_CULL_MODE_2:
-            GXSetCullMode(GX_CULL_MODE_1);
+        case GX_CULL_BACK:
+            GXSetCullMode(GX_CULL_FRONT);
             break;
-        case GX_CULL_MODE_1:
-            GXSetCullMode(GX_CULL_MODE_2);
+        case GX_CULL_FRONT:
+            GXSetCullMode(GX_CULL_BACK);
             break;
         }
     }
 
     if (res->foreheadDlSize > 0) {
-        GXSetArray(GX_ATTR_VTX, res->foreheadVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->foreheadVtxNrm, 6);
+        GXSetArray(GX_VA_POS, res->foreheadVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->foreheadVtxNrm, 6);
         GXCallDisplayList(res->foreheadDl, res->foreheadDlSize);
     }
 
     if (res->hairDlSize > 0) {
-        GXSetArray(GX_ATTR_VTX, res->hairVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->hairVtxNrm, 6);
+        GXSetArray(GX_VA_POS, res->hairVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->hairVtxNrm, 6);
         GXCallDisplayList(res->hairDl, res->hairDlSize);
     }
 
-    GXSetVtxDesc(GX_ATTR_VTX_TEX_COORD, GX_ATTR_2);
+    GXSetVtxDesc(GX_VA_TEX0, GX_VA_TEX1MTXIDX);
     if (res->capDlSize > 0) {
-        GXSetArray(GX_ATTR_VTX, res->capVtxPos, 6);
-        GXSetArray(GX_ATTR_VTX_NRM, res->capVtxNrm, 6);
-        GXSetArray(GX_ATTR_VTX_TEX_COORD, res->capVtxTxc, 4);
+        GXSetArray(GX_VA_POS, res->capVtxPos, 6);
+        GXSetArray(GX_VA_NRM, res->capVtxNrm, 6);
+        GXSetArray(GX_VA_TEX0, res->capVtxTxc, 4);
         GXCallDisplayList(res->capDl, res->capDlSize);
     }
 
     if (res->WORD_0x824C > 0) {
         switch (cullMode) {
-        case GX_CULL_MODE_2:
-            GXSetCullMode(GX_CULL_MODE_2);
+        case GX_CULL_BACK:
+            GXSetCullMode(GX_CULL_BACK);
             break;
-        case GX_CULL_MODE_1:
-            GXSetCullMode(GX_CULL_MODE_1);
+        case GX_CULL_FRONT:
+            GXSetCullMode(GX_CULL_FRONT);
             break;
         }
     }
 
-    GXSetArray(GX_ATTR_VTX, res->faceVtxPos, 6);
-    GXSetArray(GX_ATTR_VTX_NRM, res->faceVtxNrm, 6);
-    GXSetArray(GX_ATTR_VTX_TEX_COORD, res->faceVtxTxc, 4);
+    GXSetArray(GX_VA_POS, res->faceVtxPos, 6);
+    GXSetArray(GX_VA_NRM, res->faceVtxNrm, 6);
+    GXSetArray(GX_VA_TEX0, res->faceVtxTxc, 4);
     GXCallDisplayList(res->faceDl, res->faceDlSize);
 }

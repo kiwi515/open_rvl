@@ -30,46 +30,46 @@ void GXInitLightSpot(GXLightObj* light, f32 angle, GXSpotFn fn) {
     f32 a, b, c, d;
 
     if (angle <= 0.0f || angle > 90.0f) {
-        fn = GX_SPOT_FN_0;
+        fn = GX_SP_OFF;
     }
 
     rad = cosf((3.1415927f * angle) / 180.0f);
 
     switch (fn) {
-    case GX_SPOT_FN_1:
+    case GX_SP_FLAT:
         a = -1000.0f * rad;
         b = 1000.0f;
         c = 0.0f;
         break;
-    case GX_SPOT_FN_2:
+    case GX_SP_COS:
         b = 1.0f / (1.0f - rad);
         a = -rad * b;
         c = 0.0f;
         break;
-    case GX_SPOT_FN_3:
+    case GX_SP_COS2:
         c = 1.0f / (1.0f - rad);
         a = 0.0f;
         b = -rad * c;
         break;
-    case GX_SPOT_FN_4:
+    case GX_SP_SHARP:
         d = 1.0f / ((1.0f - rad) * (1.0f - rad));
         a = (rad * (rad - 2.0f)) * d;
         b = 2.0f * d;
         c = -d;
         break;
-    case GX_SPOT_FN_5:
+    case GX_SP_RING1:
         d = 1.0f / ((1.0f - rad) * (1.0f - rad));
         c = -4.0f * d;
         a = c * rad;
         b = 4.0f * (1.0f + rad) * d;
         break;
-    case GX_SPOT_FN_6:
+    case GX_SP_RING2:
         d = 1.0f / ((1.0f - rad) * (1.0f - rad));
         a = 1.0f - 2.0f * rad * rad * d;
         b = 4.0f * rad * d;
         c = -2.0f * d;
         break;
-    case GX_SPOT_FN_0:
+    case GX_SP_OFF:
     default:
         a = 1.0f;
         b = 0.0f;
@@ -86,30 +86,30 @@ void GXInitLightDistAttn(GXLightObj* light, f32 f1, f32 f2, GXDistAttnFn fn) {
     f32 a, b, c;
 
     if (f1 < 0.0f) {
-        fn = GX_DIST_ATTN_FN_0;
+        fn = GX_DA_OFF;
     }
 
     if (f2 <= 0.0f || f2 >= 1.0f) {
-        fn = GX_DIST_ATTN_FN_0;
+        fn = GX_DA_OFF;
     }
 
     switch (fn) {
-    case GX_DIST_ATTN_FN_1:
+    case GX_DA_GENTLE:
         a = 1.0f;
         b = (1.0f - f2) / (f2 * f1);
         c = 0.0f;
         break;
-    case GX_DIST_ATTN_FN_2:
+    case GX_DA_MEDIUM:
         a = 1.0f;
         b = (0.5f * (1.0f - f2)) / (f2 * f1);
         c = (0.5f * (1.0f - f2)) / (f1 * (f2 * f1));
         break;
-    case GX_DIST_ATTN_FN_3:
+    case GX_DA_STEEP:
         a = 1.0f;
         b = 0.0f;
         c = (1.0f - f2) / (f1 * (f2 * f1));
         break;
-    case GX_DIST_ATTN_FN_0:
+    case GX_DA_OFF:
     default:
         a = 1.0f;
         b = 0.0f;
@@ -241,29 +241,29 @@ void GXSetChanAmbColor(GXChannelID chan, GXColor color) {
     u32 colorId;
 
     switch (chan) {
-    case GX_CHAN_RGB_0:
+    case GX_COLOR0:
         ambColor =
             __rlwimi(*(u32*)&__GXData->ambColors[0], *(u32*)&color, 0, 0, 23);
         colorId = 0;
         break;
-    case GX_CHAN_RGB_1:
+    case GX_COLOR1:
         ambColor =
             __rlwimi(*(u32*)&__GXData->ambColors[1], *(u32*)&color, 0, 0, 23);
         colorId = 1;
         break;
-    case GX_CHAN_ALPHA_0:
+    case GX_ALPHA0:
         ambColor = __rlwimi(*(u32*)&__GXData->ambColors[0], color.a, 0, 24, 31);
         colorId = 0;
         break;
-    case GX_CHAN_ALPHA_1:
+    case GX_ALPHA1:
         ambColor = __rlwimi(*(u32*)&__GXData->ambColors[1], color.a, 0, 24, 31);
         colorId = 1;
         break;
-    case GX_CHAN_RGBA_0:
+    case GX_COLOR0A0:
         ambColor = *(u32*)&color;
         colorId = 0;
         break;
-    case GX_CHAN_RGBA_1:
+    case GX_COLOR1A1:
         ambColor = *(u32*)&color;
         colorId = 1;
         break;
@@ -280,29 +280,29 @@ void GXSetChanMatColor(GXChannelID chan, GXColor color) {
     u32 colorId;
 
     switch (chan) {
-    case GX_CHAN_RGB_0:
+    case GX_COLOR0:
         matColor =
             __rlwimi(*(u32*)&__GXData->matColors[0], *(u32*)&color, 0, 0, 23);
         colorId = 0;
         break;
-    case GX_CHAN_RGB_1:
+    case GX_COLOR1:
         matColor =
             __rlwimi(*(u32*)&__GXData->matColors[1], *(u32*)&color, 0, 0, 23);
         colorId = 1;
         break;
-    case GX_CHAN_ALPHA_0:
+    case GX_ALPHA0:
         matColor = __rlwimi(*(u32*)&__GXData->matColors[0], color.a, 0, 24, 31);
         colorId = 0;
         break;
-    case GX_CHAN_ALPHA_1:
+    case GX_ALPHA1:
         matColor = __rlwimi(*(u32*)&__GXData->matColors[1], color.a, 0, 24, 31);
         colorId = 1;
         break;
-    case GX_CHAN_RGBA_0:
+    case GX_COLOR0A0:
         matColor = *(u32*)&color;
         colorId = 0;
         break;
-    case GX_CHAN_RGBA_1:
+    case GX_COLOR1A1:
         matColor = *(u32*)&color;
         colorId = 1;
         break;
@@ -328,20 +328,19 @@ void GXSetChanCtrl(GXChannelID chan, u8 r4, GXColorSrc src0, GXColorSrc src1,
     GX_BITFIELD_SET(field, 30, 1, r4);
     GX_BITFIELD_SET(field, 31, 1, src1);
     GX_BITFIELD_SET(field, 25, 1, src0);
-    GX_BITFIELD_SET(field, 23, 2,
-                    (attnFn == GX_ATTN_FN_0) ? GX_DIFFUSE_FN_0 : diffFn);
-    GX_BITFIELD_SET(field, 22, 1, attnFn != GX_ATTN_FN_2);
-    GX_BITFIELD_SET(field, 21, 1, attnFn != GX_ATTN_FN_0);
+    GX_BITFIELD_SET(field, 23, 2, (attnFn == GX_AF_SPEC) ? GX_DF_NONE : diffFn);
+    GX_BITFIELD_SET(field, 22, 1, attnFn != GX_AF_NONE);
+    GX_BITFIELD_SET(field, 21, 1, attnFn != GX_AF_SPEC);
     GX_BITFIELD_SET(field, 26, 4, (u32)light);
     GX_BITFIELD_SET(field, 17, 4, (u32)light >> 4);
 
     __GXData->WORDS_0xB8[idx] = field;
     __GXData->dirtyFlags |= (0x1000 << (idx));
 
-    if (chan == GX_CHAN_RGBA_0) {
+    if (chan == GX_COLOR0A0) {
         __GXData->WORD_0xC0 = field;
         __GXData->dirtyFlags |= 0x5000;
-    } else if (chan == GX_CHAN_RGBA_1) {
+    } else if (chan == GX_COLOR1A1) {
         __GXData->WORD_0xC4 = field;
         __GXData->dirtyFlags |= 0xA000;
     }
