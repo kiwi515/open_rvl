@@ -9,9 +9,8 @@ static f32 __OSu16tof32(register const u16* arg) {
     register f32 ret;
 
     // clang-format off
-    asm
-    {
-		psq_l ret, 0(arg), 1, 3
+    asm {
+        psq_l ret, 0(arg), 1, 3
     }
     // clang-format on
 
@@ -25,9 +24,8 @@ static u16 __OSf32tou16(register f32 arg) {
     register u16* ptr = ret;
 
     // clang-format off
-    asm
-    {
-		psq_st arg, 0(ptr), 1, 3
+    asm {
+        psq_st arg, 0(ptr), 1, 3
     }
     // clang-format on
 
@@ -40,9 +38,8 @@ static f32 __OSs16tof32(register const s16* arg) {
     register f32 ret;
 
     // clang-format off
-    asm
-    {
-		psq_l ret, 0(arg), 1, 5
+    asm {
+        psq_l ret, 0(arg), 1, 5
     }
     // clang-format on
 
@@ -56,9 +53,8 @@ static s16 __OSf32tos16(register f32 arg) {
     register s16* ptr = ret;
 
     // clang-format off
-    asm
-    {
-		psq_st arg, 0(ptr), 1, 5
+    asm {
+        psq_st arg, 0(ptr), 1, 5
     }
     // clang-format on
 
