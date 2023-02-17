@@ -7,7 +7,7 @@ extern "C" {
 #endif
 
 void PSVECAdd(const Vec*, const Vec*, Vec*);
-void PSVECAdd(const Vec*, Vec*, f32);
+void PSVECScale(const Vec*, Vec*, f32);
 void PSVECNormalize(const Vec*, Vec*);
 f32 PSVECMag(const Vec*);
 f32 PSVECDotProduct(const Vec*, const Vec*);
