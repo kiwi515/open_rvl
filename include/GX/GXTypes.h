@@ -525,7 +525,7 @@ typedef enum _GXTexCoordID {
     GX_TEXCOORD7,
 
     GX_MAX_TEXCOORD,
-    GX_TEXCOORD_INVALID = 255
+    GX_TEXCOORD_NULL = 255
 } GXTexCoordID;
 
 typedef enum _GXTexFilter {
