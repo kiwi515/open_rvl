@@ -6,6 +6,7 @@
 extern "C" {
 #endif
 
+void GXSetTevOp(GXTevStageID, UNKWORD);
 void GXSetTevColorIn(GXTevStageID, GXTevColorArg, GXTevColorArg, GXTevColorArg,
                      GXTevColorArg);
 void GXSetTevAlphaIn(GXTevStageID, GXTevAlphaArg, GXTevAlphaArg, GXTevAlphaArg,
