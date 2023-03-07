@@ -5,23 +5,25 @@
 extern "C" {
 #endif
 
-static asm void OSInitFastCast(void) {
+static void OSInitFastCast(void) {
     // clang-format off
-    li r3, 4
-    oris r3, r3, 4
-    mtspr 0x392, r3
+    asm {
+        li r3, 4
+        oris r3, r3, 4
+        mtspr 0x392, r3
 
-    li r3, 5
-    oris r3, r3, 5
-    mtspr 0x393, r3
-    
-    li r3, 6
-    oris r3, r3, 6
-    mtspr 0x394, r3
-    
-    li r3, 7
-    oris r3, r3, 7
-    mtspr 0x395, r3
+        li r3, 5
+        oris r3, r3, 5
+        mtspr 0x393, r3
+        
+        li r3, 6
+        oris r3, r3, 6
+        mtspr 0x394, r3
+        
+        li r3, 7
+        oris r3, r3, 7
+        mtspr 0x395, r3
+    }
     // clang-format on
 }
 
