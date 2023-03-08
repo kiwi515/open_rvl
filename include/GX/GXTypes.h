@@ -24,6 +24,10 @@ typedef struct _GXColor {
     u8 r, g, b, a;
 } GXColor;
 
+typedef struct _GXColorS10 {
+    s16 r, g, b, a;
+} GXColorS10;
+
 /**
  * Enums
  */
