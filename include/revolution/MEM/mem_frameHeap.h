@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_MEM_FRAME_HEAP_H
 #define RVL_SDK_MEM_FRAME_HEAP_H
 #include <revolution/MEM/mem_heapCommon.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

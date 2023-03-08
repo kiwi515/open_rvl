@@ -2,7 +2,7 @@
 #define RVL_SDK_OS_GLOBALS_H
 #include <revolution/OS/OSAddress.h>
 #include <revolution/OS/OSThread.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

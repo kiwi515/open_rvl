@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_VF_PF_STRING_H
 #define RVL_SDK_VF_PF_STRING_H
 #include <revolution/VF/pf.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

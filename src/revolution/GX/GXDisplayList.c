@@ -1,9 +1,4 @@
-#include <revolution/GX/GXDisplayList.h>
-#include <revolution/GX/GXFifo.h>
-#include <revolution/GX/GXGeometry.h>
-#include <revolution/GX/GXInit.h>
-#include <revolution/GX/GXMisc.h>
-
+#include <revolution/GX.h>
 #include <revolution/OS.h>
 #include <string.h>
 
@@ -28,6 +23,7 @@ void GXBeginDisplayList(void* list, u32 size) {
     fifo->count = 0;
     fifo->readPtr = list;
     fifo->writePtr = list;
+
     __GXData->dlistBegan = TRUE;
 
     GXGetCPUFifo(&OldCPUFifo);

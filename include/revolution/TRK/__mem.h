@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_TRK___MEM_H
 #define RVL_SDK_TRK___MEM_H
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

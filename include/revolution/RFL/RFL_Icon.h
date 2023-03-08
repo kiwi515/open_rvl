@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_RFL_ICON_H
 #define RVL_SDK_RFL_ICON_H
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

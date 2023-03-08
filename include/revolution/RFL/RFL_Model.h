@@ -6,7 +6,7 @@
 #include <revolution/RFL/RFL_DataUtility.h>
 #include <revolution/RFL/RFL_MiddleDatabase.h>
 #include <revolution/RFL/RFL_System.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

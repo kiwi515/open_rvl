@@ -1,6 +1,5 @@
 #include <math.h>
-#include <revolution/GX/GXInit.h>
-#include <revolution/GX/GXLight.h>
+#include <revolution/GX.h>
 
 void GXInitLightAttn(GXLightObj* light, f32 aa, f32 ab, f32 ac, f32 ka, f32 kb,
                      f32 kc) {
@@ -319,8 +318,9 @@ void GXSetNumChans(u8 num) {
     __GXData->dirtyFlags |= 0x4;
 }
 
-void GXSetChanCtrl(GXChannelID chan, u8 r4, GXColorSrc src0, GXColorSrc src1,
-                   GXLightID light, GXDiffuseFn diffFn, GXAttnFn attnFn) {
+void GXSetChanCtrl(GXChannelID chan, GXBool8 r4, GXColorSrc src0,
+                   GXColorSrc src1, GXLightID light, GXDiffuseFn diffFn,
+                   GXAttnFn attnFn) {
     u32 field = 0;
     const u32 idx = chan & 3;
 

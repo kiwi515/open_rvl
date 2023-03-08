@@ -1,31 +1,26 @@
-#include <revolution/GX/GXAttr.h>
-#include <revolution/GX/GXBump.h>
-#include <revolution/GX/GXGeometry.h>
-#include <revolution/GX/GXInit.h>
-#include <revolution/GX/GXTexture.h>
-#include <revolution/GX/GXTransform.h>
+#include <revolution/GX.h>
 
 #ifndef NON_MATCHING
 #error __GXSetAmbMat has not yet been matched.
 #endif
 inline void __GXSetAmbMat(u32 flags) {
     if (flags & GX_DIRTY_AMB_COLOR0) {
-        WGPIPE.c = 0x10;
+        WGPIPE.c = GX_FIFO_ACCESS_XF;
         WGPIPE.i = 0x100A;
         WGPIPE.i = *(u32*)&__GXData->ambColors[0];
     }
     if (flags & GX_DIRTY_AMB_COLOR1) {
-        WGPIPE.c = 0x10;
+        WGPIPE.c = GX_FIFO_ACCESS_XF;
         WGPIPE.i = 0x100B;
         WGPIPE.i = *(u32*)&__GXData->ambColors[1];
     }
     if (flags & GX_DIRTY_MAT_COLOR0) {
-        WGPIPE.c = 0x10;
+        WGPIPE.c = GX_FIFO_ACCESS_XF;
         WGPIPE.i = 0x100C;
         WGPIPE.i = *(u32*)&__GXData->matColors[0];
     }
     if (flags & GX_DIRTY_MAT_COLOR1) {
-        WGPIPE.c = 0x10;
+        WGPIPE.c = GX_FIFO_ACCESS_XF;
         WGPIPE.i = 0x100D;
         WGPIPE.i = *(u32*)&__GXData->matColors[1];
     }
@@ -41,7 +36,7 @@ inline void __GXSetLightChan(u32 flags) {
 
     if (flags & 0x1000000) {
         u32 r5 = (__GXData->WORD_0x254 & 0x70) >> 4;
-        WGPIPE.c = 0x10;
+        WGPIPE.c = GX_FIFO_ACCESS_XF;
         WGPIPE.i = 0x1009;
         WGPIPE.i = r5;
     }
@@ -50,7 +45,7 @@ inline void __GXSetLightChan(u32 flags) {
     i = 0;
     for (; bit != 0; i++, val++, bit >>= 1) {
         if (bit & 0x1) {
-            WGPIPE.c = 0x10;
+            WGPIPE.c = GX_FIFO_ACCESS_XF;
             WGPIPE.i = val;
             WGPIPE.i = __GXData->WORDS_0xB8[i];
         }
@@ -67,7 +62,7 @@ inline void __GXSetTexGen(u32 flags) {
 
     if (flags & 0x2000000) {
         u32 r5 = __GXData->WORD_0x254 & 0xF;
-        WGPIPE.c = 0x10;
+        WGPIPE.c = GX_FIFO_ACCESS_XF;
         WGPIPE.i = 0x103F;
         WGPIPE.i = r5;
     }
@@ -78,11 +73,11 @@ inline void __GXSetTexGen(u32 flags) {
         u32 r5 = val + 0x10;
 
         if (bit & 0x1) {
-            WGPIPE.c = 0x10;
+            WGPIPE.c = GX_FIFO_ACCESS_XF;
             WGPIPE.i = val;
             WGPIPE.i = __GXData->WORDS_0xC8[i];
 
-            WGPIPE.c = 0x10;
+            WGPIPE.c = GX_FIFO_ACCESS_XF;
             WGPIPE.i = r5;
             WGPIPE.i = __GXData->WORDS_0xE8[i];
         }
@@ -141,7 +136,7 @@ void __GXSetDirtyState(void) {
     __GXData->dirtyFlags = 0;
 }
 
-void GXBegin(GXPrimitive prim, UNKWORD fmtIndex, u16 r5) {
+void GXBegin(GXPrimitive prim, UNKWORD fmtIndex, u16 num) {
     if (__GXData->dirtyFlags != 0) {
         __GXSetDirtyState();
     }
@@ -151,7 +146,7 @@ void GXBegin(GXPrimitive prim, UNKWORD fmtIndex, u16 r5) {
     }
 
     WGPIPE.c = fmtIndex | prim;
-    WGPIPE.s = r5;
+    WGPIPE.s = num;
 }
 
 void __GXSendFlushPrim(void) {
@@ -171,7 +166,7 @@ void __GXSendFlushPrim(void) {
 void GXSetLineWidth(u8 width, UNKWORD r5) {
     GX_BITFIELD_SET(__GXData->WORD_0x7C, 24, 8, width);
     GX_BITFIELD_SET(__GXData->WORD_0x7C, 13, 3, r5);
-    WGPIPE.c = 0x61;
+    WGPIPE.c = GX_FIFO_ACCESS_BP;
     WGPIPE.i = __GXData->WORD_0x7C;
     __GXData->SHORTS_0x0[1] = 0;
 }
@@ -179,15 +174,15 @@ void GXSetLineWidth(u8 width, UNKWORD r5) {
 void GXSetPointSize(u8 size, UNKWORD r5) {
     GX_BITFIELD_SET(__GXData->WORD_0x7C, 16, 8, size);
     GX_BITFIELD_SET(__GXData->WORD_0x7C, 10, 3, r5);
-    WGPIPE.c = 0x61;
+    WGPIPE.c = GX_FIFO_ACCESS_BP;
     WGPIPE.i = __GXData->WORD_0x7C;
     __GXData->SHORTS_0x0[1] = 0;
 }
 
-void GXEnableTexOffsets(UNKWORD coordId, u8 r4, u8 r5) {
+void GXEnableTexOffsets(UNKWORD coordId, GXBool8 r4, GXBool8 r5) {
     GX_BITFIELD_SET(__GXData->WORDS_0x108[coordId], 13, 1, r4);
     GX_BITFIELD_SET(__GXData->WORDS_0x108[coordId], 12, 1, r5);
-    WGPIPE.c = 0x61;
+    WGPIPE.c = GX_FIFO_ACCESS_BP;
     WGPIPE.i = __GXData->WORDS_0x108[coordId];
     __GXData->SHORTS_0x0[1] = 0;
 }
@@ -206,14 +201,14 @@ void GXGetCullMode(GXCullMode* out) {
 
 void GXSetCoPlanar(u8 enable) {
     GX_BITFIELD_SET(__GXData->WORD_0x254, 12, 1, enable);
-    WGPIPE.c = 0x61;
+    WGPIPE.c = GX_FIFO_ACCESS_BP;
     WGPIPE.i = 0xFE080000;
-    WGPIPE.c = 0x61;
+    WGPIPE.c = GX_FIFO_ACCESS_BP;
     WGPIPE.i = __GXData->WORD_0x254;
 }
 
 void __GXSetGenMode(void) {
-    WGPIPE.c = 0x61;
+    WGPIPE.c = GX_FIFO_ACCESS_BP;
     WGPIPE.i = __GXData->WORD_0x254;
     __GXData->SHORTS_0x0[1] = 0;
 }

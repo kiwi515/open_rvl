@@ -2,8 +2,8 @@
 #define RVL_SDK_MEM_HEAP_COMMON_H
 #include <revolution/MEM/mem_list.h>
 #include <revolution/OS.h>
+#include <revolution/types.h>
 #include <string.h>
-#include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -2,7 +2,7 @@
 #define RVL_SDK_RFL_NAND_LOADER_H
 #include <revolution/RFL/RFL_Model.h>
 #include <revolution/RFL/RFL_System.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

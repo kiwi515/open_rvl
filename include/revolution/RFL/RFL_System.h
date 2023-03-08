@@ -4,7 +4,7 @@
 #include <revolution/NAND.h>
 #include <revolution/OS.h>
 #include <revolution/RFL/RFL_Icon.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
