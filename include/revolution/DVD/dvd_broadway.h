@@ -1,6 +1,6 @@
-#ifndef RVL_SDK_DVD_DVD_BROADWAY_H
-#define RVL_SDK_DVD_DVD_BROADWAY_H
-#include <types.h>
+#ifndef RVL_SDK_DVD_BROADWAY_H
+#define RVL_SDK_DVD_BROADWAY_H
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -13,8 +13,8 @@ typedef struct ESPTmd;
 typedef struct OSAlarm;
 
 /**
- * Some named from asserts, mostly from WiiBrew.
- * Is "Int" for "interrupt"?
+ * https://wiibrew.org/wiki//dev/di
+ * Names adjusted to be closer to those seen in assertions
  */
 typedef enum {
     DVD_INTTYPE_TC = (1 << 0),   //!< Transaction callback?

@@ -1,6 +1,6 @@
-#ifndef RVL_SDK_DVD_DVDFS_H
-#define RVL_SDK_DVD_DVDFS_H
-#include <types.h>
+#ifndef RVL_SDK_DVD_FS_H
+#define RVL_SDK_DVD_FS_H
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
