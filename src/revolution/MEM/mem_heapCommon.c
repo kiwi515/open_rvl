@@ -36,12 +36,12 @@ void MEMiInitHeapHead(MEMiHeapHead* heap, u32 magic, void* start, void* end,
     heap->magic = magic;
     heap->start = start;
     heap->end = end;
-    heap->WORD_0x38 = 0;
+    heap->attribute = 0;
     SetOptForHeap(heap, opt);
-    MEMInitList(&heap->list, offsetof(MEMiHeapHead, node));
+    MEMInitList(&heap->list, offsetof(MEMiHeapHead, link));
 
     if (!sRootListInitialized) {
-        MEMInitList(&sRootList, offsetof(MEMiHeapHead, node));
+        MEMInitList(&sRootList, offsetof(MEMiHeapHead, link));
         OSInitMutex(&sRootMutex);
         sRootListInitialized = TRUE;
     }

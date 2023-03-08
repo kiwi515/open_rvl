@@ -1,7 +1,7 @@
 #include <revolution/MEM.h>
 
 static void* AllocatorAllocForExpHeap_(MEMAllocator* allocator, u32 size) {
-    return MEMAllocFromExpHeapEx(allocator->heap, size, allocator->align);
+    return MEMAllocFromExpHeapEx(allocator->heap, size, allocator->heapParam1);
 }
 
 static void AllocatorFreeForExpHeap_(MEMAllocator* allocator, void* block) {
@@ -9,7 +9,7 @@ static void AllocatorFreeForExpHeap_(MEMAllocator* allocator, void* block) {
 }
 
 static void* AllocatorAllocForFrmHeap_(MEMAllocator* allocator, u32 size) {
-    return MEMAllocFromFrmHeapEx(allocator->heap, size, allocator->align);
+    return MEMAllocFromFrmHeapEx(allocator->heap, size, allocator->heapParam1);
 }
 
 static void AllocatorFreeForFrmHeap_(MEMAllocator* allocator, void* block) {
@@ -31,8 +31,8 @@ void MEMInitAllocatorForExpHeap(MEMAllocator* allocator, MEMiHeapHead* heap,
                                                AllocatorFreeForExpHeap_};
     allocator->funcs = &sAllocatorFunc;
     allocator->heap = heap;
-    allocator->align = align;
-    allocator->WORD_0xC = 0;
+    allocator->heapParam1 = align;
+    allocator->heapParam2 = 0;
 }
 
 void MEMInitAllocatorForFrmHeap(MEMAllocator* allocator, MEMiHeapHead* heap,
@@ -41,6 +41,6 @@ void MEMInitAllocatorForFrmHeap(MEMAllocator* allocator, MEMiHeapHead* heap,
                                                AllocatorFreeForFrmHeap_};
     allocator->funcs = &sAllocatorFunc;
     allocator->heap = heap;
-    allocator->align = align;
-    allocator->WORD_0xC = 0;
+    allocator->heapParam1 = align;
+    allocator->heapParam2 = 0;
 }
