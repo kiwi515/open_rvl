@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_AI_HARDWARE_H
 #define RVL_SDK_AI_HARDWARE_H
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,7 +19,7 @@ typedef enum {
     AI_AIVR,   //!< 0xCC006C04
     AI_AISCNT, //!< 0xCC006C08
     AI_AIIT,   //!< 0xCC006C0C
-} AIHwReg;
+};
 
 // AICR - AI Control Register
 #define AI_AICR_SAMPLERATE (1 << 6)
