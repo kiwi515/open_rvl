@@ -93,7 +93,7 @@ typedef struct SCControl {
     OSThreadQueue threadQueue;     // at 0x0
     NANDFileInfo fileInfo;         // at 0x8
     NANDCommandBlock commandBlock; // at 0x94
-    FSFileAttr fileAttr;           // at 0x14C
+    NANDStatus fileAttr;           // at 0x14C
     u8 nandCbState;                // at 0x154
     u8 BYTE_0x155;
     u8 openFile; // at 0x156

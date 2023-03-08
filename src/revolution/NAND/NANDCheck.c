@@ -13,9 +13,9 @@ static const char* USER_DIR_LIST[] = {"/meta",
                                       NULL,
                                       NULL};
 
-static IPCResult nandCalcUsage(s32* blockCountOut, s32* fileCountOut,
-                               const char** dirList) {
-    IPCResult result = (IPCResult)-117;
+static s32 nandCalcUsage(s32* blockCountOut, s32* fileCountOut,
+                         const char** dirList) {
+    s32 result = -117;
 
     *blockCountOut = 0;
     *fileCountOut = 0;
@@ -38,7 +38,7 @@ static IPCResult nandCalcUsage(s32* blockCountOut, s32* fileCountOut,
     return result;
 }
 
-static IPCResult nandCalcUserUsage(s32* blockCountOut, s32* fileCountOut) {
+static s32 nandCalcUserUsage(s32* blockCountOut, s32* fileCountOut) {
     return nandCalcUsage(blockCountOut, fileCountOut, USER_DIR_LIST);
 }
 
@@ -66,7 +66,7 @@ static u32 nandCheck(u32 neededBlocks, u32 neededFiles, u32 homeDirBlocks,
 }
 
 NANDResult NANDCheck(u32 neededBlocks, u32 neededFiles, u32* answer) {
-    IPCResult result;
+    s32 result;
 
     s32 homeDirBlocks = -1;
     s32 homeDirFiles = -1;

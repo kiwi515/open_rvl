@@ -5,15 +5,22 @@
 #include <string.h>
 #include <wchar.h>
 
-#define NAND_BANNER_HEADER_MAGIC 'WIBN'
+#define NAND_BANNER_MAGIC 'WIBN'
 
-static void nandShutdownCallback(s32, void*);
-static void nandGetTypeCallback(s32, void*);
-static BOOL nandOnShutdown(u32, u32);
-static IPCResult _ES_InitLib(s32*);
-static IPCResult _ES_GetDataDir(s32*, u64, char*) __attribute__((never_inline));
-static IPCResult _ES_GetTitleId(s32*, u64*);
-static IPCResult _ES_CloseLib(s32*);
+typedef enum {
+    NAND_LIB_UNINITIALIZED,
+    NAND_LIB_INITIALIZING,
+    NAND_LIB_INITIALIZED
+} NANDLibState;
+
+static void nandShutdownCallback(s32 result, void* arg);
+static void nandGetTypeCallback(s32 result, void* arg);
+static BOOL nandOnShutdown(u32 pass, u32 event);
+static s32 _ES_InitLib(s32* fd);
+static s32 _ES_GetDataDir(s32* fd, u64 tid, char* dirOut)
+    __attribute__((never_inline));
+static s32 _ES_GetTitleId(s32* fd, u64* tidOut);
+static s32 _ES_CloseLib(s32* fd);
 
 static const char* __NANDVersion =
     "<< RVL_SDK - NAND \trelease build: Nov 30 2006 03:32:57 (0x4199_60831) >>";
@@ -141,14 +148,14 @@ BOOL nandIsInitialized(void) {
 }
 
 // Stubbed for release
-void nandReportErrorCode(IPCResult result){
+void nandReportErrorCode(s32 result){
 #pragma unused(result)
 }
 
 // Padding for the string table in order to match NANDInit
 CW_FORCE_STRINGS(NANDCore_c, "ABCDEFGH");
 
-NANDResult nandConvertErrorCode(IPCResult result) {
+NANDResult nandConvertErrorCode(s32 result) {
     int i;
 
     // clang-format off
@@ -246,7 +253,7 @@ void nandGetParentDirectory(char* dir, const char* path) {
 }
 
 NANDResult NANDInit(void) {
-    IPCResult result;
+    s32 result;
     u64 tid;
     s32 fd;
     BOOL enabled;
@@ -301,9 +308,9 @@ NANDResult NANDInit(void) {
     }
 }
 
-static BOOL nandOnShutdown(u32 r3, u32 r4) {
-    if (r3 == 0) {
-        if (r4 == 2) {
+static BOOL nandOnShutdown(u32 pass, u32 event) {
+    if (pass == OS_SD_PASS_FIRST) {
+        if (event == OS_SD_EVENT_SHUTDOWN) {
             volatile BOOL shutdown = FALSE;
             s64 start = OSGetTime();
             ISFS_ShutdownAsync(nandShutdownCallback, (void*)&shutdown);
@@ -354,11 +361,11 @@ void nandCallback(s32 result, void* arg) {
     block->callback(nandConvertErrorCode(result), block);
 }
 
-static IPCResult nandGetType(const char* path, u8* type,
-                             NANDCommandBlock* block, BOOL async, BOOL priv) {
+static s32 nandGetType(const char* path, u8* type, NANDCommandBlock* block,
+                       BOOL async, BOOL priv) {
     char absPath[64];
     u32 numFiles;
-    IPCResult result;
+    s32 result;
 
     if (strlen(path) == 0) {
         return IPC_RESULT_INVALID;
@@ -371,11 +378,11 @@ static IPCResult nandGetType(const char* path, u8* type,
             return IPC_RESULT_ACCESS;
         }
 
-        block->typeOut = type;
+        block->type = type;
         return ISFS_ReadDirAsync(block->path, NULL, &block->dirFileCount,
                                  nandGetTypeCallback, block);
     } else {
-        __memclr(absPath, sizeof(absPath));
+        CLEAR_PATH(absPath);
         nandGenerateAbsPath(absPath, path);
 
         if (!priv && nandIsUnderPrivatePath(absPath)) {
@@ -419,10 +426,10 @@ static void nandGetTypeCallback(s32 result, void* arg) {
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
 
     if (result == IPC_RESULT_OK || result == IPC_RESULT_ACCESS) {
-        *block->typeOut = NAND_FILE_TYPE_DIR;
+        *block->type = NAND_FILE_TYPE_DIR;
         result = IPC_RESULT_OK;
     } else if (result == IPC_RESULT_INVALID) {
-        *block->typeOut = NAND_FILE_TYPE_FILE;
+        *block->type = NAND_FILE_TYPE_FILE;
         result = IPC_RESULT_OK;
     }
 
@@ -435,7 +442,7 @@ void NANDInitBanner(NANDBanner* banner, u32 flags, const wchar_t* title,
                     const wchar_t* subtitle) {
     memset(banner, 0, sizeof(NANDBanner));
     banner->flags = flags;
-    banner->magic = NAND_BANNER_HEADER_MAGIC;
+    banner->magic = NAND_BANNER_MAGIC;
 
     if (wcscmp(title, L"") == 0) {
         wcsncpy(banner->title, L" ", NAND_BANNER_TITLE_MAX);
@@ -454,8 +461,8 @@ void NANDInitBanner(NANDBanner* banner, u32 flags, const wchar_t* title,
  * These were actually re(?)implemented in NANDCore/OSExec according to BBA
  */
 
-static IPCResult _ES_InitLib(s32* fd) {
-    IPCResult result;
+static s32 _ES_InitLib(s32* fd) {
+    s32 result;
 
     *fd = -1;
     result = IPC_RESULT_OK;
@@ -468,7 +475,7 @@ static IPCResult _ES_InitLib(s32* fd) {
     return result;
 }
 
-static IPCResult _ES_GetDataDir(s32* fd, u64 tid, char* dirOut) {
+static s32 _ES_GetDataDir(s32* fd, u64 tid, char* dirOut) {
     // TODO: Hacky solution
     u8 tidWork[256] ALIGN(32);
     u8 vectorWork[32] ALIGN(32);
@@ -494,8 +501,8 @@ static IPCResult _ES_GetDataDir(s32* fd, u64 tid, char* dirOut) {
     return IOS_Ioctlv(*fd, IPC_IOCTLV_GET_DATA_DIR, 1, 1, pVectors);
 }
 
-static IPCResult _ES_GetTitleId(s32* fd, u64* tidOut) {
-    IPCResult result;
+static s32 _ES_GetTitleId(s32* fd, u64* tidOut) {
+    s32 result;
     u64* pTid;
     // TODO: Hacky solution
     u8 tidWork[256] ALIGN(32);
@@ -519,8 +526,8 @@ static IPCResult _ES_GetTitleId(s32* fd, u64* tidOut) {
     return result;
 }
 
-static IPCResult _ES_CloseLib(s32* fd) {
-    IPCResult result = IPC_RESULT_OK;
+static s32 _ES_CloseLib(s32* fd) {
+    s32 result = IPC_RESULT_OK;
 
     if (*fd >= 0 && (result = IOS_Close(*fd)) == IPC_RESULT_OK) {
         *fd = -1;

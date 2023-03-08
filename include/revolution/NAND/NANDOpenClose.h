@@ -6,18 +6,24 @@
 extern "C" {
 #endif
 
-NANDResult NANDOpen(const char*, NANDFileInfo*, u8);
-NANDResult NANDPrivateOpen(const char*, NANDFileInfo*, u8);
-NANDResult NANDOpenAsync(const char*, NANDFileInfo*, u8, NANDAsyncCallback,
-                         NANDCommandBlock*);
-NANDResult NANDPrivateOpenAsync(const char*, NANDFileInfo*, u8,
-                                NANDAsyncCallback, NANDCommandBlock*);
-NANDResult NANDClose(NANDFileInfo*);
-NANDResult NANDCloseAsync(NANDFileInfo*, NANDAsyncCallback, NANDCommandBlock*);
-NANDResult NANDPrivateSafeOpenAsync(const char*, NANDFileInfo*, u8, void*, u32,
-                                    NANDAsyncCallback, NANDCommandBlock*);
-NANDResult NANDSafeCloseAsync(NANDFileInfo*, NANDAsyncCallback,
-                              NANDCommandBlock*);
+NANDResult NANDOpen(const char* path, NANDFileInfo* info, u8 mode);
+NANDResult NANDPrivateOpen(const char* path, NANDFileInfo* info, u8 mode);
+NANDResult NANDOpenAsync(const char* path, NANDFileInfo* info, u8 mode,
+                         NANDAsyncCallback callback, NANDCommandBlock* block);
+NANDResult NANDPrivateOpenAsync(const char* path, NANDFileInfo* info, u8 mode,
+                                NANDAsyncCallback callback,
+                                NANDCommandBlock* block);
+
+NANDResult NANDClose(NANDFileInfo* info);
+NANDResult NANDCloseAsync(NANDFileInfo* info, NANDAsyncCallback callback,
+                          NANDCommandBlock* block);
+
+NANDResult NANDPrivateSafeOpenAsync(const char* path, NANDFileInfo* info,
+                                    u8 access, void* buffer, u32 bufferSize,
+                                    NANDAsyncCallback callback,
+                                    NANDCommandBlock* block);
+NANDResult NANDSafeCloseAsync(NANDFileInfo* info, NANDAsyncCallback callback,
+                              NANDCommandBlock* block);
 
 #ifdef __cplusplus
 }

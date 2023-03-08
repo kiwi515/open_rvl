@@ -20,13 +20,6 @@ typedef struct FSFileStats {
     u32 position; // at 0x4
 } FSFileStats ALIGN(32);
 
-typedef struct FSFileAttr {
-    u32 ownerId; // at 0x0
-    u16 groupId; // at 0x4
-    u8 attr;     // at 0x6
-    u8 perm;     // at 0x7
-} FSFileAttr;
-
 s32 ISFS_OpenLib(void);
 s32 ISFS_CreateDir(const char* path, u32 attr, u32 ownerPerm, u32 groupPerm,
                    u32 otherPerm);
