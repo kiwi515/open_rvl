@@ -1,6 +1,4 @@
-#include <revolution/NdevExi2AD/DebuggerDriver.h>
-#include <revolution/NdevExi2AD/ODEMU.h>
-#include <revolution/NdevExi2AD/exi2.h>
+#include <revolution/NdevExi2AD.h>
 #include <revolution/OS.h>
 
 static u32 __DBRecvDataSize;
@@ -44,11 +42,11 @@ static u8 __DBReadUSB_CSR(void) {
     return val;
 }
 
-void DBInitComm(u8** flagOut, OSInterruptHandler mtrCb) {
+void DBInitComm(u8** flagOut, OSInterruptHandler handler) {
     const BOOL enabled = OSDisableInterrupts();
 
     *flagOut = &__DBEXIInputFlag;
-    __DBMtrCallback = mtrCb;
+    __DBMtrCallback = handler;
     __DBEXIInit();
 
     OSRestoreInterrupts(enabled);
@@ -78,10 +76,10 @@ u32 DBQueryData(void) {
     return __DBRecvDataSize;
 }
 
-BOOL DBRead(void* dest, u32 size) {
+BOOL DBRead(void* dst, u32 size) {
     const BOOL enabled = OSDisableInterrupts();
 
-    __DBRead(ODEMUGetPc2NngcOffset(__DBRecvMail) + 0x1000, dest,
+    __DBRead(ODEMUGetPc2NngcOffset(__DBRecvMail) + 0x1000, dst,
              ROUND_UP(size, 4));
     __DBRecvDataSize = 0;
     __DBEXIInputFlag = FALSE;

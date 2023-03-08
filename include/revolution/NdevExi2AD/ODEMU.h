@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_NDEV_EXI2AD_ODEMU_H
-#define RVL_SDK_NDEV_EXI2AD_ODEMU_H
+#ifndef RVL_SDK_NDEV_EXI2_AD_ODEMU_H
+#define RVL_SDK_NDEV_EXI2_AD_ODEMU_H
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
