@@ -3,19 +3,19 @@
 #include <revolution/OS.h>
 
 static BOOL __EXI2Select(void) {
-    u32 temp = EXI_CD006800[EXI_CHAN_2].WORD_0x0;
-    EXI_CD006800[EXI_CHAN_2].WORD_0x0 = ((temp & 0x405) | 0xC0);
+    u32 temp = EXI_CHAN_CTRL[EXI_CHAN_2].csr;
+    EXI_CHAN_CTRL[EXI_CHAN_2].csr = ((temp & 0x405) | 0xC0);
     return TRUE;
 }
 
 static BOOL __EXI2Deselect(void) {
-    u32 temp = EXI_CD006800[EXI_CHAN_2].WORD_0x0;
-    EXI_CD006800[EXI_CHAN_2].WORD_0x0 = temp & 0x405;
+    u32 temp = EXI_CHAN_CTRL[EXI_CHAN_2].csr;
+    EXI_CHAN_CTRL[EXI_CHAN_2].csr = temp & 0x405;
     return TRUE;
 }
 
 static BOOL __EXI2Sync(void) {
-    while (EXI_CD006800[EXI_CHAN_2].WORD_0xC & 0x1) {
+    while (EXI_CHAN_CTRL[EXI_CHAN_2].cr & 0x1) {
     }
     return TRUE;
 }
@@ -31,14 +31,14 @@ BOOL __EXI2Imm(void* mem, int size, EXIType type) {
             val |= bmem[i] << (3 - i) * 8;
         }
 
-        EXI_CD006800[EXI_CHAN_2].WORD_0x10 = val;
+        EXI_CHAN_CTRL[EXI_CHAN_2].imm = val;
     }
 
-    EXI_CD006800[EXI_CHAN_2].WORD_0xC = type << 2 | 1 | (size - 1) * 16;
+    EXI_CHAN_CTRL[EXI_CHAN_2].cr = type << 2 | 1 | (size - 1) * 16;
     __EXI2Sync();
 
     if (type == EXI_READ) {
-        u32 val = EXI_CD006800[EXI_CHAN_2].WORD_0x10;
+        u32 val = EXI_CHAN_CTRL[EXI_CHAN_2].imm;
 
         u8* bmem = (u8*)mem;
         for (i = 0; i < size; i++, bmem++) {
@@ -54,9 +54,9 @@ void __DBEXIInit(void) {
 
     __OSMaskInterrupts(OS_INTR_MASK(OS_INTR_EXI_2_EXI) |
                        OS_INTR_MASK(OS_INTR_EXI_2_TC));
-    while ((EXI_CD006800[EXI_CHAN_2].WORD_0xC & 1) == 1U) {
+    while ((EXI_CHAN_CTRL[EXI_CHAN_2].cr & 1) == 1U) {
     }
-    EXI_CD006800[EXI_CHAN_2].WORD_0x0 = 0;
+    EXI_CHAN_CTRL[EXI_CHAN_2].csr = 0;
 
     val0 = 0xB4000000;
     val1 = 0xD4000000;

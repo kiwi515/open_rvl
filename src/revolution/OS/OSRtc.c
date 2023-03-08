@@ -32,7 +32,7 @@ static BOOL ReadSram(OSScb* scb) {
         return FALSE;
     }
 
-    if (!EXISelect(EXI_CHAN_0, 1, 3)) {
+    if (!EXISelect(EXI_CHAN_0, 1, EXI_FREQ_8MHZ)) {
         EXIUnlock(EXI_CHAN_0);
         return FALSE;
     }
@@ -66,7 +66,7 @@ static BOOL WriteSram(const void* src, u32 pos, s32 size) {
         return FALSE;
     }
 
-    if (!EXISelect(EXI_CHAN_0, 1, 3)) {
+    if (!EXISelect(EXI_CHAN_0, 1, EXI_FREQ_8MHZ)) {
         EXIUnlock(EXI_CHAN_0);
         return FALSE;
     }
@@ -166,7 +166,7 @@ BOOL __OSReadROM(void* dst, s32 size, const void* src) {
         return FALSE;
     }
 
-    if (!EXISelect(EXI_CHAN_0, 1, 3)) {
+    if (!EXISelect(EXI_CHAN_0, 1, EXI_FREQ_8MHZ)) {
         EXIUnlock(EXI_CHAN_0);
         return FALSE;
     }
@@ -240,7 +240,7 @@ BOOL __OSGetRTCFlags(u32* out) {
         return FALSE;
     }
 
-    if (!EXISelect(EXI_CHAN_0, 1, 3)) {
+    if (!EXISelect(EXI_CHAN_0, 1, EXI_FREQ_8MHZ)) {
         EXIUnlock(EXI_CHAN_0);
         return FALSE;
     }
@@ -266,7 +266,7 @@ BOOL __OSClearRTCFlags(void) {
         return FALSE;
     }
 
-    if (!EXISelect(EXI_CHAN_0, 1, 3)) {
+    if (!EXISelect(EXI_CHAN_0, 1, EXI_FREQ_8MHZ)) {
         EXIUnlock(EXI_CHAN_0);
         return FALSE;
     }

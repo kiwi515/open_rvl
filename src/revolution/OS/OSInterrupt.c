@@ -178,7 +178,7 @@ static u32 SetInterruptMask(u32 type, u32 mask) {
     case OS_INTR_EXI_0_EXI:
     case OS_INTR_EXI_0_TC:
     case OS_INTR_EXI_0_EXT:
-        exi0Intr = EXI_CD006800[EXI_CHAN_0].WORD_0x0;
+        exi0Intr = EXI_CHAN_CTRL[EXI_CHAN_0].csr;
         exi0Intr &= ~0x2C0F;
 
         if (!(mask & 0x400000)) {
@@ -191,12 +191,12 @@ static u32 SetInterruptMask(u32 type, u32 mask) {
             exi0Intr |= 0x400;
         }
 
-        EXI_CD006800[EXI_CHAN_0].WORD_0x0 = exi0Intr;
+        EXI_CHAN_CTRL[EXI_CHAN_0].csr = exi0Intr;
         return type & 0xFF8FFFFF;
     case OS_INTR_EXI_1_EXI:
     case OS_INTR_EXI_1_TC:
     case OS_INTR_EXI_1_EXT:
-        exi1Intr = EXI_CD006800[EXI_CHAN_1].WORD_0x0;
+        exi1Intr = EXI_CHAN_CTRL[EXI_CHAN_1].csr;
         exi1Intr &= ~0xC0F;
 
         if (!(mask & 0x80000)) {
@@ -209,11 +209,11 @@ static u32 SetInterruptMask(u32 type, u32 mask) {
             exi1Intr |= 0x400;
         }
 
-        EXI_CD006800[EXI_CHAN_1].WORD_0x0 = exi1Intr;
+        EXI_CHAN_CTRL[EXI_CHAN_1].csr = exi1Intr;
         return type & 0xFFF1FFFF;
     case OS_INTR_EXI_2_EXI:
     case OS_INTR_EXI_2_TC:
-        exi2Intr = EXI_CD006800[EXI_CHAN_2].WORD_0x0;
+        exi2Intr = EXI_CHAN_CTRL[EXI_CHAN_2].csr;
         exi2Intr &= ~0xF;
 
         if (!(mask & 0x10000)) {
@@ -223,7 +223,7 @@ static u32 SetInterruptMask(u32 type, u32 mask) {
             exi2Intr |= 0x4;
         }
 
-        EXI_CD006800[EXI_CHAN_2].WORD_0x0 = exi2Intr;
+        EXI_CHAN_CTRL[EXI_CHAN_2].csr = exi2Intr;
         return type & 0xFFFE7FFF;
     case OS_INTR_PI_CP:
     case OS_INTR_PI_PE_TOKEN:
@@ -369,7 +369,7 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
     }
 
     if (intsr & 0x10) {
-        exi0Mask = EXI_CD006800[EXI_CHAN_0].WORD_0x0;
+        exi0Mask = EXI_CHAN_CTRL[EXI_CHAN_0].csr;
         if (exi0Mask & 0x2) {
             cause |= 0x400000;
         }
@@ -380,7 +380,7 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
             cause |= 0x100000;
         }
 
-        exi1Mask = EXI_CD006800[EXI_CHAN_1].WORD_0x0;
+        exi1Mask = EXI_CHAN_CTRL[EXI_CHAN_1].csr;
         if (exi1Mask & 0x2) {
             cause |= 0x80000;
         }
@@ -391,7 +391,7 @@ void __OSDispatchInterrupt(u8 intr, OSContext* ctx) {
             cause |= 0x20000;
         }
 
-        exi2Mask = EXI_CD006800[EXI_CHAN_2].WORD_0x0;
+        exi2Mask = EXI_CHAN_CTRL[EXI_CHAN_2].csr;
         if (exi2Mask & 0x2) {
             cause |= 0x10000;
         }

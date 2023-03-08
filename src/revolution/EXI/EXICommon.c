@@ -25,7 +25,7 @@ BOOL EXIWriteReg(EXIChannel chan, u32 dev, UNKWORD r5, const void* buf,
         return FALSE;
     }
 
-    error |= !EXISelect(chan, dev, 4);
+    error |= !EXISelect(chan, dev, EXI_FREQ_16MHZ);
     if (error) {
         EXIUnlock(chan);
         return FALSE;
