@@ -37,4 +37,6 @@ BOOL __DBIsExceptionMarked(u8 exc) {
     return __DBInterface->exceptionMask & (1 << exc);
 }
 
-void DBPrintf(const char* msg, ...) {}
+void DBPrintf(const char* msg, ...) {
+#pragma unused(msg)
+}
