@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_OS_TIME_H
 #define RVL_SDK_OS_TIME_H
-#include <revolution/OS/OSGlobals.h>
+#include <revolution/OS/OSHardware.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {

@@ -9,7 +9,7 @@ extern "C" {
 typedef struct OSAlarm;
 typedef struct OSContext;
 
-typedef void (*OSAlarmHandler)(struct OSAlarm*, struct OSContext*);
+typedef void (*OSAlarmHandler)(struct OSAlarm* alarm, struct OSContext* ctx);
 
 typedef struct OSAlarm {
     OSAlarmHandler handler; // at 0x0
@@ -28,13 +28,14 @@ typedef struct OSAlarmQueue {
 } OSAlarmQueue;
 
 void __OSInitAlarm(void);
-void OSCreateAlarm(OSAlarm*);
-void OSSetAlarm(OSAlarm*, s64, OSAlarmHandler);
-void OSSetPeriodicAlarm(OSAlarm*, s64, s64, OSAlarmHandler);
-void OSCancelAlarm(OSAlarm*);
-void OSSetAlarmTag(OSAlarm*, u32);
-void OSSetAlarmUserData(OSAlarm*, void*);
-void* OSGetAlarmUserData(const OSAlarm*);
+void OSCreateAlarm(OSAlarm* alarm);
+void OSSetAlarm(OSAlarm* alarm, s64 tick, OSAlarmHandler handler);
+void OSSetPeriodicAlarm(OSAlarm* alarm, s64 tick, s64 period,
+                        OSAlarmHandler handler);
+void OSCancelAlarm(OSAlarm* alarm);
+void OSSetAlarmTag(OSAlarm* alarm, u32 tag);
+void OSSetAlarmUserData(OSAlarm* alarm, void* userData);
+void* OSGetAlarmUserData(const OSAlarm* alarm);
 
 #ifdef __cplusplus
 }

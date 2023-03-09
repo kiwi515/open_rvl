@@ -9,30 +9,30 @@ extern "C" {
 typedef struct OSContext;
 
 void DCEnable(void);
-void DCInvalidateRange(const void*, u32);
-void DCFlushRange(const void*, u32);
-void DCStoreRange(const void*, u32);
-void DCFlushRangeNoSync(const void*, u32);
-void DCStoreRangeNoSync(const void*, u32);
-void DCZeroRange(const void*, u32);
+void DCInvalidateRange(const void* buf, u32 len);
+void DCFlushRange(const void* buf, u32 len);
+void DCStoreRange(const void* buf, u32 len);
+void DCFlushRangeNoSync(const void* buf, u32 len);
+void DCStoreRangeNoSync(const void* buf, u32 len);
+void DCZeroRange(const void* buf, u32 len);
 
-void ICInvalidateRange(const void*, u32);
+void ICInvalidateRange(const void* buf, u32 len);
 void ICFlashInvalidate(void);
 void ICEnable(void);
 
 void LCEnable(void);
 void LCDisable(void);
-void LCLoadBlocks(void*, const void*, u32);
-void LCStoreBlocks(void*, const void*, u32);
-u32 LCStoreData(void*, const void*, u32);
+void LCLoadBlocks(void* dst, const void* src, u32 len);
+void LCStoreBlocks(void* dst, const void* src, u32 len);
+u32 LCStoreData(void* dst, const void* src, u32 len);
 u32 LCQueueLength(void);
-void LCQueueWait(u32);
+void LCQueueWait(u32 n);
 
 void L2Enable(void);
 void L2Disable(void);
 void L2GlobalInvalidate(void);
 
-void DMAErrorHandler(u8, struct OSContext*, u32, u32, ...);
+void DMAErrorHandler(u8 error, OSContext* ctx, u32 dsisr, u32 dar, ...);
 
 void __OSCacheInit(void);
 

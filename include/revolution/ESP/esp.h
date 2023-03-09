@@ -7,6 +7,14 @@
 extern "C" {
 #endif
 
+typedef enum {
+    ES_IOCTLV_LAUNCH_TITLE = 8,
+    ES_IOCTLV_GET_NUM_TICKET_VIEWS = 18,
+    ES_IOCTLV_GET_TICKET_VIEWS = 19,
+    ES_IOCTLV_GET_DATA_DIR = 29,
+    ES_IOCTLV_GET_TITLE_ID = 32,
+} ESIoctl;
+
 typedef struct ESPTicket {
     u8 dummy[0x2A4];
     char padding[0x2C0 - 0x2A4];

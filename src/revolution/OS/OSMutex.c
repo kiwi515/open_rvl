@@ -1,4 +1,4 @@
-#include <OS.h>
+#include <revolution/OS.h>
 
 void OSInitMutex(OSMutex* mutex) {
     OSInitThreadQueue(&mutex->queue);
@@ -66,7 +66,7 @@ void OSUnlockMutex(OSMutex* mutex) {
             }
 
             mutex->thread = NULL;
-            if (currThread->priority < currThread->WORD_0x2D4) {
+            if (currThread->priority < currThread->base) {
                 currThread->priority = __OSGetEffectivePriority(currThread);
             }
 

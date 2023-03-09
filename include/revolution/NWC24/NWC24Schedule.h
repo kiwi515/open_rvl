@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-int NWC24SuspendScheduler(void);
+s32 NWC24SuspendScheduler(void);
 
 #ifdef __cplusplus
 }

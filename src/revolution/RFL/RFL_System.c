@@ -13,7 +13,7 @@
 
 #include <MEM.h>
 #include <OS.h>
-#include <TRK/__mem.h>
+#include <string.h>
 
 static const char* __RFLVersion =
     "<< RVL_SDK - RFL \trelease build: Jun  9 2007 17:25:33 (0x4199_60831) >>";

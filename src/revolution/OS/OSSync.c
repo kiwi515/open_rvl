@@ -1,20 +1,25 @@
-#include <OS.h>
-#include <TRK/__mem.h>
+#include <revolution/BASE.h>
+#include <revolution/OS.h>
+#include <string.h>
 
 #define OS_PHYS_SYSCALL_INTR 0xC00
 #define OS_INTR_SLOT_SIZE 0x100
+
+void __OSSystemCallVectorStart(void);
+void __OSSystemCallVectorEnd(void);
 
 static asm void SystemCallVector(void) {
     // clang-format off
     nofralloc
 
     entry __OSSystemCallVectorStart
-    mfspr r9, 0x3F0
-    ori r10, r9, 0x8
-    mtspr 0x3F0, r10
+    mfhid0 r9
+    ori r10, r9, HID0_ABE
+    mthid0 r10
     isync
     sync
-    mtspr 0x3F0, r9
+
+    mthid0 r9
     rfi
 
     entry __OSSystemCallVectorEnd

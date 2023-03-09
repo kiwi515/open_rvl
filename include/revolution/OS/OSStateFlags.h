@@ -19,8 +19,8 @@ typedef struct OSStateFlags {
     u32 WORD_0x1C;
 } OSStateFlags;
 
-BOOL __OSWriteStateFlags(const OSStateFlags*);
-BOOL __OSReadStateFlags(OSStateFlags*);
+BOOL __OSWriteStateFlags(const OSStateFlags* state);
+BOOL __OSReadStateFlags(OSStateFlags* state);
 
 #ifdef __cplusplus
 }

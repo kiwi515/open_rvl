@@ -1,5 +1,5 @@
-#include <BASE.h>
-#include <OS.h>
+#include <revolution/BASE.h>
+#include <revolution/OS.h>
 
 #pragma section ".ctors$00"
 DECL_SECTION(".ctors$00") extern funcptr_t _ctors[];

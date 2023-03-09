@@ -1,7 +1,5 @@
-#include <NWC24/NWC24Schedule.h>
-#include <NWC24/NWC24System.h>
-#include <NWC24/NWC24Time.h>
-#include <OS.h>
+#include <revolution/NWC24.h>
+#include <revolution/OS.h>
 
 void __OSInitNet(void) {
     s32 error;

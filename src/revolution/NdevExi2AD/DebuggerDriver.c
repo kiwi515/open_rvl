@@ -18,7 +18,7 @@ void __DBMtrHandler(u32 type, OSContext* ctx) {
 }
 
 void __DBIntrHandler(u32 type, OSContext* ctx) {
-    OS_PI_INTSR = 0x1000;
+    PI_HW_REGS[PI_INTSR] = PI_INTSR_DEBUG;
     if (__DBDbgCallback != NULL)
         __DBDbgCallback(type, ctx);
 }

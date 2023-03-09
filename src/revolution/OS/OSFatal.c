@@ -1,11 +1,8 @@
-#include <BASE.h>
-#include <EXI/EXIBios.h>
-#include <GX/GXFrameBuf.h>
-#include <GX/GXMisc.h>
-#include <OS.h>
-#include <VI/vi.h>
-#include <VI/vihardware.h>
-
+#include <revolution/BASE.h>
+#include <revolution/EXI.h>
+#include <revolution/GX.h>
+#include <revolution/OS.h>
+#include <revolution/VI.h>
 #include <string.h>
 
 /**

@@ -1,6 +1,6 @@
-#include <NAND.h>
-#include <OS.h>
-#include <TRK/__mem.h>
+#include <revolution/NAND.h>
+#include <revolution/OS.h>
+#include <string.h>
 
 static OSStateFlags StateFlags ALIGN(32);
 
@@ -16,10 +16,10 @@ static u32 CheckSum(const OSStateFlags* state) {
     return checksum;
 }
 
-BOOL __OSWriteStateFlags(const OSStateFlags* newState) {
+BOOL __OSWriteStateFlags(const OSStateFlags* state) {
     NANDFileInfo file;
 
-    memcpy(&StateFlags, newState, sizeof(OSStateFlags));
+    memcpy(&StateFlags, state, sizeof(OSStateFlags));
     StateFlags.checksum = CheckSum(&StateFlags);
 
     if (NANDOpen("/title/00000001/00000002/data/state.dat", &file,
@@ -39,7 +39,7 @@ BOOL __OSWriteStateFlags(const OSStateFlags* newState) {
     return TRUE;
 }
 
-BOOL __OSReadStateFlags(OSStateFlags* stateOut) {
+BOOL __OSReadStateFlags(OSStateFlags* state) {
     NANDFileInfo file;
 
     if (NANDOpen("/title/00000001/00000002/data/state.dat", &file,
@@ -51,19 +51,19 @@ BOOL __OSReadStateFlags(OSStateFlags* stateOut) {
 
         if (bytesRead != sizeof(OSStateFlags)) {
             NANDDelete("/title/00000001/00000002/data/state.dat");
-            memset(stateOut, 0, sizeof(OSStateFlags));
+            memset(state, 0, sizeof(OSStateFlags));
             return FALSE;
         }
     } else {
-        memset(stateOut, 0, sizeof(OSStateFlags));
+        memset(state, 0, sizeof(OSStateFlags));
         return FALSE;
     }
 
     if (CheckSum(&StateFlags) != StateFlags.checksum) {
-        memset(stateOut, 0, sizeof(OSStateFlags));
+        memset(state, 0, sizeof(OSStateFlags));
         return FALSE;
     }
 
-    memcpy(stateOut, &StateFlags, sizeof(OSStateFlags));
+    memcpy(state, &StateFlags, sizeof(OSStateFlags));
     return TRUE;
 }

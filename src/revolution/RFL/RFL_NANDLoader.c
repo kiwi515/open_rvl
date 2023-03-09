@@ -2,7 +2,7 @@
 #include "RFL_NANDAccess.h"
 
 #include <NAND.h>
-#include <TRK/__mem.h>
+#include <string.h>
 
 static const u32 scTmpSize = 0x400;
 static const char* scResFileFullPathName = "/shared2/FaceLib/RFL_Res.dat";

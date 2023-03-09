@@ -1,6 +1,6 @@
-#include <IPC.h>
-#include <OS.h>
-
+#include <revolution/ESP.h>
+#include <revolution/IPC.h>
+#include <revolution/OS.h>
 #include <string.h>
 
 #define MENU_TITLE_ID 0x0000000100000002
@@ -10,9 +10,9 @@ static u8 views[0xBD00] ALIGN(32);
 
 BOOL __OSInReboot;
 
-static IPCResult _ES_InitLib(s32*);
-static IPCResult _ES_GetTicketViews(s32*, u64, void*, u32*);
-static IPCResult _ES_LaunchTitle(s32*, u64, void*)
+static s32 _ES_InitLib(s32* fd);
+static s32 _ES_GetTicketViews(s32* fd, u64 tid, void* pViews, u32* count);
+static s32 _ES_LaunchTitle(s32* fd, u64 tid, void* pViews)
     __attribute__((never_inline));
 
 void __OSGetExecParams(OSExecParams* out) {
@@ -25,7 +25,7 @@ void __OSGetExecParams(OSExecParams* out) {
 
 void __OSLaunchMenu(void) {
     // This makes me feel sick
-    IPCResult result;
+    s32 result;
     void* pviews = &views;
     u32 count = 1;
     s32 fd = -1;
@@ -63,8 +63,8 @@ void __OSLaunchMenu(void) {
  * These were actually re(?)implemented in NANDCore/OSExec according to BBA
  */
 
-static IPCResult _ES_InitLib(s32* fd) {
-    IPCResult result;
+static s32 _ES_InitLib(s32* fd) {
+    s32 result;
 
     // Had to remove fd initialization to match __OSLaunchMenu
     // *fd = -1;
@@ -79,9 +79,8 @@ static IPCResult _ES_InitLib(s32* fd) {
     return result;
 }
 
-static IPCResult _ES_GetTicketViews(s32* fd, u64 tid, void* pViews,
-                                    u32* count) {
-    IPCResult result;
+static s32 _ES_GetTicketViews(s32* fd, u64 tid, void* pViews, u32* count) {
+    s32 result;
     // TODO: Hacky solution
     u8 work[0x120] ALIGN(32);
     IPCIOVector* pVectors = (IPCIOVector*)(work + 0x0);
@@ -107,7 +106,7 @@ static IPCResult _ES_GetTicketViews(s32* fd, u64 tid, void* pViews,
         pVectors[1].length = sizeof(u32);
 
         result =
-            IOS_Ioctlv(*fd, IPC_IOCTLV_GET_NUM_TICKET_VIEWS, 1, 1, pVectors);
+            IOS_Ioctlv(*fd, ES_IOCTLV_GET_NUM_TICKET_VIEWS, 1, 1, pVectors);
         if (result == IPC_RESULT_OK) {
             *count = *pCount;
         }
@@ -127,10 +126,10 @@ static IPCResult _ES_GetTicketViews(s32* fd, u64 tid, void* pViews,
     pVectors[1].length = sizeof(u32);
     pVectors[2].base = pViews;
     pVectors[2].length = *count * TICKET_VIEW_SIZE;
-    return IOS_Ioctlv(*fd, IPC_IOCTLV_GET_TICKET_VIEWS, 2, 1, pVectors);
+    return IOS_Ioctlv(*fd, ES_IOCTLV_GET_TICKET_VIEWS, 2, 1, pVectors);
 }
 
-static IPCResult _ES_LaunchTitle(s32* fd, u64 tid, void* pViews) {
+static s32 _ES_LaunchTitle(s32* fd, u64 tid, void* pViews) {
     // TODO: Hacky solution
     u8 tidWork[256] ALIGN(32);
     u8 vectorWork[32] ALIGN(32);
@@ -152,5 +151,5 @@ static IPCResult _ES_LaunchTitle(s32* fd, u64 tid, void* pViews) {
     pVectors[1].base = pViews;
     pVectors[1].length = TICKET_VIEW_SIZE;
 
-    return IOS_IoctlvReboot(*fd, IPC_IOCTLV_LAUNCH_TITLE, 2, 0, pVectors);
+    return IOS_IoctlvReboot(*fd, ES_IOCTLV_LAUNCH_TITLE, 2, 0, pVectors);
 }

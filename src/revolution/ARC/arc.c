@@ -127,7 +127,7 @@ BOOL ARCFastOpen(ARCHandle* handle, s32 entrynum, ARCFileInfo* info) {
 
 s32 ARCConvertPathToEntrynum(ARCHandle* handle, const char* path) {
     const char* name_end;
-    int name_delimited_by_slash;
+    BOOL name_delimited_by_slash;
     s32 name_length;
     u32 anchor;
     u32 it = handle->entrynum;

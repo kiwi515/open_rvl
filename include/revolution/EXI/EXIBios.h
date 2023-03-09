@@ -6,20 +6,6 @@
 extern "C" {
 #endif
 
-/**
- * Documentation from:
- * https://www.gc-forever.com/yagcd/chap5.html#sec5.9
- */
-typedef struct ExiChannelControl {
-    u32 csr;       // at 0x0
-    void* dmaAddr; // at 0x4
-    u32 dmaLen;    // at 0x8
-    u32 cr;        // at 0xC
-    u32 imm;       // at 0x10
-} ExiChannelControl;
-
-volatile ExiChannelControl EXI_CHAN_CTRL[EXI_MAX_CHAN] : 0xCD006800;
-
 typedef enum {
     EXI_FREQ_1MHZ,
     EXI_FREQ_2MHZ,

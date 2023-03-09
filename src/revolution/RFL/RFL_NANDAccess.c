@@ -6,7 +6,7 @@
 
 #include <MEM.h>
 #include <OS.h>
-#include <TRK/__mem.h>
+#include <string.h>
 
 static const char* scFileNames[RFL_ACCESS_MAX] = {
     "/shared2/menu/FaceLib/RFL_DB.dat", //!< RFL_ACCESS_DB
@@ -773,7 +773,7 @@ static void closecallback_(s32 result, NANDCommandBlock* block) {
 
 // TODO: Fakematch
 RFLResult RFLiCloseAsync(RFLAccessType type, RFLAccessCallback callback) {
-    int new_var;
+    s32 new_var;
     RFLAccessInfo* info = RFLiGetAccInfo(type);
     NANDResult reason;
 

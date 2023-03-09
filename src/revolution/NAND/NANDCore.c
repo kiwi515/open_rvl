@@ -498,7 +498,7 @@ static s32 _ES_GetDataDir(s32* fd, u64 tid, char* dirOut) {
     pVectors[1].base = dirOut;
     pVectors[1].length = 30;
 
-    return IOS_Ioctlv(*fd, IPC_IOCTLV_GET_DATA_DIR, 1, 1, pVectors);
+    return IOS_Ioctlv(*fd, ES_IOCTLV_GET_DATA_DIR, 1, 1, pVectors);
 }
 
 static s32 _ES_GetTitleId(s32* fd, u64* tidOut) {
@@ -518,7 +518,7 @@ static s32 _ES_GetTitleId(s32* fd, u64* tidOut) {
     pVectors[0].base = pTid;
     pVectors[0].length = sizeof(u64);
 
-    result = IOS_Ioctlv(*fd, IPC_IOCTLV_GET_TITLE_ID, 0, 1, pVectors);
+    result = IOS_Ioctlv(*fd, ES_IOCTLV_GET_TITLE_ID, 0, 1, pVectors);
     if (result == IPC_RESULT_OK) {
         *tidOut = *pTid;
     }

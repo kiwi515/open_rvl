@@ -1,5 +1,5 @@
-#include <EXI/EXIBios.h>
-#include <OS.h>
+#include <revolution/EXI.h>
+#include <revolution/OS.h>
 
 #define OS_SRAM_SIZE (sizeof(OSSram) + sizeof(OSSramEx))
 
@@ -20,7 +20,7 @@ typedef struct OSScb {
 
 static OSScb Scb ALIGN(32);
 
-static BOOL WriteSram(const void*, u32, s32);
+static BOOL WriteSram(const void* src, u32 pos, s32 size);
 
 static BOOL ReadSram(OSScb* scb) {
     BOOL error = FALSE;

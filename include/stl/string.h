@@ -3,7 +3,6 @@
 #include <types.h>
 
 #include "internal/mem.h"
-#include <TRK/__mem.h>
 #include <extras.h>
 #ifdef __cplusplus
 extern "C" {

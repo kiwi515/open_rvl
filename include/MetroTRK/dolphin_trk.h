@@ -1,5 +1,5 @@
-#ifndef RVL_SDK_TRK_DOLPHIN_TRK_H
-#define RVL_SDK_TRK_DOLPHIN_TRK_H
+#ifndef METROTRK_DOLPHIN_TRK_H
+#define METROTRK_DOLPHIN_TRK_H
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {

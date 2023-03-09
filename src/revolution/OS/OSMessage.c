@@ -1,4 +1,4 @@
-#include <OS.h>
+#include <revolution/OS.h>
 
 void OSInitMessageQueue(OSMessageQueue* queue, OSMessage* buffer,
                         s32 capacity) {

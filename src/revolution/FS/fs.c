@@ -47,6 +47,8 @@ typedef enum {
     FS_IOCTL_CREATE_FILE = 9,
     FS_IOCTL_GET_FILE_STATS = 11,
     FS_IOCTL_SHUTDOWN_FS = 13,
+
+    FS_IOCTLV_GET_USAGE = 12
 } FSIoctl;
 
 /**
@@ -723,7 +725,7 @@ s32 ISFS_GetUsage(const char* path, s32* blockCountOut, s32* fileCountOut) {
     vectors[2].base = fileCountWork;
     vectors[2].length = sizeof(u32);
 
-    ret = IOS_Ioctlv(__fsFd, IPC_IOCTLV_GET_USAGE, 1, 2, vectors);
+    ret = IOS_Ioctlv(__fsFd, FS_IOCTLV_GET_USAGE, 1, 2, vectors);
     if (ret == IPC_RESULT_OK) {
         *blockCountOut = *blockCountWork;
         *fileCountOut = *fileCountWork;

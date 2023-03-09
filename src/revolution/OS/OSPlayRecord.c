@@ -1,5 +1,5 @@
-#include <NAND.h>
-#include <OS.h>
+#include <revolution/NAND.h>
+#include <revolution/OS.h>
 
 // Why?!? :(
 #define MY_SEC_TO_TICKS(x) (x * (s64)OS_SEC_TO_TICKS(1))
@@ -46,7 +46,7 @@ static NANDFileInfo FileInfo;
 static NANDCommandBlock Block;
 static OSAlarm PlayRecordAlarm;
 
-static void PlayRecordCallback(s32, NANDCommandBlock*);
+static void PlayRecordCallback(s32 result, NANDCommandBlock* block);
 
 static u32 RecordCheckSum(const OSPlayRecord* playRec) {
     int i;

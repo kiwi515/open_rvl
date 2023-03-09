@@ -1,4 +1,4 @@
-#include <OS.h>
+#include <revolution/OS.h>
 
 static void* __OSArenaLo = (void*)-1;
 static void* s_mem2ArenaLo = (void*)-1;
@@ -29,9 +29,9 @@ void OSSetMEM2ArenaLo(void* lo) { s_mem2ArenaLo = lo; }
 
 void OSSetArenaLo(void* lo) { OSSetMEM1ArenaLo(lo); }
 
-void* OSAllocFromMEM1ArenaLo(size_t sz, u32 align) {
+void* OSAllocFromMEM1ArenaLo(size_t size, u32 align) {
     u8* blk_start = ROUND_UP_PTR(OSGetMEM1ArenaLo(), align);
-    u8* blk_end = blk_start + sz;
+    u8* blk_end = blk_start + size;
     blk_end = ROUND_UP_PTR(blk_end, align);
     OSSetMEM1ArenaLo(blk_end);
     return blk_start;

@@ -1,9 +1,8 @@
-#include <DVD.h>
-#include <OS.h>
-#include <PAD/Pad.h>
-#include <SC.h>
-#include <VI/vi3in1.h>
-
+#include <revolution/DVD.h>
+#include <revolution/OS.h>
+#include <revolution/PAD.h>
+#include <revolution/SC.h>
+#include <revolution/VI.h>
 #include <string.h>
 
 static OSShutdownFunctionQueue ShutdownFunctionQueue;
@@ -49,7 +48,7 @@ void OSRegisterShutdownFunction(OSShutdownFunctionInfo* info) {
     }
 }
 
-BOOL __OSCallShutdownFunctions(u32 arg0, u32 event) {
+BOOL __OSCallShutdownFunctions(u32 pass, u32 event) {
     OSShutdownFunctionInfo* iter;
     BOOL failure;
     u32 prio;
@@ -62,7 +61,7 @@ BOOL __OSCallShutdownFunctions(u32 arg0, u32 event) {
             break;
         }
 
-        failure |= !iter->func(arg0, event);
+        failure |= !iter->func(pass, event);
         prio = iter->prio;
     }
 
@@ -71,12 +70,12 @@ BOOL __OSCallShutdownFunctions(u32 arg0, u32 event) {
     return !failure;
 }
 
-void __OSShutdownDevices(u32 arg0) {
+void __OSShutdownDevices(u32 event) {
     BOOL padIntr;
     BOOL osIntr;
     BOOL keepEnable;
 
-    switch (arg0) {
+    switch (event) {
     case 0:
     case 4:
     case 5:
@@ -97,7 +96,7 @@ void __OSShutdownDevices(u32 arg0) {
         padIntr = __PADDisableRecalibration(TRUE);
     }
 
-    while (!__OSCallShutdownFunctions(0, arg0)) {
+    while (!__OSCallShutdownFunctions(OS_SD_PASS_FIRST, event)) {
         ;
     }
 
@@ -106,7 +105,7 @@ void __OSShutdownDevices(u32 arg0) {
     }
 
     osIntr = OSDisableInterrupts();
-    __OSCallShutdownFunctions(1, arg0);
+    __OSCallShutdownFunctions(OS_SD_PASS_SECOND, event);
     LCDisable();
 
     if (!keepEnable) {
@@ -142,7 +141,7 @@ static void KillThreads(void) {
     OSThread* next;
 
     for (iter = OS_THREAD_QUEUE.head; iter != NULL; iter = next) {
-        next = iter->next2;
+        next = iter->nextActive;
 
         switch (iter->state) {
         case OS_THREAD_STATE_SLEEPING:
@@ -224,7 +223,7 @@ u32 OSGetResetCode(void) {
         return __OSRebootParams.WORD_0x4 | 0x80000000;
     }
 
-    return OS_PI_RESET >> 3;
+    return PI_HW_REGS[PI_RESET] >> 3;
 }
 
 void OSResetSystem(u32 arg0, u32 arg1, u32 arg2) {

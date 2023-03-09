@@ -1,4 +1,4 @@
-#include <OS.h>
+#include <revolution/OS.h>
 
 static BOOL OnShutdown(u32 pass, u32 event);
 static OSShutdownFunctionInfo ShutdownFunctionInfo = {OnShutdown, 127, NULL,
@@ -16,7 +16,7 @@ static BOOL OnShutdown(u32 pass, u32 event) {
 #pragma unused(event)
 
     if (pass != OS_SD_PASS_FIRST) {
-        OS_MI_CC004010 = 0xFF;
+        MI_HW_REGS[MI_PROT_MEM0] = 0xFF;
         __OSMaskInterrupts(
             OS_INTR_MASK(OS_INTR_MEM_0) | OS_INTR_MASK(OS_INTR_MEM_1) |
             OS_INTR_MASK(OS_INTR_MEM_2) | OS_INTR_MASK(OS_INTR_MEM_3));
@@ -29,9 +29,9 @@ static BOOL OnShutdown(u32 pass, u32 event) {
 static void MEMIntrruptHandler(s16 intr, OSContext* ctx) {
 #pragma unused(intr)
 
-    u32 dsisr = OS_MI_CC00401E;
-    u32 dar = (OS_MI_CC004024 & 0x3ff) << 0x10 | OS_MI_CC004022;
-    OS_MI_CC004020 = 0;
+    u32 dsisr = MI_HW_REGS[MI_INTSR];
+    u32 dar = (MI_HW_REGS[MI_ADDRHI] & 0x3ff) << 0x10 | MI_HW_REGS[MI_ADDRLO];
+    MI_HW_REGS[MI_REG_0x20] = 0;
 
     if (__OSErrorTable[OS_ERR_PROTECTION] != NULL) {
         __OSErrorTable[OS_ERR_PROTECTION](OS_ERR_PROTECTION, ctx, dsisr, dar);
@@ -453,8 +453,8 @@ static void BATConfig(void) {
     void* mem2end;
 
     if (OS_HOLLYWOOD_REV == 0) {
-        // Did they mean to call the function?
-        if (&OSGetPhysicalMem1Size == NULL) {
+        // @bug Checks function address rather than result
+        if (OSGetPhysicalMem1Size == 0) {
             RealMode(ConfigMEM_ES1_0);
             return;
         }
@@ -465,7 +465,7 @@ static void BATConfig(void) {
     if (OSGetConsoleSimulatedMem1Size() < mem1phys &&
         mem1sim == OS_MEM_MB_TO_B(24)) {
         DCInvalidateRange((void*)0x81800000, OS_MEM_MB_TO_B(24));
-        OS_MI_CC004028 = 2;
+        MI_HW_REGS[MI_REG_0x28] = 2;
     }
 
     if (mem1sim <= OS_MEM_MB_TO_B(24)) {
@@ -495,8 +495,8 @@ static void BATConfig(void) {
 void __OSInitMemoryProtection(void) {
     const BOOL enabled = OSDisableInterrupts();
 
-    OS_MI_CC004020 = 0;
-    OS_MI_CC004010 = 0xFF;
+    MI_HW_REGS[MI_REG_0x20] = 0;
+    MI_HW_REGS[MI_PROT_MEM0] = 0xFF;
 
     __OSMaskInterrupts(
         OS_INTR_MASK(OS_INTR_MEM_0) | OS_INTR_MASK(OS_INTR_MEM_1) |

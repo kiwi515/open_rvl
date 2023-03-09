@@ -14,11 +14,11 @@ typedef struct OSMutex {
     struct OSMutex* prev; // at 0x14
 } OSMutex;
 
-void OSInitMutex(OSMutex*);
-void OSLockMutex(OSMutex*);
-void OSUnlockMutex(OSMutex*);
-void __OSUnlockAllMutex(OSThread*);
-BOOL OSTryLockMutex(OSMutex*);
+void OSInitMutex(OSMutex* mutex);
+void OSLockMutex(OSMutex* mutex);
+void OSUnlockMutex(OSMutex* mutex);
+void __OSUnlockAllMutex(OSThread* thread);
+BOOL OSTryLockMutex(OSMutex* mutex);
 
 #ifdef __cplusplus
 }

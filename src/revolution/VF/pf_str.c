@@ -159,7 +159,7 @@ int VFiPFSTR_StrNCmp(PFSTR* str, const char* cmp, u32 mode, s16 pos, u16 n) {
 void VFiPFSTR_ToUpperNStr(PFSTR* str, u16 n, char* out) {
     const char* data;
     const wchar_t* wdata;
-    int ch;
+    u32 ch;
     BOOL letter;
 
     if (str->mode == PFSTR_CODEMODE_OEM) {

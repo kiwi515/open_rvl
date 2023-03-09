@@ -5,9 +5,6 @@
 extern "C" {
 #endif
 
-void __OSSystemCallVectorStart(void);
-void __OSSystemCallVectorEnd(void);
-
 void __OSInitSystemCall(void);
 
 #ifdef __cplusplus

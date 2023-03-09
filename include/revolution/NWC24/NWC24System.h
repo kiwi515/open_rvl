@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-int NWC24iPrepareShutdown(void);
+s32 NWC24iPrepareShutdown(void);
 
 #ifdef __cplusplus
 }
