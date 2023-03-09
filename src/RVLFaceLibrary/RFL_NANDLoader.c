@@ -1,7 +1,5 @@
-#include "RFL_NANDLoader.h"
-#include "RFL_NANDAccess.h"
-
-#include <NAND.h>
+#include <RVLFaceLibrary.h>
+#include <revolution/NAND.h>
 #include <string.h>
 
 static const u32 scTmpSize = 0x400;
@@ -12,10 +10,10 @@ void RFLiInitLoader(void) {
     int i;
 
     loader = RFLiGetLoader();
-    for (i = 0; i < RFL_ARC_MAX; i++) {
-        loader->resources[i].numFiles = 0;
-        loader->resources[i].biggestSize = 0;
-        loader->resources[i].offset = 0;
+    for (i = 0; i < RFLiArcID_Max; i++) {
+        loader->archives[i].numFiles = 0;
+        loader->archives[i].biggestSize = 0;
+        loader->archives[i].offset = 0;
     }
 
     loader->cacheSize = 0;
@@ -36,15 +34,15 @@ static void parseOnmemoryRes_(void) __attribute__((never_inline)) {
 
     loader = RFLiGetLoader();
     loader->version = *(u16*)((u8*)loader->cache + 2);
-    for (i = 0; i < RFL_ARC_MAX; i++) {
+    for (i = 0; i < RFLiArcID_Max; i++) {
         // Pointer to section offset in header
         u32* p_offset = (u32*)((u8*)loader->cache + ((i + 1) * 4));
         // Pointer to section
         u32* p_section = (u32*)((u8*)loader->cache + *p_offset);
-        // Load resource
-        loader->resources[i].numFiles = ((u16*)p_section)[0];
-        loader->resources[i].biggestSize = ((u16*)p_section)[1];
-        loader->resources[i].offset = *p_offset + 4;
+        // Load archive
+        loader->archives[i].numFiles = ((u16*)p_section)[0];
+        loader->archives[i].biggestSize = ((u16*)p_section)[1];
+        loader->archives[i].offset = *p_offset + 4;
     }
 }
 
@@ -58,21 +56,21 @@ static void loadResRead2ndcallback_(void) {
     loader = RFLiGetLoader();
     free = FALSE;
     cb = NULL;
-    if (RFLGetAsyncStatus() == RFL_RESULT_OK) {
-        const u16 res = loader->numResources;
+    if (RFLGetAsyncStatus() == RFLErrcode_Success) {
+        const u16 arc = loader->numResources;
         headerBuf1 = (u32*)loader->headerBuf1;
-        if (res < RFL_ARC_MAX) {
+        if (arc < RFLiArcID_Max) {
             headerBuf2 = (u32*)loader->headerBuf2;
-            headerBuf1 = &headerBuf1[res + 1];
-            loader->resources[res].numFiles = ((u16*)headerBuf2)[0];
-            loader->resources[res].biggestSize = ((u16*)headerBuf2)[1];
-            loader->resources[res].offset = *headerBuf1 + 4;
+            headerBuf1 = &headerBuf1[arc + 1];
+            loader->archives[arc].numFiles = ((u16*)headerBuf2)[0];
+            loader->archives[arc].biggestSize = ((u16*)headerBuf2)[1];
+            loader->archives[arc].offset = *headerBuf1 + 4;
             loader->numResources++;
-            switch (RFLiReadAsync(RFL_ACCESS_RES, loader->headerBuf2, 32,
+            switch (RFLiReadAsync(RFLiFileType_Resource, loader->headerBuf2, 32,
                                   loadResRead2ndcallback_, *(headerBuf1 + 1))) {
-            case RFL_RESULT_BUSY:
+            case RFLErrcode_Busy:
                 break;
-            case RFL_RESULT_OK:
+            case RFLErrcode_Success:
                 break;
             default:
                 free = TRUE;
@@ -83,7 +81,7 @@ static void loadResRead2ndcallback_(void) {
         }
     } else {
         free = TRUE;
-        RFLiSetFileBroken(RFL_BROKEN_IO_ERROR);
+        RFLiSetFileBroken(RFLiFileBrokenType_ResBroken);
     }
 
     if (free) {
@@ -91,7 +89,7 @@ static void loadResRead2ndcallback_(void) {
         loader->headerBuf1 = NULL;
         RFLiFree(loader->headerBuf2);
         loader->headerBuf2 = NULL;
-        RFLiCloseAsync(RFL_ACCESS_RES, cb);
+        RFLiCloseAsync(RFLiFileType_Resource, cb);
     }
 }
 
@@ -105,7 +103,7 @@ static void loadResRead1stcallback_(void) {
 
     loader = RFLiGetLoader();
     free = FALSE;
-    if (RFLGetAsyncStatus() == RFL_RESULT_OK) {
+    if (RFLGetAsyncStatus() == RFLErrcode_Success) {
         headerBuf1 = (u32*)loader->headerBuf1;
         loader->version = *(u16*)((u8*)headerBuf1 + 2);
 
@@ -113,18 +111,18 @@ static void loadResRead1stcallback_(void) {
         loader->headerBuf2 = headerBuf2;
         loader->numResources = 0;
 
-        switch (RFLiReadAsync(RFL_ACCESS_RES, headerBuf2, 32,
+        switch (RFLiReadAsync(RFLiFileType_Resource, headerBuf2, 32,
                               loadResRead2ndcallback_, *(headerBuf1 + 1))) {
-        case RFL_RESULT_BUSY:
+        case RFLErrcode_Busy:
             break;
-        case RFL_RESULT_OK:
+        case RFLErrcode_Success:
             break;
         default:
             free = TRUE;
         }
     } else {
         free = TRUE;
-        RFLiSetFileBroken(RFL_BROKEN_IO_ERROR);
+        RFLiSetFileBroken(RFLiFileBrokenType_ResBroken);
     }
 
     if (free) {
@@ -136,7 +134,7 @@ static void loadResRead1stcallback_(void) {
             loader->headerBuf2 = NULL;
         }
 
-        RFLiCloseAsync(RFL_ACCESS_RES, errclosecallback_);
+        RFLiCloseAsync(RFLiFileType_Resource, errclosecallback_);
     }
 }
 
@@ -145,85 +143,85 @@ static void loadResGetlengthcallback_(void) {
     void* headerBuf1;
 
     loader = RFLiGetLoader();
-    if (RFLGetAsyncStatus() == RFL_RESULT_OK) {
+    if (RFLGetAsyncStatus() == RFLErrcode_Success) {
         headerBuf1 = RFLiAlloc32(0x100);
         loader->headerBuf1 = headerBuf1;
-        switch (RFLiReadAsync(RFL_ACCESS_RES, headerBuf1, 0x100,
+        switch (RFLiReadAsync(RFLiFileType_Resource, headerBuf1, 0x100,
                               loadResRead1stcallback_, 0)) {
-        case RFL_RESULT_BUSY:
+        case RFLErrcode_Busy:
             break;
-        case RFL_RESULT_OK:
+        case RFLErrcode_Success:
             break;
         default:
             RFLiFree(loader->headerBuf1);
             loader->headerBuf1 = NULL;
-            RFLiCloseAsync(RFL_ACCESS_RES, NULL);
+            RFLiCloseAsync(RFLiFileType_Resource, NULL);
         }
     } else {
-        RFLiCloseAsync(RFL_ACCESS_RES, errclosecallback_);
+        RFLiCloseAsync(RFLiFileType_Resource, errclosecallback_);
     }
 }
 
 static void loadResOpencallback_(void) {
     RFLLoader* loader;
 
-    if (RFLGetAsyncStatus() == RFL_RESULT_OK) {
+    if (RFLGetAsyncStatus() == RFLErrcode_Success) {
         loader = RFLiGetLoader();
         loader->cacheSize = 0;
-        switch (RFLiGetLengthAsync(RFL_ACCESS_RES, &loader->cacheSize,
+        switch (RFLiGetLengthAsync(RFLiFileType_Resource, &loader->cacheSize,
                                    loadResGetlengthcallback_)) {
-        case RFL_RESULT_BUSY:
+        case RFLErrcode_Busy:
             break;
-        case RFL_RESULT_OK:
+        case RFLErrcode_Success:
             break;
         default:
-            RFLiCloseAsync(RFL_ACCESS_RES, NULL);
+            RFLiCloseAsync(RFLiFileType_Resource, NULL);
         }
     } else {
         RFLExit();
     }
 }
 
-RFLResult RFLiLoadResourceHeaderAsync(void) {
+RFLErrcode RFLiLoadResourceHeaderAsync(void) {
     RFLLoader* loader;
 
     loader = RFLiGetLoader();
     if (loader == NULL) {
-        RFLiEndWorking(RFL_RESULT_CRITICAL);
-        return RFL_RESULT_CRITICAL;
+        RFLiEndWorking(RFLErrcode_Fatal);
+        return RFLErrcode_Fatal;
     }
 
     if (RFLIsResourceCached()) {
         parseOnmemoryRes_();
-        RFLiEndWorking(RFL_RESULT_OK);
-        return RFL_RESULT_BUSY;
+        RFLiEndWorking(RFLErrcode_Success);
+        return RFLErrcode_Busy;
     }
 
-    return RFLiOpenAsync(RFL_ACCESS_RES, NAND_ACCESS_READ,
+    return RFLiOpenAsync(RFLiFileType_Resource, NAND_ACCESS_READ,
                          loadResOpencallback_);
 }
 
-static u32 getCachedLength_(RFLLoader* loader, u32 resIdx, u16 fileIdx) {
-    RFLResource* res = &loader->resources[resIdx];
-    const void* resBuf = (u8*)loader->cache + res->offset;
-    const u32 next = ((u32*)resBuf)[fileIdx + 1];
-    const u32 self = ((u32*)resBuf)[fileIdx];
+static u32 getCachedLength_(RFLLoader* loader, u32 arcIdx, u16 fileIdx) {
+    RFLArchive* arc = &loader->archives[arcIdx];
+    const void* arcBuf = (u8*)loader->cache + arc->offset;
+    const u32 next = ((u32*)arcBuf)[fileIdx + 1];
+    const u32 self = ((u32*)arcBuf)[fileIdx];
     return next - self;
 }
 
-static u32 getNANDLength_(RFLLoader* loader, u32 resIdx, u16 fileIdx) {
+static u32 getNANDLength_(RFLLoader* loader, u32 arcIdx, u16 fileIdx) {
     NANDFileInfo file;
-    RFLResource* res;
+    RFLArchive* arc;
     void* tmpBuf;
     u32 length = 0;
 
     tmpBuf = RFLiAlloc32(scTmpSize);
-    res = &loader->resources[resIdx];
+    arc = &loader->archives[arcIdx];
 
     if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) ==
         NAND_RESULT_OK) {
-        const u32 readSize = ROUND_UP(res->numFiles * 4 + 4, 32);
-        NANDSeek(&file, res->offset, NAND_SEEK_BEG);
+        const u32 readSize = ROUND_UP(arc->numFiles * 4 + 4, 32);
+        NANDSeek(&file, arc->offset, NAND_SEEK_BEG);
 
         if (NANDRead(&file, tmpBuf, readSize) == readSize) {
             const u32 self = ((u32*)tmpBuf)[fileIdx];
@@ -238,7 +236,7 @@ static u32 getNANDLength_(RFLLoader* loader, u32 resIdx, u16 fileIdx) {
     return length;
 }
 
-static u32 getLength_(u32 resIdx, u16 fileIdx) {
+static u32 getLength_(u32 arcIdx, u16 fileIdx) {
     RFLLoader* loader;
 
     loader = RFLiGetLoader();
@@ -246,95 +244,95 @@ static u32 getLength_(u32 resIdx, u16 fileIdx) {
         return 0;
     }
 
-    if (fileIdx >= loader->resources[resIdx].numFiles) {
+    if (fileIdx >= loader->archives[arcIdx].numFiles) {
         return 0;
     }
 
     if (RFLIsResourceCached()) {
-        return getCachedLength_(loader, resIdx, fileIdx);
+        return getCachedLength_(loader, arcIdx, fileIdx);
     } else {
-        return getNANDLength_(loader, resIdx, fileIdx);
+        return getNANDLength_(loader, arcIdx, fileIdx);
     }
 }
 
-static void* getCachedFile_(void* dst, RFLLoader* loader, u32 resIdx,
+static void* getCachedFile_(void* dst, RFLLoader* loader, u32 arcIdx,
                             u16 fileIdx) {
     const u8* cache = (u8*)loader->cache;
-    RFLResource* res = &loader->resources[resIdx];
-    const void* resBuf = cache + res->offset;
-    const u32 self = ((u32*)resBuf)[fileIdx];
-    const u32 next = ((u32*)resBuf)[fileIdx + 1];
+    RFLArchive* arc = &loader->archives[arcIdx];
+    const void* arcBuf = cache + arc->offset;
+    const u32 self = ((u32*)arcBuf)[fileIdx];
+    const u32 next = ((u32*)arcBuf)[fileIdx + 1];
     const u32 size = next - self;
-    const u32 src = res->offset + self + (res->numFiles * 4);
+    const u32 src = arc->offset + self + (arc->numFiles * 4);
 
     memcpy(dst, src + 4 + cache, size);
     return dst;
 }
 
-static void* getNANDFile_(void* dst, RFLLoader* loader, u32 resIdx,
+static void* getNANDFile_(void* dst, RFLLoader* loader, u32 arcIdx,
                           u16 fileIdx) {
     NANDFileInfo file;
-    RFLResource* res;
+    RFLArchive* arc;
     void* tmpBuf;
-    void* resBuf;
+    void* arcBuf;
     void* ret;
     u32 readSize;
 
     ret = NULL;
-    res = &loader->resources[resIdx];
+    arc = &loader->archives[arcIdx];
     tmpBuf = RFLiAlloc32(scTmpSize);
 
     if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) ==
         NAND_RESULT_OK) {
-        u32 resBufSize;
+        u32 arcBufSize;
         s32 seekOffset;
-        u32 resSize;
-        u32 resOffset;
+        u32 arcSize;
+        u32 arcOffset;
 
-        readSize = ROUND_UP(res->numFiles * 4 + 4, 32);
-        resSize = 0;
-        resOffset = 0;
+        readSize = ROUND_UP(arc->numFiles * 4 + 4, 32);
+        arcSize = 0;
+        arcOffset = 0;
 
-        NANDSeek(&file, res->offset, NAND_SEEK_BEG);
+        NANDSeek(&file, arc->offset, NAND_SEEK_BEG);
 
         if (NANDRead(&file, tmpBuf, readSize) == readSize) {
             const u32 next = ((u32*)tmpBuf)[fileIdx + 1];
             const u32 self = ((u32*)tmpBuf)[fileIdx];
-            resSize = next - self;
-            resOffset = self;
+            arcSize = next - self;
+            arcOffset = self;
         } else {
-            RFLiSetFileBroken(RFL_BROKEN_IO_ERROR);
+            RFLiSetFileBroken(RFLiFileBrokenType_ResBroken);
             RFLiFree(tmpBuf);
             return NULL;
         }
 
-        seekOffset = res->offset + res->numFiles * 4 + 4 + resOffset;
-        resBufSize = ROUND_UP(resSize, 32);
+        seekOffset = arc->offset + arc->numFiles * 4 + 4 + arcOffset;
+        arcBufSize = ROUND_UP(arcSize, 32);
 
-        resBuf = RFLiAlloc32(resBufSize);
+        arcBuf = RFLiAlloc32(arcBufSize);
         NANDSeek(&file, seekOffset, NAND_SEEK_BEG);
 
-        if (NANDRead(&file, resBuf, resBufSize) == resBufSize) {
-            memcpy(dst, resBuf, resSize);
+        if (NANDRead(&file, arcBuf, arcBufSize) == arcBufSize) {
+            memcpy(dst, arcBuf, arcSize);
             ret = dst;
         } else {
-            RFLiSetFileBroken(RFL_BROKEN_IO_ERROR);
+            RFLiSetFileBroken(RFLiFileBrokenType_ResBroken);
             RFLiFree(tmpBuf);
-            RFLiFree(resBuf);
+            RFLiFree(arcBuf);
             return NULL;
         }
 
-        RFLiFree(resBuf);
+        RFLiFree(arcBuf);
         NANDClose(&file);
     } else {
-        RFLiSetFileBroken(RFL_BROKEN_IO_ERROR);
+        RFLiSetFileBroken(RFLiFileBrokenType_ResBroken);
     }
 
     RFLiFree(tmpBuf);
     return ret;
 }
 
-static void* getFile_(void* dst, u32 resIdx, u16 fileIdx) {
+static void* getFile_(void* dst, u32 arcIdx, u16 fileIdx) {
     RFLLoader* loader;
 
     if (!RFLAvailable()) {
@@ -346,56 +344,56 @@ static void* getFile_(void* dst, u32 resIdx, u16 fileIdx) {
         return 0;
     }
 
-    if (fileIdx >= loader->resources[resIdx].numFiles) {
+    if (fileIdx >= loader->archives[arcIdx].numFiles) {
         return 0;
     }
 
     if (RFLIsResourceCached()) {
-        return getCachedFile_(dst, loader, resIdx, fileIdx);
+        return getCachedFile_(dst, loader, arcIdx, fileIdx);
     } else {
-        return getNANDFile_(dst, loader, resIdx, fileIdx);
+        return getNANDFile_(dst, loader, arcIdx, fileIdx);
     }
 }
 
-u32 RFLiGetTexSize(RFLPartTex part, u16 file) {
-    static const u32 scParts2Arc[] = {
-        RFL_ARC_TEX_EYE, RFL_ARC_TEX_EYEBROW, RFL_ARC_TEX_MOUTH,
-        RFL_ARC_TEX_FACIAL_HAIR, RFL_ARC_TEX_MOLE};
+u32 RFLiGetTexSize(RFLiPartsTex part, u16 file) {
+    static const u32 scParts2Arc[] = {RFLiArcID_Eye, RFLiArcID_Eyebrow,
+                                      RFLiArcID_Mouth, RFLiArcID_Mustache,
+                                      RFLiArcID_Mole};
     return getLength_(scParts2Arc[part], file);
 }
 
-RFLTexHeader* RFLiLoadTexture(RFLPartTex part, u16 file, void* dst) {
-    static const u32 scParts2Arc[] = {
-        RFL_ARC_TEX_EYE, RFL_ARC_TEX_EYEBROW, RFL_ARC_TEX_MOUTH,
-        RFL_ARC_TEX_FACIAL_HAIR, RFL_ARC_TEX_MOLE};
+RFLTexHeader* RFLiLoadTexture(RFLiPartsTex part, u16 file, void* dst) {
+    static const u32 scParts2Arc[] = {RFLiArcID_Eye, RFLiArcID_Eyebrow,
+                                      RFLiArcID_Mouth, RFLiArcID_Mustache,
+                                      RFLiArcID_Mole};
     return (RFLTexHeader*)getFile_(dst, scParts2Arc[part], file);
 }
 
-u32 RFLiGetShpTexSize(RFLPartShpTex part, u16 file) {
-    static const u32 scParts2Arc[] = {RFL_ARC_TEX_MASCARA, RFL_ARC_TEX_CAP,
-                                      RFL_ARC_TEX_NOSE, RFL_ARC_TEX_GLASSES};
+u32 RFLiGetShpTexSize(RFLiPartsShpTex part, u16 file) {
+    static const u32 scParts2Arc[] = {RFLiArcID_FaceTex, RFLiArcID_CapTex,
+                                      RFLiArcID_NlineTex, RFLiArcID_GlassTex};
     return getLength_(scParts2Arc[part], file);
 }
 
-RFLTexHeader* RFLiLoadShpTexture(RFLPartShpTex part, u16 file, void* dst) {
-    static const u32 scParts2Arc[] = {RFL_ARC_TEX_MASCARA, RFL_ARC_TEX_CAP,
-                                      RFL_ARC_TEX_NOSE, RFL_ARC_TEX_GLASSES};
+RFLTexHeader* RFLiLoadShpTexture(RFLiPartsShpTex part, u16 file, void* dst) {
+    static const u32 scParts2Arc[] = {RFLiArcID_FaceTex, RFLiArcID_CapTex,
+                                      RFLiArcID_NlineTex, RFLiArcID_GlassTex};
     return (RFLTexHeader*)getFile_(dst, scParts2Arc[part], file);
 }
 
-u32 RFLiGetShapeSize(RFLPartShp part, u16 file) {
+u32 RFLiGetShapeSize(RFLiPartsShp part, u16 file) {
     static const u32 scParts2Arc[] = {
-        RFL_ARC_SHP_NOSE,     RFL_ARC_SHP_FOREHEAD, RFL_ARC_SHP_FACE,
-        RFL_ARC_SHP_HAIR,     RFL_ARC_SHP_CAP,      RFL_ARC_SHP_BEARD,
-        RFL_ARC_SHP_NOSELINE, RFL_ARC_SHP_MASK,     RFL_ARC_SHP_GLASSES};
+        RFLiArcID_Nose,  RFLiArcID_ForeHead, RFLiArcID_Faceline,
+        RFLiArcID_Hair,  RFLiArcID_Cap,      RFLiArcID_Beard,
+        RFLiArcID_Nline, RFLiArcID_Mask,     RFLiArcID_Glass};
     return getLength_(scParts2Arc[part], file);
 }
 
-void* RFLiLoadShape(RFLPartShp part, u16 file, void* dst) {
+void* RFLiLoadShape(RFLiPartsShp part, u16 file, void* dst) {
     static const u32 scParts2Arc[] = {
-        RFL_ARC_SHP_NOSE,     RFL_ARC_SHP_FOREHEAD, RFL_ARC_SHP_FACE,
-        RFL_ARC_SHP_HAIR,     RFL_ARC_SHP_CAP,      RFL_ARC_SHP_BEARD,
-        RFL_ARC_SHP_NOSELINE, RFL_ARC_SHP_MASK,     RFL_ARC_SHP_GLASSES};
+        RFLiArcID_Nose,  RFLiArcID_ForeHead, RFLiArcID_Faceline,
+        RFLiArcID_Hair,  RFLiArcID_Cap,      RFLiArcID_Beard,
+        RFLiArcID_Nline, RFLiArcID_Mask,     RFLiArcID_Glass};
     return getFile_(dst, scParts2Arc[part], file);
 }
 

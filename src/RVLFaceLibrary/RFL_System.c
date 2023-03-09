@@ -2,17 +2,9 @@
 #define RFL_WORK_SIZE 0x4B000
 #define RFL_DELUXE_WORK_SIZE 0x64000
 
-#include "RFL_Controller.h"
-#include "RFL_Database.h"
-#include "RFL_HiddenDatabase.h"
-#include "RFL_Icon.h"
-#include "RFL_Model.h"
-#include "RFL_NANDAccess.h"
-#include "RFL_NANDLoader.h"
-#include <revolution/RFL/RFL_System.h>
-
-#include <MEM.h>
-#include <OS.h>
+#include <RVLFaceLibrary.h>
+#include <revolution/MEM.h>
+#include <revolution/OS.h>
 #include <string.h>
 
 static const char* __RFLVersion =
@@ -22,8 +14,8 @@ static const RFLCoordinateData scCoordinate = {
     0x01, 0x02, 0x00, 0x00, 0x00000000, 0x00000000, 0x00000000};
 
 static RFLManager* sRFLManager = NULL;
-static RFLResult sRFLLastErrCode = RFL_RESULT_1;
-static u8 sRFLBrokenType;
+static RFLErrcode sRFLLastErrCode = RFLErrcode_NotAvailable;
+static u8 sRFLiFileBrokenType;
 static NANDResult sRFLLastReason;
 
 u32 RFLGetWorkSize(BOOL deluxTex) {
@@ -31,15 +23,15 @@ u32 RFLGetWorkSize(BOOL deluxTex) {
                     : RFL_WORK_SIZE + sizeof(RFLManager);
 }
 
-RFLResult RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
-                          BOOL deluxTex) {
+RFLErrcode RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
+                           BOOL deluxTex) {
     u32 workSize;
     u32 heapSize;
     void* heapBuffer;
-    RFLResult error;
+    RFLErrcode error;
 
     if (resBuffer == NULL) {
-        return RFL_RESULT_CRITICAL;
+        return RFLErrcode_Fatal;
     }
 
     if (RFLiGetManager() == NULL) {
@@ -49,9 +41,9 @@ RFLResult RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         memset(workBuffer, 0, workSize);
 
         sRFLManager = (RFLManager*)workBuffer;
-        sRFLLastErrCode = RFL_RESULT_1;
+        sRFLLastErrCode = RFLErrcode_NotAvailable;
         sRFLLastReason = NAND_RESULT_OK;
-        sRFLBrokenType = 0;
+        sRFLiFileBrokenType = 0;
         sRFLManager->workBuffer = (u8*)workBuffer + sizeof(RFLManager);
 
         heapSize = deluxTex ? RFL_DELUXE_WORK_SIZE - sizeof(RFLManager)
@@ -71,8 +63,8 @@ RFLResult RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         RFLiGetManager()->tmpHeap =
             MEMCreateExpHeapEx(heapBuffer, heapSize, 0x1);
 
-        RFLiGetManager()->status = RFL_RESULT_OK;
-        RFLiGetManager()->lastStatus = RFL_RESULT_OK;
+        RFLiGetManager()->status = RFLErrcode_Success;
+        RFLiGetManager()->lastStatus = RFLErrcode_Success;
         RFLiGetManager()->reason = NAND_RESULT_OK;
         RFLiGetManager()->lastReason = NAND_RESULT_OK;
         RFLiGetManager()->deluxTex = deluxTex;
@@ -95,18 +87,18 @@ RFLResult RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         }
 
         error = RFLiBootLoadAsync();
-        if (error != RFL_RESULT_BUSY && error != RFL_RESULT_OK) {
+        if (error != RFLErrcode_Busy && error != RFLErrcode_Success) {
             RFLExit();
         }
     } else {
-        error = RFL_RESULT_OK;
+        error = RFLErrcode_Success;
     }
 
     return error;
 }
 
-RFLResult RFLInitRes(void* workBuffer, void* resBuffer, u32 resSize,
-                     BOOL deluxTex) {
+RFLErrcode RFLInitRes(void* workBuffer, void* resBuffer, u32 resSize,
+                      BOOL deluxTex) {
     RFLInitResAsync(workBuffer, resBuffer, resSize, deluxTex);
     return RFLWaitAsync();
 }
@@ -121,7 +113,7 @@ void RFLExit(void) {
     sRFLLastReason = RFLAvailable() ? (RFLAvailable() ? RFLiGetManager()->reason
                                                       : NAND_RESULT_OK)
                                     : sRFLLastReason;
-    sRFLBrokenType = RFLiGetManager()->brokenType;
+    sRFLiFileBrokenType = RFLiGetManager()->brokenType;
 
     if (RFLIsResourceCached()) {
         RFLFreeCachedResource();
@@ -139,16 +131,16 @@ static void bootloadDB2Res_(void) {
     RFLiLoadResourceHeaderAsync();
 
     switch (RFLWaitAsync()) {
-    case RFL_RESULT_3:
-    case RFL_RESULT_OK:
-    case RFL_RESULT_BUSY:
+    case RFLErrcode_Loadfail:
+    case RFLErrcode_Success:
+    case RFLErrcode_Busy:
         break;
     default:
         RFLExit();
     }
 }
 
-RFLResult RFLiBootLoadAsync(void) {
+RFLErrcode RFLiBootLoadAsync(void) {
     return RFLiBootLoadDatabaseAsync(bootloadDB2Res_);
 }
 
@@ -184,17 +176,17 @@ void RFLiSetWorking(BOOL working) { RFLiGetManager()->working = working; }
 
 RFLManager* RFLiGetManager(void) { return sRFLManager; }
 
-RFLResult RFLGetAsyncStatus(void) {
+RFLErrcode RFLGetAsyncStatus(void) {
     if (!RFLAvailable()) {
         return sRFLLastErrCode;
     }
 
     if (RFLiIsWorking()) {
-        return RFL_RESULT_BUSY;
+        return RFLErrcode_Busy;
     }
 
     if (RFLiCriticalError()) {
-        return RFL_RESULT_CRITICAL;
+        return RFLErrcode_Fatal;
     }
 
     return RFLiGetManager()->status;
@@ -206,60 +198,61 @@ NANDResult RFLGetLastReason(void) {
                : (RFLAvailable() ? RFLiGetManager()->reason : NAND_RESULT_OK);
 }
 
-RFLResult RFLWaitAsync(void) {
-    volatile RFLResult status;
+RFLErrcode RFLWaitAsync(void) {
+    volatile RFLErrcode status;
 
     do {
         status = RFLGetAsyncStatus();
-    } while (status == RFL_RESULT_BUSY);
+    } while (status == RFLErrcode_Busy);
 
     return status;
 }
 
-RFLAccessInfo* RFLiGetAccInfo(RFLAccessType type) {
+RFLAccessInfo* RFLiGetAccInfo(RFLiFileType type) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->info[type];
 }
 
 RFLCtrlBufManager* RFLiGetCtrlBufManager(void) {
-    return !RFLAvailable() ? NULL : &RFLiGetManager()->ctrlBufMgr;
+    return !RFLAvailable() ? NULL : &RFLiGetManager()->ctrlMgr;
 }
 
 NANDResult RFLiGetLastReason(void) {
     return !RFLAvailable() ? NAND_RESULT_OK : RFLiGetManager()->reason;
 }
 
-void RFLiSetFileBroken(RFLBrokenType type) {
+void RFLiSetFileBroken(RFLiFileBrokenType type) {
     if (RFLAvailable()) {
         RFLiGetManager()->brokenType |= (1 << type) & 0xFF;
     }
 }
 
 BOOL RFLiNotFoundError(void) {
-    u8* broken = &sRFLBrokenType;
+    u8* broken = &sRFLiFileBrokenType;
 
     if (RFLAvailable()) {
         broken = &RFLiGetManager()->brokenType;
     }
 
-    return *broken >> RFL_BROKEN_NOT_FOUND & 1;
+    return *broken >> RFLiFileBrokenType_DBNotFound & 1;
 }
 
 BOOL RFLiNeedRepairError(void) {
-    u8* broken = &sRFLBrokenType;
+    u8* broken = &sRFLiFileBrokenType;
 
     if (RFLAvailable()) {
         broken = &RFLiGetManager()->brokenType;
     }
 
-    return *broken >> RFL_BROKEN_NEED_REPAIR & 1;
+    return *broken >> RFLiFileBrokenType_DBBroken & 1;
 }
 
 BOOL RFLiCriticalError(void) {
-    u8* broken = &sRFLBrokenType;
+    u8* broken = &sRFLiFileBrokenType;
 
     if (RFLAvailable()) {
         broken = &RFLiGetManager()->brokenType;
     }
 
-    return *broken & 1 << RFL_BROKEN_IO_ERROR || *broken & 1 << RFL_BROKEN_3;
+    return *broken & 1 << RFLiFileBrokenType_ResBroken ||
+           *broken & 1 << RFLiFileBrokenType_Corrupt;
 }

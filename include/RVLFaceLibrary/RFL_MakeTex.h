@@ -1,7 +1,7 @@
-#ifndef RVL_SDK_RFL_MAKE_TEX_H
-#define RVL_SDK_RFL_MAKE_TEX_H
-#include <revolution/RFL/RFL_Model.h>
-#include <revolution/RFL/RFL_System.h>
+#ifndef RVL_FACE_LIBRARY_MAKE_TEX_H
+#define RVL_FACE_LIBRARY_MAKE_TEX_H
+#include <RVLFaceLibrary/RFL_Model.h>
+#include <RVLFaceLibrary/RFL_System.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {

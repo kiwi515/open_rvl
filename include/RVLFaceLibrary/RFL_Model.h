@@ -1,11 +1,10 @@
-#ifndef RVL_SDK_RFL_MODEL_H
-#define RVL_SDK_RFL_MODEL_H
-#include <revolution/GX/GXLight.h>
-#include <revolution/GX/GXTexture.h>
-#include <revolution/MTX/mtx.h>
-#include <revolution/RFL/RFL_DataUtility.h>
-#include <revolution/RFL/RFL_MiddleDatabase.h>
-#include <revolution/RFL/RFL_System.h>
+#ifndef RVL_FACE_LIBRARY_MODEL_H
+#define RVL_FACE_LIBRARY_MODEL_H
+#include <RVLFaceLibrary/RFL_DataUtility.h>
+#include <RVLFaceLibrary/RFL_MiddleDatabase.h>
+#include <RVLFaceLibrary/RFL_System.h>
+#include <revolution/GX.h>
+#include <revolution/MTX.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
@@ -15,100 +14,13 @@ typedef enum {
     RFL_COORDINATE_TYPE_0,
 } RFLCoordinateType;
 
-typedef enum {
-    RFL_EXPR_0,
-    RFL_EXPR_1,
-    RFL_EXPR_2,
-    RFL_EXPR_3,
-    RFL_EXPR_4,
-    RFL_EXPR_5,
-    RFL_EXPR_6,
-
-    RFL_EXPR_MAX
-} RFLExpression;
-
-typedef enum {
-    RFL_FACE_COLOR_0,
-    RFL_FACE_COLOR_1,
-    RFL_FACE_COLOR_2,
-    RFL_FACE_COLOR_3,
-    RFL_FACE_COLOR_4,
-    RFL_FACE_COLOR_5,
-
-    RFL_FACELINE_MAX
-} RFLFacelineColor;
-
-typedef enum {
-    RFL_HAIR_COLOR_0,
-    RFL_HAIR_COLOR_1,
-    RFL_HAIR_COLOR_2,
-    RFL_HAIR_COLOR_3,
-    RFL_HAIR_COLOR_4,
-    RFL_HAIR_COLOR_5,
-    RFL_HAIR_COLOR_6,
-    RFL_HAIR_COLOR_7,
-
-    RFL_HAIR_COLOR_MAX
-} RFLHairColor;
-
-typedef enum {
-    RFL_BEARD_COLOR_0,
-    RFL_BEARD_COLOR_1,
-    RFL_BEARD_COLOR_2,
-    RFL_BEARD_COLOR_3,
-    RFL_BEARD_COLOR_4,
-    RFL_BEARD_COLOR_5,
-    RFL_BEARD_COLOR_6,
-    RFL_BEARD_COLOR_7,
-
-    RFL_BEARD_COLOR_MAX
-} RFLBeardColor;
-
-typedef enum {
-    RFL_GLASSES_COLOR_BLACK,
-    RFL_GLASSES_COLOR_BROWN,
-    RFL_GLASSES_COLOR_RED,
-    RFL_GLASSES_COLOR_BLUE,
-    RFL_GLASSES_COLOR_ORANGE,
-    RFL_GLASSES_COLOR_GREY,
-
-    RFL_GLASSES_COLOR_MAX
-} RFLGlassesColor;
-
-typedef enum {
-    RFL_COLOR_RED,
-    RFL_COLOR_ORANGE,
-    RFL_COLOR_YELLOW,
-    RFL_COLOR_LIME,
-    RFL_COLOR_GREEN,
-    RFL_COLOR_BLUE,
-    RFL_COLOR_AQUA,
-    RFL_COLOR_PINK,
-    RFL_COLOR_PURPLE,
-    RFL_COLOR_BROWN,
-    RFL_COLOR_WHITE,
-    RFL_COLOR_BLACK,
-
-    RFL_COLOR_MAX
-} RFLFavoriteColor;
-
-typedef enum {
-    RFL_RSL_64 = 64,
-    RFL_RSL_96 = 96,
-    RFL_RSL_128 = 128,
-    RFL_RSL_224 = 224,
-    RFL_RSL_256 = 256,
-    RFL_RSL_480 = 480
-} RFLResolution;
-
 typedef struct RFLCoordinateData {
-    u8 BYTE_0x0;
-    u8 BYTE_0x1;
-    u8 BYTE_0x2;
-    u8 BYTE_0x3;
-    u32 WORD_0x4;
-    u32 WORD_0x8;
-    u32 WORD_0xC;
+    u8 uOff;   // at 0x0
+    u8 fOff;   // at 0x1
+    u8 rOff;   // at 0x2
+    BOOL uRev; // at 0x4
+    BOOL fRev; // at 0x8
+    BOOL rRev; // at 0xC
 } RFLCoordinateData;
 
 typedef struct RFLCharModelRes {
@@ -185,17 +97,137 @@ typedef struct RFLCharModelRes {
 } RFLCharModelRes;
 
 typedef struct RFLCharModel {
-    Mtx viewMtx;                        // at 0x0
-    Mtx nrmMtx;                         // at 0x30
-    RFLExpression expression;           // at 0x60
-    RFLResolution resolution;           // at 0x64
-    RFLCharModelRes* res;               // at 0x68
-    GXTexObj* maskTexObj[RFL_EXPR_MAX]; // at 0x6C
+    Mtx viewMtx;                      // at 0x0
+    Mtx nrmMtx;                       // at 0x30
+    RFLExpression expression;         // at 0x60
+    RFLResolution resolution;         // at 0x64
+    RFLCharModelRes* res;             // at 0x68
+    GXTexObj* maskTexObj[RFLExp_Max]; // at 0x6C
 } RFLCharModel;
 
+typedef struct RFLCharInfo {
+    union {
+        struct {
+            u16 type : 3;
+            u16 color : 3;
+            u16 texture : 4;
+            u16 padding : 6;
+        };
+        u16 rawdata;
+    } faceline; // at 0x0
+
+    union {
+        struct {
+            u16 type : 7;
+            u16 color : 3;
+            u16 flip : 1;
+            u16 padding : 5;
+        };
+        u16 rawdata;
+    } hair; // at 0x2
+
+    union {
+        struct {
+            u32 type : 6;
+            u32 color : 3;
+            u32 scale : 4;
+            u32 rotate : 5;
+            u32 x : 4;
+            u32 y : 5;
+            u32 padding : 5;
+        };
+        u32 rawdata;
+    } eye; // at 0x4
+
+    union {
+        struct {
+            u32 type : 5;
+            u32 color : 3;
+            u32 scale : 4;
+            u32 rotate : 5;
+            u32 x : 4;
+            u32 y : 5;
+            u32 padding : 6;
+        };
+        u32 rawdata;
+    } eyebrow; // at 0x8
+
+    union {
+        struct {
+            u16 type : 4;
+            u16 scale : 4;
+            u16 y : 5;
+            u16 padding : 3;
+        };
+        u16 rawdata;
+    } nose; // at 0xC
+
+    union {
+        struct {
+            u16 type : 5;
+            u16 color : 2;
+            u16 scale : 4;
+            u16 y : 5;
+        };
+        u16 rawdata;
+    } mouth; // at 0xE
+
+    union {
+        struct {
+            u16 mustache : 2;
+            u16 type : 2;
+            u16 color : 3;
+            u16 scale : 4;
+            u16 y : 5;
+        };
+        u16 rawdata;
+    } beard; // at 0x10
+
+    union {
+        struct {
+            u16 type : 4;
+            u16 color : 3;
+            u16 scale : 4;
+            u16 y : 5;
+        };
+        u16 rawdata;
+    } glass; // at 0x12
+
+    union {
+        struct {
+            u16 type : 1;
+            u16 scale : 4;
+            u16 x : 5;
+            u16 y : 5;
+            u16 y : 1;
+        };
+        u16 rawdata;
+    } mole; // at 0x14
+
+    struct {
+        u8 height;
+        u8 build;
+    } body; // at 0x16
+
+    struct {
+        wchar_t name[RFL_NAME_LEN];
+        wchar_t creator[RFL_CREATOR_LEN];
+        u16 sex;
+        u16 bmonth;
+        u16 bday;
+        u16 color;
+        u16 favorite;
+        u16 localOnly;
+    } personal; // at 0x18
+
+    struct {
+        u8 data[RFL_CREATEID_LEN];
+    } createID; // at 0x46
+} RFLCharInfo;
+
 typedef struct RFLShape {
-    RFLPartShp part; // at 0x0
-    u16 file;        // at 0x4
+    RFLiPartsShp part; // at 0x0
+    u16 file;          // at 0x4
     BOOL BOOL_0x8;
     BOOL BOOL_0xC;
     s16* vtxPosBuf;    // at 0x10
@@ -226,27 +258,29 @@ typedef struct RFLDrawSetting {
     u8 compLoc;          // at 0x14
 } RFLDrawSetting;
 
-/**
- * Documentation from:
- * https://wiki.tockdom.com/wiki/BTI_(File_Format)
- */
 typedef struct RFLTexHeader {
-    u8 format;       // at 0x0
-    u8 alpha;        // at 0x1
-    u16 width;       // at 0x2
-    u16 height;      // at 0x4
-    u8 wrapS;        // at 0x6
-    u8 wrapT;        // at 0x7
-    u16 paletteFmt;  // at 0x8
-    u16 numPalettes; // at 0xA
-    u32 paletteOfs;  // at 0xC
-    char UNK_0x10[0x4];
-    u8 magFilt; // at 0x14
-    u8 minFilt; // at 0x15
-    char UNK_0x16[0x2];
-    u8 numImages; // at 0x18
-    char UNK_0x19[0x3];
-    u32 imageOfs; // at 0x1C
+    u8 format;          // at 0x0
+    u8 alpha;           // at 0x1
+    u16 width;          // at 0x2
+    u16 height;         // at 0x4
+    u8 wrapS;           // at 0x6
+    u8 wrapT;           // at 0x7
+    u16 indexTexture;   // at 0x8
+    u16 colorFormat;    // at 0x9
+    u16 numColors;      // at 0xA
+    u32 paletteOfs;     // at 0xC
+    u8 enableLOD;       // at 0x10
+    u8 enableEdgeLOD;   // at 0x11
+    u8 enableBiasClamp; // at 0x12
+    u8 enableMaxAniso;  // at 0x13
+    u8 minFilt;         // at 0x14
+    u8 magFilt;         // at 0x15
+    s8 minLOD;          // at 0x16
+    s8 maxLOD;          // at 0x16
+    u8 mipmapLevel;     // at 0x18
+    s8 reserved;        // at 0x19
+    s16 lodBias;        // at 0x1A
+    u32 imageOfs;       // at 0x1C
 } RFLTexHeader;
 
 typedef struct RFLDrawCoreSetting {
@@ -275,10 +309,10 @@ static inline const void* RFLiGetTexImage(const RFLTexHeader* tex) {
 void RFLSetCoordinate(RFLCoordinateType, RFLCoordinateType);
 u32 RFLiGetExpressionNum(u32);
 u32 RFLGetModelBufferSize(RFLResolution, u32);
-RFLResult RFLInitCharModel(RFLCharModel*, RFLDataSource, RFLMiddleDB*, u16,
-                           void*, RFLResolution, u32);
-RFLResult RFLiInitCharModel(RFLCharModel*, RFLCharInfo*, void*, RFLResolution,
-                            u32);
+RFLErrcode RFLInitCharModel(RFLCharModel*, RFLDataSource, RFLMiddleDB*, u16,
+                            void*, RFLResolution, u32);
+RFLErrcode RFLiInitCharModel(RFLCharModel*, RFLCharInfo*, void*, RFLResolution,
+                             u32);
 void RFLSetMtx(RFLCharModel*, Mtx);
 void RFLSetExpression(RFLCharModel*, RFLExpression);
 RFLExpression RFLGetExpression(RFLCharModel*);
@@ -293,7 +327,7 @@ void RFLDrawOpaCore(const RFLCharModel*, const RFLDrawCoreSetting*);
 void RFLDrawXluCore(const RFLCharModel*, const RFLDrawCoreSetting*);
 void RFLiInitCharModelRes(RFLCharModelRes*, RFLCharInfo*);
 void RFLiInitShapeRes(RFLShape*);
-void RFLiInitTexRes(GXTexObj*, RFLPartShpTex, u16, void*);
+void RFLiInitTexRes(GXTexObj*, RFLiPartsShpTex, u16, void*);
 void RFLiTransformCoordinate(s16*, const s16*);
 void RFLDrawShape(const RFLCharModel*);
 

@@ -1,19 +1,7 @@
-#include "RFL_Model.h"
-#include "RFL_MakeTex.h"
-#include "RFL_NANDLoader.h"
-
-#include <OS.h>
-#include <TRK/__mem.h>
-
-#include <GX/GXAttr.h>
-#include <GX/GXBump.h>
-#include <GX/GXDisplayList.h>
-#include <GX/GXGeometry.h>
-#include <GX/GXMisc.h>
-#include <GX/GXPixel.h>
-#include <GX/GXTev.h>
-#include <GX/GXTransform.h>
-#include <GX/GXVert.h>
+#include <RVLFaceLibrary.h>
+#include <revolution/GX.h>
+#include <revolution/OS.h>
+#include <string.h>
 
 const RFLDrawCoreSetting cDefaultDrawCoreSetting2Tev = {
     .txcGenNum = 1,
@@ -81,19 +69,19 @@ static const GXColor cGlassColor[RFL_GLASSES_COLOR_MAX] = {
     {96, 88, 80, 255},  //!< RFL_GLASSES_COLOR_GREY
 };
 
-static const GXColor cFavoriteColor[RFL_COLOR_MAX] = {
-    {184, 64, 48, 255},   //!< RFL_COLOR_RED
-    {240, 120, 40, 255},  //!< RFL_COLOR_ORANGE
-    {248, 216, 32, 255},  //!< RFL_COLOR_YELLOW
-    {128, 200, 40, 255},  //!< RFL_COLOR_LIME
-    {0, 116, 40, 255},    //!< RFL_COLOR_GREEN
-    {32, 72, 152, 255},   //!< RFL_COLOR_BLUE
-    {64, 160, 216, 255},  //!< RFL_COLOR_AQUA
-    {232, 96, 120, 255},  //!< RFL_COLOR_PINK
-    {112, 44, 168, 255},  //!< RFL_COLOR_PURPLE
-    {72, 56, 24, 255},    //!< RFL_COLOR_BROWN
-    {224, 224, 224, 255}, //!< RFL_COLOR_WHITE
-    {24, 24, 20, 255},    //!< RFL_COLOR_BLACK
+static const GXColor cFavoriteColor[RFLFavoriteColor_Max] = {
+    {184, 64, 48, 255},   //!< RFLFavoriteColor_Red
+    {240, 120, 40, 255},  //!< RFLFavoriteColor_Orange
+    {248, 216, 32, 255},  //!< RFLFavoriteColor_Yellow
+    {128, 200, 40, 255},  //!< RFLFavoriteColor_YellowGreen
+    {0, 116, 40, 255},    //!< RFLFavoriteColor_Green
+    {32, 72, 152, 255},   //!< RFLFavoriteColor_Blue
+    {64, 160, 216, 255},  //!< RFLFavoriteColor_SkyBlue
+    {232, 96, 120, 255},  //!< RFLFavoriteColor_Pink
+    {112, 44, 168, 255},  //!< RFLFavoriteColor_Purple
+    {72, 56, 24, 255},    //!< RFLFavoriteColor_Brown
+    {224, 224, 224, 255}, //!< RFLFavoriteColor_White
+    {24, 24, 20, 255},    //!< RFLFavoriteColor_Black
 };
 
 static const GXColor cWhite = {255, 255, 255, 255};
@@ -110,7 +98,7 @@ u32 RFLiGetExpressionNum(u32 exprFlags) {
     int i;
     u32 num = 0;
 
-    for (i = 0; i < RFL_EXPR_MAX; i++) {
+    for (i = 0; i < RFLExp_Max; i++) {
         if (exprFlags & (1 << i)) {
             num++;
         }
@@ -126,24 +114,24 @@ u32 RFLGetModelBufferSize(RFLResolution res, u32 expr) {
            ROUND_UP(texSize * exprNum, 32);
 }
 
-RFLResult RFLInitCharModel(RFLCharModel* model, RFLDataSource src,
-                           RFLMiddleDB* db, u16 id, void* work,
-                           RFLResolution res, u32 expressions) {
+RFLErrcode RFLInitCharModel(RFLCharModel* model, RFLDataSource src,
+                            RFLMiddleDB* db, u16 id, void* work,
+                            RFLResolution res, u32 expressions) {
     RFLCharInfo info;
 
-    RFLResult result = RFLiPickupCharInfo(&info, src, db, id);
-    if (result == RFL_RESULT_OK) {
+    RFLErrcode result = RFLiPickupCharInfo(&info, src, db, id);
+    if (result == RFLErrcode_Success) {
         RFLiInitCharModel(model, &info, work, res, expressions);
     }
 
     return result;
 }
 
-RFLResult RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
-                            RFLResolution res, u32 expressions) {
+RFLErrcode RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
+                             RFLResolution res, u32 expressions) {
     RFLCharModel* model2;
     u32 maskSize;
-    void* maskImages[RFL_EXPR_MAX];
+    void* maskImages[RFLExp_Max];
     u32 maskRes;
     GXTexObj* exprTexObj;
     void* image;
@@ -165,7 +153,7 @@ RFLResult RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
     // Expression texobjs
     exprTexObj =
         (GXTexObj*)ROUND_UP_PTR((char*)work + sizeof(RFLCharModelRes), 32);
-    for (i = 0; i < RFL_EXPR_MAX; i++) {
+    for (i = 0; i < RFLExp_Max; i++) {
         if (expressions & (1 << i)) {
             model2->maskTexObj[i] = exprTexObj;
             exprTexObj++;
@@ -176,7 +164,7 @@ RFLResult RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
 
     // Expression images
     image = ROUND_UP_PTR(exprTexObj, 32);
-    for (i = 0; i < RFL_EXPR_MAX; i++) {
+    for (i = 0; i < RFLExp_Max; i++) {
         if (expressions & (1 << i)) {
             maskImages[i] = image;
             image = ((char*)image + maskSize);
@@ -192,21 +180,21 @@ RFLResult RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
     maxLod = 0.0f;
 
     switch (res) {
-    case RFL_RSL_96:
+    case RFLResolution_64M:
         maxLod = 1.0f;
         mipmap = TRUE;
         break;
-    case RFL_RSL_224:
+    case RFLResolution_128M:
         maxLod = 2.0f;
         mipmap = TRUE;
         break;
-    case RFL_RSL_480:
+    case RFLResolution_256M:
         maxLod = 3.0f;
         mipmap = TRUE;
         break;
     }
 
-    for (i = 0; i < RFL_EXPR_MAX; i++) {
+    for (i = 0; i < RFLExp_Max; i++) {
         if (model2->maskTexObj[i] != NULL) {
             GXInitTexObj(model2->maskTexObj[i], maskImages[i], maskRes, maskRes,
                          GX_TF_RGB5A3, GX_CLAMP, GX_CLAMP, mipmap);
@@ -493,7 +481,7 @@ void RFLiInitCharModelRes(RFLCharModelRes* res, RFLCharInfo* info) {
  * The format changes based on the model type, so the code is a little messy.
  */
 void RFLiInitShapeRes(RFLShape* shape) {
-    static const u32 csHeader[RFL_PART_SHP_MAX] = {
+    static const u32 csHeader[RFLiPartsShp_Max] = {
         'nose', 'frhd', 'face', 'hair', 'cap_', 'berd', 'nsln', 'mask', 'glas'};
 
     u8 indices;
@@ -510,14 +498,14 @@ void RFLiInitShapeRes(RFLShape* shape) {
     u8 dlSize;
     s16* nrmPtr;
 
-    BOOL noTxc = (((u32)shape->part) <= RFL_PART_SHP_BEARD) &&
+    BOOL noTxc = (((u32)shape->part) <= RFLiPartsShp_Beard) &&
                  (((1 << shape->part) & 0x2B) != 0);
     u8* res = (u8*)RFLiAlloc32(RFLiGetShapeSize(shape->part, shape->file));
     RFLiLoadShape(shape->part, shape->file, res);
 
     res += sizeof(u32);
 
-    if (shape->part == RFL_PART_SHP_FACE) {
+    if (shape->part == RFLiPartsShp_Faceline) {
         memcpy(shape->noseTrans, res, sizeof(Vec));
         res += sizeof(Vec);
         memcpy(shape->beardTrans, res, sizeof(Vec));
@@ -629,7 +617,7 @@ void RFLiInitShapeRes(RFLShape* shape) {
     RFLiFree(res);
 }
 
-void RFLiInitTexRes(GXTexObj* texObj, RFLPartShpTex part, u16 file,
+void RFLiInitTexRes(GXTexObj* texObj, RFLiPartsShpTex part, u16 file,
                     void* buffer) {
     u32 texSize;
     RFLTexHeader* tex;
@@ -638,14 +626,14 @@ void RFLiInitTexRes(GXTexObj* texObj, RFLPartShpTex part, u16 file,
     RFLiLoadShpTexture(part, file, tex);
 
     switch (part) {
-    case RFL_PART_SHP_TEX_MASCARA:
+    case RFLiPartsShpTex_Face:
         texSize = tex->height * tex->width * 2;
         break;
-    case RFL_PART_SHP_TEX_CAP:
-    case RFL_PART_SHP_TEX_NOSE:
+    case RFLiPartsShpTex_Cap:
+    case RFLiPartsShpTex_Noseline:
         texSize = tex->height * tex->width / 2;
         break;
-    case RFL_PART_SHP_TEX_GLASSES:
+    case RFLiPartsShpTex_Glass:
         texSize = tex->height * tex->width;
         break;
     }
@@ -659,12 +647,9 @@ void RFLiInitTexRes(GXTexObj* texObj, RFLPartShpTex part, u16 file,
 }
 
 void RFLiTransformCoordinate(s16* to, const s16* from) {
-    to[coordinateData.BYTE_0x2] =
-        (coordinateData.WORD_0xC != 0) ? -from[0] : from[0];
-    to[coordinateData.BYTE_0x0] =
-        (coordinateData.WORD_0x4 != 0) ? -from[1] : from[1];
-    to[coordinateData.BYTE_0x1] =
-        (coordinateData.WORD_0x8 != 0) ? -from[2] : from[2];
+    to[coordinateData.rOff] = (coordinateData.rRev != 0) ? -from[0] : from[0];
+    to[coordinateData.uOff] = (coordinateData.uRev != 0) ? -from[1] : from[1];
+    to[coordinateData.fOff] = (coordinateData.fRev != 0) ? -from[2] : from[2];
 }
 
 void RFLDrawShape(const RFLCharModel* model) {

@@ -29,7 +29,7 @@ typedef struct _GXColorS10 {
 } GXColorS10;
 
 /**
- * Enums
+ * Common enums
  */
 
 typedef enum _GXAlphaOp {
