@@ -17,11 +17,10 @@ typedef struct RFLAccessInfo {
     RFLAccessCallback callback; // at 0x0
     union {
         struct {
-            char path[FS_MAX_PATH]; // at 0x4
-            u8 BYTE_0x45;           // at 0x45
-            u8 openMode;            // at 0x46
-            u8 perm;                // at 0x47
-            u8 attr;                // at 0x48
+            char path[FS_MAX_PATH + 1]; // at 0x4
+            u8 openMode;                // at 0x46
+            u8 perm;                    // at 0x47
+            u8 attr;                    // at 0x48
         } openInfo;
 
         struct {

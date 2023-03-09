@@ -647,9 +647,9 @@ void RFLiInitTexRes(GXTexObj* texObj, RFLiPartsShpTex part, u16 file,
 }
 
 void RFLiTransformCoordinate(s16* to, const s16* from) {
-    to[coordinateData.rOff] = (coordinateData.rRev != 0) ? -from[0] : from[0];
-    to[coordinateData.uOff] = (coordinateData.uRev != 0) ? -from[1] : from[1];
-    to[coordinateData.fOff] = (coordinateData.fRev != 0) ? -from[2] : from[2];
+    to[coordinateData.rOff] = coordinateData.rRev ? -from[0] : from[0];
+    to[coordinateData.uOff] = coordinateData.uRev ? -from[1] : from[1];
+    to[coordinateData.fOff] = coordinateData.fRev ? -from[2] : from[2];
 }
 
 void RFLDrawShape(const RFLCharModel* model) {

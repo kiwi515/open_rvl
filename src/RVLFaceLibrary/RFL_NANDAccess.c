@@ -133,13 +133,13 @@ void RFLiEndWorking(RFLErrcode err) {
 
 NANDCommandBlock* RFLiSetCommandBlock(RFLiFileType type, RFLiAsyncTag tag) {
     NANDCommandBlock* block;
-    RFLAccessInfo* acc;
+    RFLAccessInfo* info;
     RFLCallbackTag* data;
 
     block = &RFLiGetAccInfo(type)->block;
-    acc = RFLiGetAccInfo(type);
+    info = RFLiGetAccInfo(type);
 
-    data = &acc->tag;
+    data = &info->tag;
     data->tag = tag;
     data->type = type;
 
@@ -161,41 +161,43 @@ NANDFileInfo* RFLiGetWorkingFile(RFLiFileType type) {
 static void alarmCallback_(OSAlarm* alarm, OSContext* ctx) {
 #pragma unused(ctx)
 
-    const RFLCallbackTag* userData;
-    userData = (const RFLCallbackTag*)OSGetAlarmUserData(alarm);
+    const RFLiFileType* userData;
+    userData = (const RFLiFileType*)OSGetAlarmUserData(alarm);
 
     if (RFLAvailable()) {
         const RFLAlarmCallback alarmCallback =
-            RFLiGetAccInfo(*userData)->alarmData.callback;
+            RFLiGetAccInfo(*userData)->retryCallback;
         alarmCallback(*userData);
     }
 }
 
 static void retry_(RFLiFileType type, u8 retryCount,
                    RFLAlarmCallback callback) {
-    RFLAccessInfo* acc;
-    RFLAlarmUserData* userData;
+    RFLAccessInfo* info;
 
     if (retryCount < MAX_RETRY_COUNT) {
-        acc = RFLiGetAccInfo(type);
-        userData = &acc->userData;
+        info = RFLiGetAccInfo(type);
+        info->retryCallback = callback;
+        info->alarmData = type;
+        info->retryCount = retryCount;
 
-        userData->retryCallback = callback;
-        userData->type = type;
-        userData->retryCount = retryCount;
-
-        OSCancelAlarm(&acc->alarm);
-        OSSetAlarmUserData(&acc->alarm, &acc->userData);
-        OSSetAlarm(&acc->alarm, OS_MSEC_TO_TICKS(50), alarmCallback_);
+        OSCancelAlarm(&info->alarm);
+        OSSetAlarmUserData(&info->alarm, &info->alarmData);
+        OSSetAlarm(&info->alarm, OS_MSEC_TO_TICKS(50), alarmCallback_);
     } else {
         RFLiEndWorkingReason(RFLErrcode_NANDCommandfail, NAND_RESULT_BUSY);
     }
 }
 
 static void opencallback_(s32 result, NANDCommandBlock* block) {
-    BOOL doCallback = TRUE;
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    RFLiFileType type;
+    BOOL doCallback;
+
+    doCallback = TRUE;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
 
     switch (result) {
     case NAND_RESULT_OK:
@@ -222,6 +224,7 @@ static void opencallback_(s32 result, NANDCommandBlock* block) {
                 info->openInfo.path, info->openInfo.perm, info->openInfo.attr,
                 createcallback_,
                 RFLiSetCommandBlock(type, RFLiAsyncTag_CreateAsync));
+
             switch (result) {
             case NAND_RESULT_OK:
                 doCallback = FALSE;
@@ -247,21 +250,28 @@ static void opencallback_(s32 result, NANDCommandBlock* block) {
 }
 
 static void createcallback_(s32 result, NANDCommandBlock* block) {
-    s32 reason;
     NANDCommandBlock* openBlock;
-    BOOL doCallback = TRUE;
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    RFLiFileType type;
+    BOOL doCallback;
+    s32 reason;
+
+    doCallback = TRUE;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
 
     switch (result) {
     case NAND_RESULT_OK:
     case NAND_RESULT_EXISTS:
         openBlock = RFLiSetCommandBlock(type, RFLiAsyncTag_OpenAsync);
         memset(info->safeBuffer, 0, ACC_SAFE_BUFFER_SIZE);
+
         reason = NANDPrivateSafeOpenAsync(
             info->openInfo.path, RFLiGetWorkingFile(type),
             info->openInfo.openMode, info->safeBuffer, ACC_SAFE_BUFFER_SIZE,
             opencallback_, openBlock);
+
         switch (reason) {
         case NAND_RESULT_OK:
             doCallback = FALSE;
@@ -303,20 +313,27 @@ static void createcallback_(s32 result, NANDCommandBlock* block) {
 }
 
 static void close2opencallback_(s32 result, NANDCommandBlock* block) {
-    s32 reason;
     NANDCommandBlock* openBlock;
-    BOOL doCallback = TRUE;
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    RFLiFileType type;
+    BOOL doCallback;
+    s32 reason;
+
+    doCallback = TRUE;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
 
     switch (result) {
     case NAND_RESULT_OK:
         openBlock = RFLiSetCommandBlock(type, RFLiAsyncTag_OpenAsync);
         memset(info->safeBuffer, 0, ACC_SAFE_BUFFER_SIZE);
+
         reason = NANDPrivateSafeOpenAsync(
             info->openInfo.path, RFLiGetWorkingFile(type),
             info->openInfo.openMode, info->safeBuffer, ACC_SAFE_BUFFER_SIZE,
             opencallback_, openBlock);
+
         switch (reason) {
         case NAND_RESULT_OK:
             doCallback = FALSE;
@@ -358,27 +375,28 @@ static void close2opencallback_(s32 result, NANDCommandBlock* block) {
 
 RFLErrcode RFLiOpenAsync(RFLiFileType type, u8 openMode,
                          RFLAccessCallback callback) {
-    NANDFileInfo* file;
     NANDCommandBlock* block;
-    s32 reason;
-    RFLAccessInfo* acc;
     const char* filename;
+    NANDFileInfo* file;
+    RFLAccessInfo* info;
+    s32 reason;
 
     file = RFLiGetWorkingFile(type);
     RFLiStartWorking();
-    acc = RFLiGetAccInfo(type);
+    info = RFLiGetAccInfo(type);
     filename = scFileNames[type];
 
-    acc->callback = callback;
-    strncpy(acc->openInfo.path, filename, FS_MAX_PATH);
-    acc->openInfo.BYTE_0x45 = 0;
-    acc->openInfo.openMode = openMode;
-    acc->openInfo.perm = scFilePermissions[type];
-    acc->openInfo.attr = scFileAttributes[type];
+    info->callback = callback;
+    strncpy(info->openInfo.path, filename, FS_MAX_PATH);
+    info->openInfo.path[FS_MAX_PATH] = '\0';
+    info->openInfo.openMode = openMode;
+    info->openInfo.perm = scFilePermissions[type];
+    info->openInfo.attr = scFileAttributes[type];
 
     block = RFLiSetCommandBlock(type, RFLiAsyncTag_OpenAsync);
-    if (acc->opened) {
+    if (info->opened) {
         reason = NANDSafeCloseAsync(file, close2opencallback_, block);
+
         switch (reason) {
         case NAND_RESULT_OK:
             break;
@@ -392,10 +410,11 @@ RFLErrcode RFLiOpenAsync(RFLiFileType type, u8 openMode,
             break;
         }
     } else {
-        memset(acc->safeBuffer, 0, ACC_SAFE_BUFFER_SIZE);
-        reason = NANDPrivateSafeOpenAsync(filename, file, openMode,
-                                          acc->safeBuffer, ACC_SAFE_BUFFER_SIZE,
-                                          opencallback_, block);
+        memset(info->safeBuffer, 0, ACC_SAFE_BUFFER_SIZE);
+        reason = NANDPrivateSafeOpenAsync(
+            filename, file, openMode, info->safeBuffer, ACC_SAFE_BUFFER_SIZE,
+            opencallback_, block);
+
         switch (reason) {
         case NAND_RESULT_OK:
             break;
@@ -404,8 +423,8 @@ RFLErrcode RFLiOpenAsync(RFLiFileType type, u8 openMode,
                 RFLiEndWorkingReason(RFLErrcode_NANDCommandfail, reason);
             } else {
                 block = RFLiSetCommandBlock(type, RFLiAsyncTag_CreateAsync);
-                reason = NANDPrivateCreateAsync(filename, acc->openInfo.perm,
-                                                acc->openInfo.attr,
+                reason = NANDPrivateCreateAsync(filename, info->openInfo.perm,
+                                                info->openInfo.attr,
                                                 createcallback_, block);
                 if (reason != NAND_RESULT_OK) {
                     RFLiEndWorkingReason(RFLErrcode_NANDCommandfail, reason);
@@ -431,9 +450,14 @@ RFLErrcode RFLiOpenAsync(RFLiFileType type, u8 openMode,
 }
 
 static void readcallback_(s32 result, NANDCommandBlock* block) {
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
-    BOOL error = FALSE;
+    RFLAccessInfo* info;
+    RFLiFileType type;
+    BOOL error;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
+
+    error = FALSE;
 
     // Non-error result = buffer size
     if (result >= NAND_RESULT_OK) {
@@ -448,6 +472,7 @@ static void readcallback_(s32 result, NANDCommandBlock* block) {
         }
     } else {
         error = TRUE;
+
         switch (result) {
         case NAND_RESULT_ACCESS:
         case NAND_RESULT_ALLOC_FAILED:
@@ -476,18 +501,26 @@ static void readcallback_(s32 result, NANDCommandBlock* block) {
 }
 
 static void readseekcallback_(s32 result, NANDCommandBlock* block) {
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
-    BOOL doCallback = TRUE;
+    RFLAccessInfo* info;
+    RFLiFileType type;
+    BOOL doCallback;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
+
+    doCallback = TRUE;
 
     // Non-error result = Seek offset
     if (result == info->readInfo.offset) {
-        NANDCommandBlock* block =
-            RFLiSetCommandBlock(type, RFLiAsyncTag_ReadAsync);
-        NANDFileInfo* file = RFLiGetWorkingFile(type);
-        s32 reason = NANDReadAsync(file, info->readInfo.dst,
-                                   ROUND_UP(info->readInfo.size, 32),
-                                   readcallback_, block);
+        NANDCommandBlock* block;
+        NANDFileInfo* file;
+        s32 reason;
+
+        block = RFLiSetCommandBlock(type, RFLiAsyncTag_ReadAsync);
+        file = RFLiGetWorkingFile(type);
+        reason = NANDReadAsync(file, info->readInfo.dst,
+                               ROUND_UP(info->readInfo.size, 32), readcallback_,
+                               block);
         switch (reason) {
         case NAND_RESULT_OK:
             doCallback = FALSE;
@@ -532,9 +565,13 @@ static void readseekcallback_(s32 result, NANDCommandBlock* block) {
 RFLErrcode RFLiReadAsync(RFLiFileType type, void* dst, u32 size,
                          RFLAccessCallback callback, s32 offset) {
     NANDCommandBlock* block;
+    RFLAccessInfo* info;
+    NANDFileInfo* file;
     s32 reason;
-    NANDFileInfo* file = RFLiGetWorkingFile(type);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+
+    file = RFLiGetWorkingFile(type);
+    info = RFLiGetAccInfo(type);
+
     RFLiStartWorking();
 
     info->callback = callback;
@@ -545,6 +582,7 @@ RFLErrcode RFLiReadAsync(RFLiFileType type, void* dst, u32 size,
     block = RFLiSetCommandBlock(type, RFLiAsyncTag_SeekAsync);
     reason =
         NANDSeekAsync(file, offset, NAND_SEEK_BEG, readseekcallback_, block);
+
     switch (reason) {
     case NAND_RESULT_OK:
         break;
@@ -565,20 +603,24 @@ RFLErrcode RFLiReadAsync(RFLiFileType type, void* dst, u32 size,
 }
 
 static void retryWrite_(RFLiFileType type) {
+    NANDCommandBlock* block;
+    RFLAccessInfo* info;
+    NANDFileInfo* file;
     s32 reason;
-    RFLAccessInfo* acc = RFLiGetAccInfo(type);
-    NANDCommandBlock* block =
-        RFLiSetCommandBlock(type, RFLiAsyncTag_WriteAsync);
-    NANDFileInfo* file = RFLiGetWorkingFile(type);
 
-    reason = NANDWriteAsync(file, acc->writeInfo.src, acc->writeInfo.size,
+    info = RFLiGetAccInfo(type);
+    block = RFLiSetCommandBlock(type, RFLiAsyncTag_WriteAsync);
+    file = RFLiGetWorkingFile(type);
+
+    reason = NANDWriteAsync(file, info->writeInfo.src, info->writeInfo.size,
                             writecallback_, block);
+
     switch (reason) {
     case NAND_RESULT_OK:
         break;
     case NAND_RESULT_BUSY:
     case NAND_RESULT_ALLOC_FAILED:
-        retry_(type, acc->userData.retryCount + 1, retryWrite_);
+        retry_(type, info->retryCount + 1, retryWrite_);
         break;
     case NAND_RESULT_MAXBLOCKS:
     case NAND_RESULT_CORRUPT:
@@ -593,14 +635,17 @@ static void retryWrite_(RFLiFileType type) {
         break;
     }
 
-    if (!RFLiIsWorking() && acc->callback != NULL) {
-        acc->callback();
+    if (!RFLiIsWorking() && info->callback != NULL) {
+        info->callback();
     }
 }
 
 static void writecallback_(s32 result, NANDCommandBlock* block) {
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    RFLiFileType type;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
 
     if (result == info->writeInfo.size) {
         RFLiEndWorking(RFLErrcode_Success);
@@ -615,7 +660,7 @@ static void writecallback_(s32 result, NANDCommandBlock* block) {
             break;
         case NAND_RESULT_BUSY:
         case NAND_RESULT_ALLOC_FAILED:
-            retry_(type, info->userData.retryCount + 1, retryWrite_);
+            retry_(type, info->retryCount + 1, retryWrite_);
             break;
         case NAND_RESULT_FATAL_ERROR:
         case NAND_RESULT_UNKNOWN:
@@ -632,19 +677,23 @@ static void writecallback_(s32 result, NANDCommandBlock* block) {
 }
 
 static void retryWriteSeek_(RFLiFileType type) {
+    NANDCommandBlock* block;
+    RFLAccessInfo* info;
+    NANDFileInfo* file;
     s32 reason;
-    RFLAccessInfo* acc = RFLiGetAccInfo(type);
-    NANDCommandBlock* block = RFLiSetCommandBlock(type, RFLiAsyncTag_SeekAsync);
-    NANDFileInfo* file = RFLiGetWorkingFile(type);
 
-    reason = NANDSeekAsync(file, acc->writeInfo.offset, NAND_SEEK_BEG,
+    info = RFLiGetAccInfo(type);
+    block = RFLiSetCommandBlock(type, RFLiAsyncTag_SeekAsync);
+    file = RFLiGetWorkingFile(type);
+
+    reason = NANDSeekAsync(file, info->writeInfo.offset, NAND_SEEK_BEG,
                            writeseekcallback_, block);
     switch (reason) {
     case NAND_RESULT_OK:
         break;
     case NAND_RESULT_BUSY:
     case NAND_RESULT_ALLOC_FAILED:
-        retry_(type, acc->userData.retryCount + 1, retryWriteSeek_);
+        retry_(type, info->retryCount + 1, retryWriteSeek_);
         break;
     case NAND_RESULT_ACCESS:
         RFLiEndWorkingReason(RFLErrcode_NANDCommandfail, reason);
@@ -659,12 +708,16 @@ static void retryWriteSeek_(RFLiFileType type) {
 }
 
 static void writeseekcallback_inline(RFLiFileType type) {
-    NANDCommandBlock* block =
-        RFLiSetCommandBlock(type, RFLiAsyncTag_WriteAsync);
-    RFLAccessInfo* acc = RFLiGetAccInfo(type);
-    NANDFileInfo* file = RFLiGetWorkingFile(type);
-    s32 reason = NANDWriteAsync(file, acc->writeInfo.src, acc->writeInfo.size,
-                                writecallback_, block);
+    NANDCommandBlock* block;
+    RFLAccessInfo* info;
+    NANDFileInfo* file;
+    s32 reason;
+
+    block = RFLiSetCommandBlock(type, RFLiAsyncTag_WriteAsync);
+    info = RFLiGetAccInfo(type);
+    file = RFLiGetWorkingFile(type);
+    reason = NANDWriteAsync(file, info->writeInfo.src, info->writeInfo.size,
+                            writecallback_, block);
     switch (reason) {
     case NAND_RESULT_OK:
         break;
@@ -687,11 +740,16 @@ static void writeseekcallback_inline(RFLiFileType type) {
 }
 
 static void writeseekcallback_(s32 result, NANDCommandBlock* block) {
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* acc = RFLiGetAccInfo(type);
-    BOOL doCallback = TRUE;
+    RFLAccessInfo* info;
+    RFLiFileType type;
+    BOOL doCallback;
 
-    if (result == acc->writeInfo.offset) {
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
+
+    doCallback = TRUE;
+
+    if (result == info->writeInfo.offset) {
         writeseekcallback_inline(type);
         if (RFLiIsWorking()) {
             doCallback = FALSE;
@@ -716,24 +774,27 @@ static void writeseekcallback_(s32 result, NANDCommandBlock* block) {
         }
     }
 
-    if (doCallback && acc->callback != NULL) {
-        acc->callback();
+    if (doCallback && info->callback != NULL) {
+        info->callback();
     }
 }
 
 RFLErrcode RFLiWriteAsync(RFLiFileType type, const void* src, u32 size,
                           RFLAccessCallback callback, s32 offset) {
-    s32 reason;
     NANDCommandBlock* block;
-    RFLAccessInfo* acc = RFLiGetAccInfo(type);
-    NANDFileInfo* file = RFLiGetWorkingFile(type);
+    RFLAccessInfo* info;
+    NANDFileInfo* file;
+    s32 reason;
+
+    info = RFLiGetAccInfo(type);
+    file = RFLiGetWorkingFile(type);
 
     RFLiStartWorking();
 
-    acc->callback = callback;
-    acc->writeInfo.src = src;
-    acc->writeInfo.size = size;
-    acc->writeInfo.offset = offset;
+    info->callback = callback;
+    info->writeInfo.src = src;
+    info->writeInfo.size = size;
+    info->writeInfo.offset = offset;
 
     block = RFLiSetCommandBlock(type, RFLiAsyncTag_SeekAsync);
     reason =
@@ -761,15 +822,21 @@ RFLErrcode RFLiWriteAsync(RFLiFileType type, const void* src, u32 size,
 }
 
 static s32 closecore_(RFLiFileType type) {
-    NANDCommandBlock* block =
-        RFLiSetCommandBlock(type, RFLiAsyncTag_CloseAsync);
-    NANDFileInfo* info = RFLiGetWorkingFile(type);
+    NANDCommandBlock* block;
+    NANDFileInfo* info;
+
+    block = RFLiSetCommandBlock(type, RFLiAsyncTag_CloseAsync);
+    info = RFLiGetWorkingFile(type);
+
     return NANDSafeCloseAsync(info, closecallback_, block);
 }
 
 static void closecallback_(s32 result, NANDCommandBlock* block) {
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    RFLiFileType type;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
 
     switch (result) {
     case NAND_RESULT_OK:
@@ -796,9 +863,10 @@ static void closecallback_(s32 result, NANDCommandBlock* block) {
 }
 
 RFLErrcode RFLiCloseAsync(RFLiFileType type, RFLAccessCallback callback) {
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
     s32 reason;
 
+    info = RFLiGetAccInfo(type);
     startWorkingClose_();
     info->callback = callback;
     reason = closecore_(type);
@@ -824,8 +892,11 @@ RFLErrcode RFLiCloseAsync(RFLiFileType type, RFLAccessCallback callback) {
 }
 
 static void getlengthcallback_(s32 result, NANDCommandBlock* block) {
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    RFLiFileType type;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
 
     switch (result) {
     case NAND_RESULT_OK:
@@ -851,15 +922,15 @@ static void getlengthcallback_(s32 result, NANDCommandBlock* block) {
 
 RFLErrcode RFLiGetLengthAsync(RFLiFileType type, u32* out,
                               RFLAccessCallback callback) {
-    s32 reason;
     NANDCommandBlock* block;
     NANDFileInfo* file;
-    RFLAccessInfo* acc = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    s32 reason;
 
+    info = RFLiGetAccInfo(type);
     RFLiStartWorking();
-
-    acc->callback = callback;
-    acc->getLengthInfo.dst = out;
+    info->callback = callback;
+    info->getLengthInfo.dst = out;
 
     block = RFLiSetCommandBlock(type, RFLiAsyncTag_GetLengthAsync);
     file = RFLiGetWorkingFile(type);
@@ -885,8 +956,11 @@ RFLErrcode RFLiGetLengthAsync(RFLiFileType type, u32* out,
 }
 
 static void deletecallback_(s32 result, NANDCommandBlock* block) {
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    RFLiFileType type;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
 
     switch (result) {
     case NAND_RESULT_OK:
@@ -915,9 +989,10 @@ static void deletecallback_(s32 result, NANDCommandBlock* block) {
 
 RFLErrcode RFLiDeleteAsync(RFLiFileType type, RFLAccessCallback callback) {
     NANDCommandBlock* block;
+    RFLAccessInfo* info;
     s32 reason;
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
 
+    info = RFLiGetAccInfo(type);
     RFLiStartWorking();
     info->callback = callback;
 
@@ -949,9 +1024,12 @@ RFLErrcode RFLiDeleteAsync(RFLiFileType type, RFLAccessCallback callback) {
 }
 
 static void createDirCommon_(const char* dir, NANDAsyncCallback callback) {
-    NANDCommandBlock* block =
+    NANDCommandBlock* block;
+    s32 reason;
+
+    block =
         RFLiSetCommandBlock(RFLiFileType_Database, RFLiAsyncTag_CreateDirAsync);
-    s32 reason =
+    reason =
         NANDPrivateCreateDirAsync(dir, NAND_PERM_RWALL, 0, callback, block);
 
     switch (reason) {
@@ -978,8 +1056,11 @@ static void createDirCommon_(const char* dir, NANDAsyncCallback callback) {
 }
 
 static void createdircallback2_(s32 result, NANDCommandBlock* block) {
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    RFLiFileType type;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
 
     switch (result) {
     case NAND_RESULT_OK:
@@ -1008,8 +1089,11 @@ static void createdircallback2_(s32 result, NANDCommandBlock* block) {
 }
 
 static void createdircallback1_(s32 result, NANDCommandBlock* block) {
-    RFLiFileType type = RFLiGetType(block);
-    RFLAccessInfo* info = RFLiGetAccInfo(type);
+    RFLAccessInfo* info;
+    RFLiFileType type;
+
+    type = RFLiGetType(block);
+    info = RFLiGetAccInfo(type);
 
     switch (result) {
     case NAND_RESULT_OK:
@@ -1038,10 +1122,12 @@ static void createdircallback1_(s32 result, NANDCommandBlock* block) {
 }
 
 RFLErrcode RFLiCreateSaveDirAsync(RFLAccessCallback callback) {
-    RFLAccessInfo* info = RFLiGetAccInfo(RFLiFileType_Database);
+    RFLAccessInfo* info;
 
+    info = RFLiGetAccInfo(RFLiFileType_Database);
     RFLiStartWorking();
     info->callback = callback;
+
     createDirCommon_(scFirstDirectory, createdircallback1_);
 
     return RFLGetAsyncStatus();
