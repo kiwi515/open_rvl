@@ -4,8 +4,8 @@
 
 #define LOADER_HEADER_BUF_1_SIZE 0x100
 #define LOADER_HEADER_BUF_2_SIZE 0x20
+#define TEMP_BUF_SIZE 0x400
 
-static const u32 scTmpSize = 0x400;
 static const char* scResFileFullPathName = "/shared2/FaceLib/RFL_Res.dat";
 
 void RFLiInitLoader(void) {
@@ -220,7 +220,7 @@ static u32 getNANDLength_(RFLLoader* loader, u32 arcIdx, u16 fileIdx) {
     void* tmpBuf;
     u32 length = 0;
 
-    tmpBuf = RFLiAlloc32(scTmpSize);
+    tmpBuf = RFLiAlloc32(TEMP_BUF_SIZE);
     arc = &loader->archives[arcIdx];
 
     if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) ==
@@ -285,7 +285,7 @@ static void* getNANDFile_(void* dst, RFLLoader* loader, u32 arcIdx,
 
     ret = NULL;
     arc = &loader->archives[arcIdx];
-    tmpBuf = RFLiAlloc32(scTmpSize);
+    tmpBuf = RFLiAlloc32(TEMP_BUF_SIZE);
 
     if (NANDPrivateOpen(scResFileFullPathName, &file, NAND_ACCESS_READ) ==
         NAND_RESULT_OK) {
