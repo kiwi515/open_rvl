@@ -17,10 +17,11 @@ typedef struct RFLAccessInfo {
     RFLAccessCallback callback; // at 0x0
     union {
         struct {
-            char filename[FS_MAX_PATH]; // at 0x4
-            u8 openMode;                // at 0x45
-            u8 perm;                    // at 0x46
-            u8 attr;                    // at 0x47
+            char path[FS_MAX_PATH]; // at 0x4
+            u8 BYTE_0x45;           // at 0x45
+            u8 openMode;            // at 0x46
+            u8 perm;                // at 0x47
+            u8 attr;                // at 0x48
         } openInfo;
 
         struct {
@@ -45,7 +46,7 @@ typedef struct RFLAccessInfo {
     };
     NANDFileInfo file;              // at 0x48
     NANDCommandBlock block;         // at 0xD4
-    RFLCallbackTag userData;        // at 0x190
+    RFLCallbackTag tag;             // at 0x190
     OSAlarm alarm;                  // at 0x198
     RFLiFileType alarmData;         // at 0x1C8
     RFLAlarmCallback retryCallback; // at 0x1CC
@@ -54,21 +55,26 @@ typedef struct RFLAccessInfo {
     u8 opened;                      // at 0x1D8
 } RFLAccessInfo;
 
-void RFLiInitAccessInfo(struct MEMiHeapHead*);
+void RFLiInitAccessInfo(struct MEMiHeapHead* heap);
 void RFLiExitAccessInfo(void);
 BOOL RFLiIsWorking(void);
 void RFLiStartWorking(void);
-void RFLiEndWorkingReason(RFLErrcode, NANDResult);
-void RFLiEndWorking(RFLErrcode);
-NANDCommandBlock* RFLiSetCommandBlock(RFLiFileType, UNKWORD);
-RFLiFileType RFLiGetType(NANDCommandBlock*);
-RFLErrcode RFLiOpenAsync(RFLiFileType, u8, RFLAccessCallback);
-RFLErrcode RFLiReadAsync(RFLiFileType, void*, u32, RFLAccessCallback, s32);
-RFLErrcode RFLiWriteAsync(RFLiFileType, void*, u32, RFLAccessCallback, s32);
-RFLErrcode RFLiCloseAsync(RFLiFileType, RFLAccessCallback);
-RFLErrcode RFLiGetLengthAsync(RFLiFileType, u32*, RFLAccessCallback);
-RFLErrcode RFLiDeleteAsync(RFLiFileType, RFLAccessCallback);
-RFLErrcode RFLiCreateSaveDirAsync(RFLAccessCallback);
+void RFLiEndWorkingReason(RFLErrcode err, s32 reason);
+void RFLiEndWorking(RFLErrcode err);
+NANDCommandBlock* RFLiSetCommandBlock(RFLiFileType type, RFLiAsyncTag tag);
+RFLiFileType RFLiGetType(NANDCommandBlock* block);
+NANDFileInfo* RFLiGetWorkingFile(RFLiFileType type);
+RFLErrcode RFLiOpenAsync(RFLiFileType type, u8 openMode,
+                         RFLAccessCallback callback);
+RFLErrcode RFLiReadAsync(RFLiFileType type, void* dst, u32 size,
+                         RFLAccessCallback callback, s32 offset);
+RFLErrcode RFLiWriteAsync(RFLiFileType type, const void* src, u32 size,
+                          RFLAccessCallback callback, s32 offset);
+RFLErrcode RFLiCloseAsync(RFLiFileType type, RFLAccessCallback callback);
+RFLErrcode RFLiGetLengthAsync(RFLiFileType type, u32* out,
+                              RFLAccessCallback callback);
+RFLErrcode RFLiDeleteAsync(RFLiFileType type, RFLAccessCallback callback);
+RFLErrcode RFLiCreateSaveDirAsync(RFLAccessCallback callback);
 
 #ifdef __cplusplus
 }

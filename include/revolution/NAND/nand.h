@@ -67,6 +67,7 @@ typedef enum {
     // Read/write by all
     NAND_PERM_RALL = NAND_PERM_RUSR | NAND_PERM_RGRP | NAND_PERM_ROTH,
     NAND_PERM_WALL = NAND_PERM_WUSR | NAND_PERM_WGRP | NAND_PERM_WOTH,
+    NAND_PERM_RWALL = NAND_PERM_RALL | NAND_PERM_WALL
 } NANDPermission;
 
 typedef void (*NANDAsyncCallback)(s32 result, struct NANDCommandBlock* block);
