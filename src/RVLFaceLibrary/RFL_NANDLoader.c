@@ -362,11 +362,11 @@ u32 RFLiGetTexSize(RFLiPartsTex part, u16 file) {
     return getLength_(scParts2Arc[part], file);
 }
 
-RFLTexHeader* RFLiLoadTexture(RFLiPartsTex part, u16 file, void* dst) {
+RFLTexture* RFLiLoadTexture(RFLiPartsTex part, u16 file, void* dst) {
     static const u32 scParts2Arc[] = {RFLiArcID_Eye, RFLiArcID_Eyebrow,
                                       RFLiArcID_Mouth, RFLiArcID_Mustache,
                                       RFLiArcID_Mole};
-    return (RFLTexHeader*)getFile_(dst, scParts2Arc[part], file);
+    return (RFLTexture*)getFile_(dst, scParts2Arc[part], file);
 }
 
 u32 RFLiGetShpTexSize(RFLiPartsShpTex part, u16 file) {
@@ -375,10 +375,10 @@ u32 RFLiGetShpTexSize(RFLiPartsShpTex part, u16 file) {
     return getLength_(scParts2Arc[part], file);
 }
 
-RFLTexHeader* RFLiLoadShpTexture(RFLiPartsShpTex part, u16 file, void* dst) {
+RFLTexture* RFLiLoadShpTexture(RFLiPartsShpTex part, u16 file, void* dst) {
     static const u32 scParts2Arc[] = {RFLiArcID_FaceTex, RFLiArcID_CapTex,
                                       RFLiArcID_NlineTex, RFLiArcID_GlassTex};
-    return (RFLTexHeader*)getFile_(dst, scParts2Arc[part], file);
+    return (RFLTexture*)getFile_(dst, scParts2Arc[part], file);
 }
 
 u32 RFLiGetShapeSize(RFLiPartsShp part, u16 file) {

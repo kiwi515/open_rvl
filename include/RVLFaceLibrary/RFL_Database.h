@@ -1,25 +1,29 @@
 #ifndef RVL_FACE_LIBRARY_DATABASE_H
 #define RVL_FACE_LIBRARY_DATABASE_H
 #include <RVLFaceLibrary/RFL_Types.h>
+#include <revolution/OS.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+// Forward declarations
+typedef struct MEMiHeapHead;
+
 // TODO: 0x34a009
 typedef struct RFLDatabase {
-    u8 dummy;
+    u8 dummy[0x1F1E0];
 } RFLDatabase;
 
 // TODO: IDK what this name is
 // 0x3491af
 typedef struct RFLTrg {
-    u8 dummy;
+    u8 dummy[0x4A];
 } RFLTrg;
 
 // TODO: 0x34a921
 typedef struct RFLDBCharInfo {
-    u8 dummy;
+    u8 dummy[0x40];
 } RFLDBCharInfo;
 
 typedef struct RFLCrcInfo {
@@ -42,7 +46,7 @@ typedef struct RFLDBManager {
     RFLCrcInfo crcInfo;             // at 0x60
 } RFLDBManager;
 
-void RFLiInitDatabase(MEMiHeapHead*);
+void RFLiInitDatabase(struct MEMiHeapHead*);
 
 RFLErrcode RFLiBootLoadDatabaseAsync(RFLDatabaseCallback);
 

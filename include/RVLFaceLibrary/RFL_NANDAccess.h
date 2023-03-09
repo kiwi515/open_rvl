@@ -2,6 +2,7 @@
 #define RVL_FACE_LIBRARY_NAND_ACCESS_H
 #include <RVLFaceLibrary/RFL_Types.h>
 #include <revolution/FS.h>
+#include <revolution/NAND.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
@@ -53,7 +54,7 @@ typedef struct RFLAccessInfo {
     u8 opened;                      // at 0x1D8
 } RFLAccessInfo;
 
-void RFLiInitAccessInfo(MEMiHeapHead*);
+void RFLiInitAccessInfo(struct MEMiHeapHead*);
 void RFLiExitAccessInfo(void);
 BOOL RFLiIsWorking(void);
 void RFLiStartWorking(void);

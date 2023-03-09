@@ -1,14 +1,18 @@
 #ifndef RVL_FACE_LIBRARY_CONTROLLER_H
 #define RVL_FACE_LIBRARY_CONTROLLER_H
 #include <RVLFaceLibrary/RFL_Types.h>
+#include <revolution/CARD.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+// Forward declarations
+typedef struct MEMiHeapHead;
+
 // 0x34919d
 typedef struct RFLCtrlCharInfo {
-
+    u8 dummy;
 } RFLCtrlCharInfo;
 
 typedef struct RFLCtrlData {
@@ -48,7 +52,7 @@ typedef struct RFLCtrlBufManager {
     u8 hiddenMDB[24];                              // at 0x0
 } RFLCtrlBufManager;
 
-void RFLiInitCtrlBuf(MEMiHeapHead*);
+void RFLiInitCtrlBuf(struct MEMiHeapHead*);
 
 #ifdef __cplusplus
 }

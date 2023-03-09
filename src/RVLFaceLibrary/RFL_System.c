@@ -1,30 +1,39 @@
+#include <RVLFaceLibrary.h>
+#include <revolution/MEM.h>
+#include <string.h>
+
 #define RFL_SYSTEM_HEAP_SIZE 0x24800
 #define RFL_WORK_SIZE 0x4B000
 #define RFL_DELUXE_WORK_SIZE 0x64000
 
-#include <RVLFaceLibrary.h>
-#include <revolution/MEM.h>
-#include <revolution/OS.h>
-#include <string.h>
+/**
+ * These functions are inlined, but with their conditions inverted(?) from the
+ * actual functions. To avoid manually inlining them, these defines will hide
+ * the fake inlines.
+ */
+#define RFLiGetLoader_() (RFLAvailable() ? &RFLiGetManager()->loader : NULL)
+#define RFLiGetLastReason_()                                                   \
+    (RFLAvailable() ? RFLiGetManager()->lastReason : NAND_RESULT_OK)
+#define RFLGetLastReason_()                                                    \
+    RFLAvailable() ? RFLiGetLastReason_() : sRFLLastReason;
 
 static const char* __RFLVersion =
     "<< RVL_SDK - RFL \trelease build: Jun  9 2007 17:25:33 (0x4199_60831) >>";
 
-static const RFLCoordinateData scCoordinate = {
-    0x01, 0x02, 0x00, 0x00, 0x00000000, 0x00000000, 0x00000000};
+static const RFLCoordinateData scCoordinate = {1, 2, 0, FALSE, FALSE, FALSE};
 
 static RFLManager* sRFLManager = NULL;
 static RFLErrcode sRFLLastErrCode = RFLErrcode_NotAvailable;
 static u8 sRFLiFileBrokenType;
-static NANDResult sRFLLastReason;
+static s32 sRFLLastReason;
 
-u32 RFLGetWorkSize(BOOL deluxTex) {
-    return deluxTex ? RFL_DELUXE_WORK_SIZE + sizeof(RFLManager)
-                    : RFL_WORK_SIZE + sizeof(RFLManager);
+u32 RFLGetWorkSize(BOOL deluxeTex) {
+    return deluxeTex ? RFL_DELUXE_WORK_SIZE + sizeof(RFLManager)
+                     : RFL_WORK_SIZE + sizeof(RFLManager);
 }
 
 RFLErrcode RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
-                           BOOL deluxTex) {
+                           BOOL deluxeTex) {
     u32 workSize;
     u32 heapSize;
     void* heapBuffer;
@@ -37,38 +46,39 @@ RFLErrcode RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
     if (RFLiGetManager() == NULL) {
         OSRegisterVersion(__RFLVersion);
 
-        workSize = deluxTex ? RFL_DELUXE_WORK_SIZE : RFL_WORK_SIZE;
+        workSize = deluxeTex ? RFL_DELUXE_WORK_SIZE : RFL_WORK_SIZE;
         memset(workBuffer, 0, workSize);
 
         sRFLManager = (RFLManager*)workBuffer;
         sRFLLastErrCode = RFLErrcode_NotAvailable;
         sRFLLastReason = NAND_RESULT_OK;
-        sRFLiFileBrokenType = 0;
+        sRFLiFileBrokenType = RFLiFileBrokenType_DBNotFound;
         sRFLManager->workBuffer = (u8*)workBuffer + sizeof(RFLManager);
 
-        heapSize = deluxTex ? RFL_DELUXE_WORK_SIZE - sizeof(RFLManager)
-                            : RFL_WORK_SIZE - sizeof(RFLManager);
+        heapSize = deluxeTex ? RFL_DELUXE_WORK_SIZE - sizeof(RFLManager)
+                             : RFL_WORK_SIZE - sizeof(RFLManager);
 
-        RFLiGetManager()->rootHeap =
-            MEMCreateExpHeapEx(RFLiGetManager()->workBuffer, heapSize, 0x1);
+        RFLiGetManager()->rootHeap = MEMCreateExpHeapEx(
+            RFLiGetManager()->workBuffer, heapSize, MEM_HEAP_OPT_CLEAR_ALLOC);
 
         heapBuffer = MEMAllocFromExpHeapEx(RFLiGetManager()->rootHeap,
                                            RFL_SYSTEM_HEAP_SIZE, 32);
-        RFLiGetManager()->systemHeap =
-            MEMCreateExpHeapEx(heapBuffer, RFL_SYSTEM_HEAP_SIZE, 0x1);
+        RFLiGetManager()->systemHeap = MEMCreateExpHeapEx(
+            heapBuffer, RFL_SYSTEM_HEAP_SIZE, MEM_HEAP_OPT_CLEAR_ALLOC);
 
         heapSize = MEMGetAllocatableSizeForExpHeap(RFLiGetManager()->rootHeap);
         heapBuffer =
             MEMAllocFromExpHeapEx(RFLiGetManager()->rootHeap, heapSize, 8);
         RFLiGetManager()->tmpHeap =
-            MEMCreateExpHeapEx(heapBuffer, heapSize, 0x1);
+            MEMCreateExpHeapEx(heapBuffer, heapSize, MEM_HEAP_OPT_CLEAR_ALLOC);
 
-        RFLiGetManager()->status = RFLErrcode_Success;
-        RFLiGetManager()->lastStatus = RFLErrcode_Success;
-        RFLiGetManager()->reason = NAND_RESULT_OK;
+        RFLiGetManager()->lastErrCode = RFLErrcode_Success;
+        RFLiGetManager()->beforeCloseErr = RFLErrcode_Success;
         RFLiGetManager()->lastReason = NAND_RESULT_OK;
-        RFLiGetManager()->deluxTex = deluxTex;
-        RFLiGetManager()->brokenType = 0;
+        RFLiGetManager()->beforeCloseReason = NAND_RESULT_OK;
+        RFLiGetManager()->deluxeTex = deluxeTex;
+        RFLiGetManager()->brokenType = RFLiFileBrokenType_DBNotFound;
+
         RFLSetIconDrawDoneCallback(NULL);
         RFLiSetWorking(FALSE);
         RFLiInitDatabase(RFLiGetManager()->systemHeap);
@@ -79,8 +89,7 @@ RFLErrcode RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         RFLiSetCoordinateData(&scCoordinate);
 
         if (resBuffer != NULL) {
-            RFLLoader* loader =
-                RFLAvailable() ? &RFLiGetManager()->loader : NULL;
+            RFLLoader* loader = RFLiGetLoader_();
             loader->cached = TRUE;
             loader->cacheSize = resSize;
             loader->cache = resBuffer;
@@ -98,8 +107,8 @@ RFLErrcode RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
 }
 
 RFLErrcode RFLInitRes(void* workBuffer, void* resBuffer, u32 resSize,
-                      BOOL deluxTex) {
-    RFLInitResAsync(workBuffer, resBuffer, resSize, deluxTex);
+                      BOOL deluxeTex) {
+    RFLInitResAsync(workBuffer, resBuffer, resSize, deluxeTex);
     return RFLWaitAsync();
 }
 
@@ -109,10 +118,9 @@ void RFLExit(void) {
     }
 
     RFLWaitAsync();
+
     sRFLLastErrCode = RFLGetAsyncStatus();
-    sRFLLastReason = RFLAvailable() ? (RFLAvailable() ? RFLiGetManager()->reason
-                                                      : NAND_RESULT_OK)
-                                    : sRFLLastReason;
+    sRFLLastReason = RFLGetLastReason_();
     sRFLiFileBrokenType = RFLiGetManager()->brokenType;
 
     if (RFLIsResourceCached()) {
@@ -124,6 +132,7 @@ void RFLExit(void) {
     MEMDestroyExpHeap(RFLiGetManager()->tmpHeap);
     MEMDestroyExpHeap(RFLiGetManager()->systemHeap);
     MEMDestroyExpHeap(RFLiGetManager()->rootHeap);
+
     sRFLManager = NULL;
 }
 
@@ -154,7 +163,9 @@ void* RFLiAlloc(u32 size) { return allocal_(size, 8); }
 
 void* RFLiAlloc32(u32 size) { return allocal_(size, 32); }
 
-void RFLiFree(void* mem) { MEMFreeToExpHeap(RFLiGetManager()->tmpHeap, mem); }
+void RFLiFree(void* block) {
+    MEMFreeToExpHeap(RFLiGetManager()->tmpHeap, block);
+}
 
 RFLDBManager* RFLiGetDBManager(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->dbMgr;
@@ -189,13 +200,11 @@ RFLErrcode RFLGetAsyncStatus(void) {
         return RFLErrcode_Fatal;
     }
 
-    return RFLiGetManager()->status;
+    return RFLiGetManager()->lastErrCode;
 }
 
-NANDResult RFLGetLastReason(void) {
-    return !RFLAvailable()
-               ? sRFLLastReason
-               : (RFLAvailable() ? RFLiGetManager()->reason : NAND_RESULT_OK);
+s32 RFLGetLastReason(void) {
+    return !RFLAvailable() ? sRFLLastReason : RFLiGetLastReason_();
 }
 
 RFLErrcode RFLWaitAsync(void) {
@@ -216,8 +225,8 @@ RFLCtrlBufManager* RFLiGetCtrlBufManager(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->ctrlMgr;
 }
 
-NANDResult RFLiGetLastReason(void) {
-    return !RFLAvailable() ? NAND_RESULT_OK : RFLiGetManager()->reason;
+s32 RFLiGetLastReason(void) {
+    return !RFLAvailable() ? NAND_RESULT_OK : RFLiGetManager()->lastReason;
 }
 
 void RFLiSetFileBroken(RFLiFileBrokenType type) {

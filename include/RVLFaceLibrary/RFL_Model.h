@@ -1,14 +1,16 @@
 #ifndef RVL_FACE_LIBRARY_MODEL_H
 #define RVL_FACE_LIBRARY_MODEL_H
-#include <RVLFaceLibrary/RFL_DataUtility.h>
-#include <RVLFaceLibrary/RFL_MiddleDatabase.h>
-#include <RVLFaceLibrary/RFL_System.h>
+#include <RVLFaceLibrary/RFL_Types.h>
 #include <revolution/GX.h>
 #include <revolution/MTX.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// Forward declarations
+typedef struct RFLCharInfo;
+typedef struct RFLMiddleDB;
 
 typedef enum {
     RFL_COORDINATE_TYPE_0,
@@ -199,7 +201,7 @@ typedef struct RFLCharInfo {
             u16 scale : 4;
             u16 x : 5;
             u16 y : 5;
-            u16 y : 1;
+            u16 padding : 1;
         };
         u16 rawdata;
     } mole; // at 0x14
@@ -258,31 +260,6 @@ typedef struct RFLDrawSetting {
     u8 compLoc;          // at 0x14
 } RFLDrawSetting;
 
-typedef struct RFLTexHeader {
-    u8 format;          // at 0x0
-    u8 alpha;           // at 0x1
-    u16 width;          // at 0x2
-    u16 height;         // at 0x4
-    u8 wrapS;           // at 0x6
-    u8 wrapT;           // at 0x7
-    u16 indexTexture;   // at 0x8
-    u16 colorFormat;    // at 0x9
-    u16 numColors;      // at 0xA
-    u32 paletteOfs;     // at 0xC
-    u8 enableLOD;       // at 0x10
-    u8 enableEdgeLOD;   // at 0x11
-    u8 enableBiasClamp; // at 0x12
-    u8 enableMaxAniso;  // at 0x13
-    u8 minFilt;         // at 0x14
-    u8 magFilt;         // at 0x15
-    s8 minLOD;          // at 0x16
-    s8 maxLOD;          // at 0x16
-    u8 mipmapLevel;     // at 0x18
-    s8 reserved;        // at 0x19
-    s16 lodBias;        // at 0x1A
-    u32 imageOfs;       // at 0x1C
-} RFLTexHeader;
-
 typedef struct RFLDrawCoreSetting {
     u8 txcGenNum;              // at 0x0
     GXTexCoordID txcID;        // at 0x4
@@ -302,22 +279,18 @@ static inline void RFLiSetCoordinateData(const RFLCoordinateData* data) {
     coordinateData = *data;
 }
 
-static inline const void* RFLiGetTexImage(const RFLTexHeader* tex) {
-    return (char*)tex + tex->imageOfs;
-}
-
 void RFLSetCoordinate(RFLCoordinateType, RFLCoordinateType);
 u32 RFLiGetExpressionNum(u32);
 u32 RFLGetModelBufferSize(RFLResolution, u32);
-RFLErrcode RFLInitCharModel(RFLCharModel*, RFLDataSource, RFLMiddleDB*, u16,
-                            void*, RFLResolution, u32);
-RFLErrcode RFLiInitCharModel(RFLCharModel*, RFLCharInfo*, void*, RFLResolution,
-                             u32);
+RFLErrcode RFLInitCharModel(RFLCharModel*, RFLDataSource, struct RFLMiddleDB*,
+                            u16, void*, RFLResolution, u32);
+RFLErrcode RFLiInitCharModel(RFLCharModel*, struct RFLCharInfo*, void*,
+                             RFLResolution, u32);
 void RFLSetMtx(RFLCharModel*, Mtx);
 void RFLSetExpression(RFLCharModel*, RFLExpression);
 RFLExpression RFLGetExpression(RFLCharModel*);
 GXColor RFLGetFavoriteColor(RFLFavoriteColor);
-GXColor RFLiGetFacelineColor(RFLCharInfo*);
+GXColor RFLiGetFacelineColor(struct RFLCharInfo*);
 void RFLLoadDrawSetting(const RFLDrawSetting*);
 void RFLDrawOpa(const RFLCharModel*);
 void RFLDrawXlu(const RFLCharModel*);
@@ -325,7 +298,7 @@ void RFLLoadVertexSetting(const RFLDrawCoreSetting*);
 void RFLLoadMaterialSetting(const RFLDrawCoreSetting*);
 void RFLDrawOpaCore(const RFLCharModel*, const RFLDrawCoreSetting*);
 void RFLDrawXluCore(const RFLCharModel*, const RFLDrawCoreSetting*);
-void RFLiInitCharModelRes(RFLCharModelRes*, RFLCharInfo*);
+void RFLiInitCharModelRes(RFLCharModelRes*, struct RFLCharInfo*);
 void RFLiInitShapeRes(RFLShape*);
 void RFLiInitTexRes(GXTexObj*, RFLiPartsShpTex, u16, void*);
 void RFLiTransformCoordinate(s16*, const s16*);

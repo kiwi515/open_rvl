@@ -620,9 +620,9 @@ void RFLiInitShapeRes(RFLShape* shape) {
 void RFLiInitTexRes(GXTexObj* texObj, RFLiPartsShpTex part, u16 file,
                     void* buffer) {
     u32 texSize;
-    RFLTexHeader* tex;
+    RFLTexture* tex;
 
-    tex = (RFLTexHeader*)RFLiAlloc32(RFLiGetShpTexSize(part, file));
+    tex = (RFLTexture*)RFLiAlloc32(RFLiGetShpTexSize(part, file));
     RFLiLoadShpTexture(part, file, tex);
 
     switch (part) {

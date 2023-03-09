@@ -6,6 +6,9 @@
 extern "C" {
 #endif
 
+// Forward declarations
+typedef struct RFLTexture;
+
 typedef struct RFLArchive {
     u16 numFiles;    // at 0x0
     u16 biggestSize; // at 0x2
@@ -26,9 +29,9 @@ typedef struct RFLLoader {
 void RFLiInitLoader(void);
 RFLErrcode RFLiLoadResourceHeaderAsync(void);
 u32 RFLiGetTexSize(RFLiPartsTex, u16);
-RFLTexHeader* RFLiLoadTexture(RFLiPartsTex, u16, void*);
+struct RFLTexture* RFLiLoadTexture(RFLiPartsTex, u16, void*);
 u32 RFLiGetShpTexSize(RFLiPartsShpTex, u16);
-RFLTexHeader* RFLiLoadShpTexture(RFLiPartsShpTex, u16, void*);
+struct RFLTexture* RFLiLoadShpTexture(RFLiPartsShpTex, u16, void*);
 u32 RFLiGetShapeSize(RFLiPartsShp, u16);
 void* RFLiLoadShape(RFLiPartsShp, u16, void*);
 BOOL RFLFreeCachedResource(void);
