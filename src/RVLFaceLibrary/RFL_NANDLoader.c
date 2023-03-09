@@ -2,6 +2,9 @@
 #include <revolution/NAND.h>
 #include <string.h>
 
+#define LOADER_HEADER_BUF_1_SIZE 0x100
+#define LOADER_HEADER_BUF_2_SIZE 0x20
+
 static const u32 scTmpSize = 0x400;
 static const char* scResFileFullPathName = "/shared2/FaceLib/RFL_Res.dat";
 
@@ -36,13 +39,13 @@ static void parseOnmemoryRes_(void) __attribute__((never_inline)) {
     loader->version = *(u16*)((u8*)loader->cache + 2);
     for (i = 0; i < RFLiArcID_Max; i++) {
         // Pointer to section offset in header
-        u32* p_offset = (u32*)((u8*)loader->cache + ((i + 1) * 4));
+        u32* offset = (u32*)((u8*)loader->cache + ((i + 1) * 4));
         // Pointer to section
-        u32* p_section = (u32*)((u8*)loader->cache + *p_offset);
+        u32* p_section = (u32*)((u8*)loader->cache + *offset);
         // Load archive
         loader->archives[i].numFiles = ((u16*)p_section)[0];
         loader->archives[i].biggestSize = ((u16*)p_section)[1];
-        loader->archives[i].offset = *p_offset + 4;
+        loader->archives[i].offset = *offset + 4;
     }
 }
 
@@ -107,12 +110,13 @@ static void loadResRead1stcallback_(void) {
         headerBuf1 = (u32*)loader->headerBuf1;
         loader->version = *(u16*)((u8*)headerBuf1 + 2);
 
-        headerBuf2 = RFLiAlloc32(32);
+        headerBuf2 = RFLiAlloc32(LOADER_HEADER_BUF_2_SIZE);
         loader->headerBuf2 = headerBuf2;
         loader->numResources = 0;
 
-        switch (RFLiReadAsync(RFLiFileType_Resource, headerBuf2, 32,
-                              loadResRead2ndcallback_, *(headerBuf1 + 1))) {
+        switch (RFLiReadAsync(RFLiFileType_Resource, headerBuf2,
+                              LOADER_HEADER_BUF_2_SIZE, loadResRead2ndcallback_,
+                              *(headerBuf1 + 1))) {
         case RFLErrcode_Busy:
             break;
         case RFLErrcode_Success:
@@ -144,10 +148,11 @@ static void loadResGetlengthcallback_(void) {
 
     loader = RFLiGetLoader();
     if (RFLGetAsyncStatus() == RFLErrcode_Success) {
-        headerBuf1 = RFLiAlloc32(0x100);
+        headerBuf1 = RFLiAlloc32(LOADER_HEADER_BUF_1_SIZE);
         loader->headerBuf1 = headerBuf1;
-        switch (RFLiReadAsync(RFLiFileType_Resource, headerBuf1, 0x100,
-                              loadResRead1stcallback_, 0)) {
+        switch (RFLiReadAsync(RFLiFileType_Resource, headerBuf1,
+                              LOADER_HEADER_BUF_1_SIZE, loadResRead1stcallback_,
+                              0)) {
         case RFLErrcode_Busy:
             break;
         case RFLErrcode_Success:
@@ -336,16 +341,16 @@ static void* getFile_(void* dst, u32 arcIdx, u16 fileIdx) {
     RFLLoader* loader;
 
     if (!RFLAvailable()) {
-        return 0;
+        return NULL;
     }
 
     loader = RFLiGetLoader();
     if (loader == NULL) {
-        return 0;
+        return NULL;
     }
 
     if (fileIdx >= loader->archives[arcIdx].numFiles) {
-        return 0;
+        return NULL;
     }
 
     if (RFLIsResourceCached()) {

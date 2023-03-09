@@ -28,12 +28,13 @@ typedef struct RFLLoader {
 
 void RFLiInitLoader(void);
 RFLErrcode RFLiLoadResourceHeaderAsync(void);
-u32 RFLiGetTexSize(RFLiPartsTex, u16);
-struct RFLTexture* RFLiLoadTexture(RFLiPartsTex, u16, void*);
-u32 RFLiGetShpTexSize(RFLiPartsShpTex, u16);
-struct RFLTexture* RFLiLoadShpTexture(RFLiPartsShpTex, u16, void*);
-u32 RFLiGetShapeSize(RFLiPartsShp, u16);
-void* RFLiLoadShape(RFLiPartsShp, u16, void*);
+u32 RFLiGetTexSize(RFLiPartsTex part, u16 file);
+struct RFLTexture* RFLiLoadTexture(RFLiPartsTex part, u16 file, void* dst);
+u32 RFLiGetShpTexSize(RFLiPartsShpTex part, u16 file);
+struct RFLTexture* RFLiLoadShpTexture(RFLiPartsShpTex part, u16 file,
+                                      void* dst);
+u32 RFLiGetShapeSize(RFLiPartsShp part, u16 file);
+void* RFLiLoadShape(RFLiPartsShp part, u16 file, void* dst);
 BOOL RFLFreeCachedResource(void);
 BOOL RFLIsResourceCached(void);
 

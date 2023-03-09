@@ -15,6 +15,7 @@ extern "C" {
 #include <RVLFaceLibrary/RFL_NANDAccess.h>
 #include <RVLFaceLibrary/RFL_NANDLoader.h>
 #include <RVLFaceLibrary/RFL_System.h>
+#include <RVLFaceLibrary/RFL_Texture.h>
 
 #ifdef __cplusplus
 }
