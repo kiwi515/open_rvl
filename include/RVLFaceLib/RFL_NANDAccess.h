@@ -1,6 +1,6 @@
 #ifndef RVL_FACE_LIBRARY_NAND_ACCESS_H
 #define RVL_FACE_LIBRARY_NAND_ACCESS_H
-#include <RVLFaceLibrary/RFL_Types.h>
+#include <RVLFaceLib/RFL_Types.h>
 #include <revolution/FS.h>
 #include <revolution/NAND.h>
 #include <revolution/types.h>

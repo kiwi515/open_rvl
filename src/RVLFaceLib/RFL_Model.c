@@ -1,87 +1,78 @@
-#include <RVLFaceLibrary.h>
-#include <revolution/GX.h>
+#include <RVLFaceLib.h>
 #include <revolution/OS.h>
 #include <string.h>
 
 const RFLDrawCoreSetting cDefaultDrawCoreSetting2Tev = {
-    .txcGenNum = 1,
-    .txcID = GX_TEXCOORD0,
-    .texMapID = GX_TEXMAP_0,
-    .tevStageNum = 2,
-    .tevSwapTable = 0,
-    .tevKColorID = GX_KCOLOR0,
-    .tevOutRegID = GX_TEVPREV,
-    .mtxId = 0,
-    .BYTE_0x20 = 0
-    // TODO: UNK_0x21
-};
+    1,          GX_TEXCOORD0, GX_TEXMAP0, 2,    GX_TEV_SWAP0,
+    GX_KCOLOR0, GX_TEVPREV,   GX_PNMTX0,  FALSE};
 
 const RFLDrawCoreSetting cDefaultDrawCoreSetting1Tev = {
-    .txcGenNum = 1,
-    .txcID = GX_TEXCOORD0,
-    .texMapID = GX_TEXMAP_0,
-    .tevStageNum = 1,
-    .tevSwapTable = 0,
-    .tevKColorID = GX_KCOLOR0,
-    .tevOutRegID = GX_TEVPREV,
-    .mtxId = 0,
-    .BYTE_0x20 = 0
-    // TODO: UNK_0x21
+    1,          GX_TEXCOORD0, GX_TEXMAP0, 1,    GX_TEV_SWAP0,
+    GX_KCOLOR0, GX_TEVPREV,   GX_PNMTX0,  FALSE};
+
+static const GXColor cFacelineColor[] = {
+    // clang-format off
+    {240, 216, 196, 255}, 
+    {255, 188, 128, 255}, 
+    {216, 136, 80,  255},  
+    {255, 176, 144, 255}, 
+    {152, 80,  48,  255},   
+    {82,  46,  28,  255},
+    // clang-format on
 };
 
-static const GXColor cFacelineColor[RFL_FACELINE_MAX] = {
-    {240, 216, 196, 255}, //!< RFL_FACE_COLOR_0
-    {255, 188, 128, 255}, //!< RFL_FACE_COLOR_1
-    {216, 136, 80, 255},  //!< RFL_FACE_COLOR_2
-    {255, 176, 144, 255}, //!< RFL_FACE_COLOR_3
-    {152, 80, 48, 255},   //!< RFL_FACE_COLOR_4
-    {82, 46, 28, 255},    //!< RFL_FACE_COLOR_5
+static const GXColor cHairColor[] = {
+    // clang-format off
+    {30,  26,  24,  255},    
+    {56,  32,  21,  255},    
+    {85,  38,  23,  255},    
+    {112, 64,  36,  255},   
+    {114, 114, 120, 255}, 
+    {73,  54,  26,  255},    
+    {122, 89,  40,  255},   
+    {193, 159, 100, 255},
+    // clang-format on
 };
 
-static const GXColor cHairColor[RFL_HAIR_COLOR_MAX] = {
-    {30, 26, 24, 255},    //!< RFL_HAIR_COLOR_0
-    {56, 32, 21, 255},    //!< RFL_HAIR_COLOR_1
-    {85, 38, 23, 255},    //!< RFL_HAIR_COLOR_2
-    {112, 64, 36, 255},   //!< RFL_HAIR_COLOR_3
-    {114, 114, 120, 255}, //!< RFL_HAIR_COLOR_4
-    {73, 54, 26, 255},    //!< RFL_HAIR_COLOR_5
-    {122, 89, 40, 255},   //!< RFL_HAIR_COLOR_6
-    {193, 159, 100, 255}, //!< RFL_HAIR_COLOR_7
+static const GXColor cBeardColor[] = {
+    // clang-format off
+    {30,  26,  24,  255},    
+    {56,  32,  21,  255},    
+    {85,  38,  23,  255},    
+    {112, 64,  36,  255},   
+    {114, 114, 120, 255}, 
+    {73,  54,  26,  255},    
+    {122, 89,  40,  255},   
+    {193, 159, 100, 255},
+    // clang-format on
 };
 
-static const GXColor cBeardColor[RFL_BEARD_COLOR_MAX] = {
-    {30, 26, 24, 255},    //!< RFL_BEARD_COLOR_0
-    {56, 32, 21, 255},    //!< RFL_BEARD_COLOR_1
-    {85, 38, 23, 255},    //!< RFL_BEARD_COLOR_2
-    {112, 64, 36, 255},   //!< RFL_BEARD_COLOR_3
-    {114, 114, 120, 255}, //!< RFL_BEARD_COLOR_4
-    {73, 54, 26, 255},    //!< RFL_BEARD_COLOR_5
-    {122, 89, 40, 255},   //!< RFL_BEARD_COLOR_6
-    {193, 159, 100, 255}, //!< RFL_BEARD_COLOR_7
-};
-
-static const GXColor cGlassColor[RFL_GLASSES_COLOR_MAX] = {
-    {16, 16, 16, 255},  //!< RFL_GLASSES_COLOR_BLACK
-    {96, 56, 16, 255},  //!< RFL_GLASSES_COLOR_BROWN
-    {152, 24, 16, 255}, //!< RFL_GLASSES_COLOR_RED
-    {32, 48, 96, 255},  //!< RFL_GLASSES_COLOR_BLUE
-    {144, 88, 0, 255},  //!< RFL_GLASSES_COLOR_ORANGE
-    {96, 88, 80, 255},  //!< RFL_GLASSES_COLOR_GREY
+static const GXColor cGlassColor[] = {
+    // clang-format off
+    {16,  16, 16, 255},  
+    {96,  56, 16, 255},  
+    {152, 24, 16, 255}, 
+    {32,  48, 96, 255},  
+    {144, 88, 0,  255},  
+    {96,  88, 80, 255},
+    // clang-format on
 };
 
 static const GXColor cFavoriteColor[RFLFavoriteColor_Max] = {
-    {184, 64, 48, 255},   //!< RFLFavoriteColor_Red
-    {240, 120, 40, 255},  //!< RFLFavoriteColor_Orange
-    {248, 216, 32, 255},  //!< RFLFavoriteColor_Yellow
-    {128, 200, 40, 255},  //!< RFLFavoriteColor_YellowGreen
-    {0, 116, 40, 255},    //!< RFLFavoriteColor_Green
-    {32, 72, 152, 255},   //!< RFLFavoriteColor_Blue
-    {64, 160, 216, 255},  //!< RFLFavoriteColor_SkyBlue
-    {232, 96, 120, 255},  //!< RFLFavoriteColor_Pink
-    {112, 44, 168, 255},  //!< RFLFavoriteColor_Purple
-    {72, 56, 24, 255},    //!< RFLFavoriteColor_Brown
+    // clang-format off
+    {184, 64,  48,  255}, //!< RFLFavoriteColor_Red
+    {240, 120, 40,  255}, //!< RFLFavoriteColor_Orange
+    {248, 216, 32,  255}, //!< RFLFavoriteColor_Yellow
+    {128, 200, 40,  255}, //!< RFLFavoriteColor_YellowGreen
+    {0,   116, 40,  255}, //!< RFLFavoriteColor_Green
+    {32,  72,  152, 255}, //!< RFLFavoriteColor_Blue
+    {64,  160, 216, 255}, //!< RFLFavoriteColor_SkyBlue
+    {232, 96,  120, 255}, //!< RFLFavoriteColor_Pink
+    {112, 44,  168, 255}, //!< RFLFavoriteColor_Purple
+    {72,  56,  24,  255}, //!< RFLFavoriteColor_Brown
     {224, 224, 224, 255}, //!< RFLFavoriteColor_White
-    {24, 24, 20, 255},    //!< RFLFavoriteColor_Black
+    {24,  24,  20,  255}, //!< RFLFavoriteColor_Black
+    // clang-format on
 };
 
 static const GXColor cWhite = {255, 255, 255, 255};
@@ -89,9 +80,9 @@ static const GXColor cWhite = {255, 255, 255, 255};
 #ifndef NON_MATCHING
 #error RFLSetCoordinate has not yet been matched.
 #endif
-void RFLSetCoordinate(RFLCoordinateType t1, RFLCoordinateType t2) {
-    ;
-    ;
+void RFLSetCoordinate(RFLCoordinateType t1, RFLCoordinateType t2){
+#pragma unused(t1)
+#pragma unused(t2)
 }
 
 u32 RFLiGetExpressionNum(u32 exprFlags) {
@@ -107,73 +98,72 @@ u32 RFLiGetExpressionNum(u32 exprFlags) {
     return num;
 }
 
-u32 RFLGetModelBufferSize(RFLResolution res, u32 expr) {
-    const u32 exprNum = RFLiGetExpressionNum(expr);
+u32 RFLGetModelBufferSize(RFLResolution res, u32 exprFlags) {
+    const u32 exprNum = RFLiGetExpressionNum(exprFlags);
     const s32 texSize = RFLiGetMaskBufSize(res);
-    return ROUND_UP(exprNum * sizeof(GXTexObj), 32) + sizeof(RFLCharModelRes) +
+
+    return ROUND_UP(exprNum * sizeof(GXTexObj), 32) +
+           ROUND_UP(sizeof(RFLCharModelRes), 32) +
            ROUND_UP(texSize * exprNum, 32);
 }
 
 RFLErrcode RFLInitCharModel(RFLCharModel* model, RFLDataSource src,
                             RFLMiddleDB* db, u16 id, void* work,
-                            RFLResolution res, u32 expressions) {
+                            RFLResolution res, u32 exprFlags) {
     RFLCharInfo info;
 
-    RFLErrcode result = RFLiPickupCharInfo(&info, src, db, id);
-    if (result == RFLErrcode_Success) {
-        RFLiInitCharModel(model, &info, work, res, expressions);
+    RFLErrcode err = RFLiPickupCharInfo(&info, src, db, id);
+    if (err == RFLErrcode_Success) {
+        RFLiInitCharModel(model, &info, work, res, exprFlags);
     }
 
-    return result;
+    return err;
 }
 
-RFLErrcode RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
-                             RFLResolution res, u32 expressions) {
-    RFLCharModel* model2;
+void RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
+                       RFLResolution res, u32 exprFlags) {
+    RFLCharModel* model_;
     u32 maskSize;
-    void* maskImages[RFLExp_Max];
+    u8* maskImages[RFLExp_Max];
     u32 maskRes;
     GXTexObj* exprTexObj;
-    void* image;
+    u8* image;
     BOOL setExpr;
     f32 maxLod;
     u8 mipmap;
     int i;
 
-    // Actually exists in debug ver. asm.
-    // Perhaps model is actually a work buffer; however, asserts name it
-    // "charModel", and g3d::ScnRfl passes in a RFLCharModel*.
-    model2 = (RFLCharModel*)model;
+    model_ = (RFLCharModel*)model;
 
-    model2->resolution = res;
+    model_->resolution = res;
     maskSize = RFLiGetMaskBufSize(res);
     maskRes = RFLiGetMaxMaskRsl(res);
-    model2->res = work;
+    model_->res = work;
 
     // Expression texobjs
     exprTexObj =
         (GXTexObj*)ROUND_UP_PTR((char*)work + sizeof(RFLCharModelRes), 32);
     for (i = 0; i < RFLExp_Max; i++) {
-        if (expressions & (1 << i)) {
-            model2->maskTexObj[i] = exprTexObj;
+        if (exprFlags & (1 << i)) {
+            model_->maskTexObj[i] = exprTexObj;
             exprTexObj++;
         } else {
-            model2->maskTexObj[i] = NULL;
+            model_->maskTexObj[i] = NULL;
         }
     }
 
     // Expression images
     image = ROUND_UP_PTR(exprTexObj, 32);
     for (i = 0; i < RFLExp_Max; i++) {
-        if (expressions & (1 << i)) {
+        if (exprFlags & (1 << i)) {
             maskImages[i] = image;
-            image = ((char*)image + maskSize);
+            image = (u8*)image + maskSize;
         } else {
             maskImages[i] = NULL;
         }
     }
 
-    RFLiInitCharModelRes(model2->res, info);
+    RFLiInitCharModelRes(model_->res, info);
 
     setExpr = FALSE;
     mipmap = FALSE;
@@ -195,19 +185,21 @@ RFLErrcode RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
     }
 
     for (i = 0; i < RFLExp_Max; i++) {
-        if (model2->maskTexObj[i] != NULL) {
-            GXInitTexObj(model2->maskTexObj[i], maskImages[i], maskRes, maskRes,
+        if (model_->maskTexObj[i] != NULL) {
+            GXInitTexObj(model_->maskTexObj[i], maskImages[i], maskRes, maskRes,
                          GX_TF_RGB5A3, GX_CLAMP, GX_CLAMP, mipmap);
+
             if (mipmap) {
-                GXInitTexObjLOD(model2->maskTexObj[i], GX_LIN_MIP_LIN,
+                GXInitTexObjLOD(model_->maskTexObj[i], GX_LIN_MIP_LIN,
                                 GX_LINEAR, 0.0f, maxLod, 0.0f, 0, 0,
                                 GX_ANISO_1);
             } else {
-                GXInitTexObjLOD(model2->maskTexObj[i], GX_LINEAR, GX_LINEAR,
+                GXInitTexObjLOD(model_->maskTexObj[i], GX_LINEAR, GX_LINEAR,
                                 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_1);
             }
+
             if (!setExpr) {
-                model2->expression = (RFLExpression)i;
+                model_->expression = (RFLExpression)i;
                 setExpr = TRUE;
             }
         }
@@ -216,9 +208,10 @@ RFLErrcode RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
     RFLiMakeTexture(info, maskImages, res);
 }
 
-void RFLSetMtx(RFLCharModel* model, Mtx modelView) {
-    PSMTXCopy(modelView, model->viewMtx);
-    PSMTXInvXpose(modelView, model->nrmMtx);
+void RFLSetMtx(RFLCharModel* model, const Mtx mvMtx) {
+    RFLCharModel* model_ = (RFLCharModel*)model;
+    PSMTXCopy(mvMtx, model_->posMtx);
+    PSMTXInvXpose(mvMtx, model_->nrmMtx);
 }
 
 void RFLSetExpression(RFLCharModel* model, RFLExpression expr) {
@@ -234,10 +227,12 @@ GXColor RFLGetFavoriteColor(RFLFavoriteColor color) {
 }
 
 GXColor RFLiGetFacelineColor(RFLCharInfo* info) {
-    RFLFacelineColor color = RFL_FACE_COLOR_0;
-    if ((info->SHORT_0x0 >> 10 & 7) < (u32)RFL_FACELINE_MAX) {
-        color = (RFLFacelineColor)(info->SHORT_0x0 >> 10 & 7);
+    s32 color = 0;
+
+    if (info->faceline.color < ARRAY_LENGTH(cFacelineColor)) {
+        color = info->faceline.color;
     }
+
     return cFacelineColor[color];
 }
 
@@ -251,10 +246,10 @@ void RFLLoadDrawSetting(const RFLDrawSetting* setting) {
     GXSetDither(0);
     GXSetDstAlpha(0, 0);
 
-    if (setting->BOOL_0x0) {
+    if (setting->lightEnable) {
         GXSetTevDirect(GX_TEVSTAGE1);
         GXSetTevSwapMode(GX_TEVSTAGE1, GX_TEV_SWAP0, GX_TEV_SWAP0);
-        GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD_INVALID, GX_TEXMAP_NULL,
+        GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD_NULL, GX_TEXMAP_NULL,
                       GX_COLOR0A0);
         GXSetTevColorIn(GX_TEVSTAGE1, GX_CC_ZERO, GX_CC_CPREV, GX_CC_RASC,
                         GX_CC_ZERO);
@@ -269,7 +264,7 @@ void RFLLoadDrawSetting(const RFLDrawSetting* setting) {
         RFLLoadVertexSetting(&cDefaultDrawCoreSetting2Tev);
         GXSetNumChans(1);
 
-        GXSetChanCtrl(GX_COLOR0, 1, GX_SRC_REG, GX_SRC_REG, setting->lightID,
+        GXSetChanCtrl(GX_COLOR0, 1, GX_SRC_REG, GX_SRC_REG, setting->lightMask,
                       setting->diffuse, setting->attn);
         GXSetChanCtrl(GX_ALPHA0, 0, GX_SRC_REG, GX_SRC_REG, GX_LIGHT_NULL,
                       GX_DF_NONE, GX_AF_NONE);
@@ -313,7 +308,7 @@ void RFLLoadMaterialSetting(const RFLDrawCoreSetting* setting) {
     GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_TEV_SCALE_0, 1,
                     setting->tevOutRegID);
     GXSetTevKColorSel(GX_TEVSTAGE0,
-                      (GXTevKColorSel)(setting->tevKColorID + 12));
+                      (GXTevKColorSel)(setting->tevKColorID + GX_TEV_KCSEL_K0));
     GXSetTevKAlphaSel(GX_TEVSTAGE0, GX_TEV_KASEL_8_8);
 }
 
@@ -324,21 +319,21 @@ void RFLDrawOpaCore(const RFLCharModel* model,
     GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO,
                     GX_CA_KONST);
 
-    // Copy-paste error?
+    // @bug Copy-paste error(?)
     GXSetTevSwapMode(GX_TEVSTAGE0, setting->tevSwapTable,
                      setting->tevSwapTable);
     GXSetTevSwapMode(GX_TEVSTAGE0, setting->tevSwapTable,
                      setting->tevSwapTable);
 
-    GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_FRONT : GX_CULL_BACK);
+    GXSetCullMode(setting->reverseCulling ? GX_CULL_FRONT : GX_CULL_BACK);
 
-    GXLoadPosMtxImm(model->viewMtx, setting->mtxId);
-    GXLoadNrmMtxImm(model->nrmMtx, setting->mtxId);
-    GXSetCurrentMtx(setting->mtxId);
+    GXLoadPosMtxImm(model->posMtx, setting->posNrmMtxID);
+    GXLoadNrmMtxImm(model->nrmMtx, setting->posNrmMtxID);
+    GXSetCurrentMtx(setting->posNrmMtxID);
 
     GXSetTexCoordGen(setting->txcID, GX_TG_MTX2x4, GX_TG_POS, 0x3C);
     GXSetVtxDesc(GX_VA_TEX0, GX_VA_PNMTXIDX);
-    GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_INVALID, GX_TEXMAP_NULL,
+    GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL,
                   GX_COLOR_NULL);
     GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO,
                     GX_CC_KONST);
@@ -358,8 +353,8 @@ void RFLDrawOpaCore(const RFLCharModel* model,
         GXCallDisplayList(res->noseDl, res->noseDlSize);
     }
 
-    if (res->WORD_0x824C != 0) {
-        GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_BACK : GX_CULL_FRONT);
+    if (res->flipHair) {
+        GXSetCullMode(setting->reverseCulling ? GX_CULL_BACK : GX_CULL_FRONT);
     }
 
     if (res->foreheadDlSize > 0) {
@@ -404,11 +399,11 @@ void RFLDrawOpaCore(const RFLCharModel* model,
     GXSetTevSwapMode(GX_TEVSTAGE0, setting->tevSwapTable,
                      (GXTevSwapSel)(setting->tevSwapTable + 1));
 
-    if (res->WORD_0x824C != 0) {
-        GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_FRONT : GX_CULL_BACK);
+    if (res->flipHair) {
+        GXSetCullMode(setting->reverseCulling ? GX_CULL_FRONT : GX_CULL_BACK);
     }
 
-    GXLoadTexObj(&res->mascaraTexObj, setting->texMapID);
+    GXLoadTexObj(&res->faceTexObj, setting->texMapID);
     GXSetArray(GX_VA_POS, res->faceVtxPos, 6);
     GXSetArray(GX_VA_NRM, res->faceVtxNrm, 6);
     GXSetArray(GX_VA_TEX0, res->faceVtxTxc, 4);
@@ -426,14 +421,14 @@ void RFLDrawXluCore(const RFLCharModel* model,
     GXSetTevSwapMode(GX_TEVSTAGE0, setting->tevSwapTable,
                      setting->tevSwapTable);
 
-    GXLoadPosMtxImm(model->viewMtx, setting->mtxId);
-    GXLoadNrmMtxImm(model->nrmMtx, setting->mtxId);
-    GXSetCurrentMtx(setting->mtxId);
+    GXLoadPosMtxImm(model->posMtx, setting->posNrmMtxID);
+    GXLoadNrmMtxImm(model->nrmMtx, setting->posNrmMtxID);
+    GXSetCurrentMtx(setting->posNrmMtxID);
 
     GXSetTexCoordGen(setting->txcID, GX_TG_MTX2x4, GX_TG_TEX0, 0x3C);
     GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO,
                     GX_CC_TEXC);
-    GXSetCullMode(setting->BYTE_0x20 ? GX_CULL_FRONT : GX_CULL_BACK);
+    GXSetCullMode(setting->reverseCulling ? GX_CULL_FRONT : GX_CULL_BACK);
 
     GXLoadTexObj(model->maskTexObj[model->expression], setting->texMapID);
     GXSetArray(GX_VA_POS, res->maskVtxPos, 6);
@@ -468,8 +463,8 @@ void RFLDrawXluCore(const RFLCharModel* model,
 #error RFLiInitCharModelRes has not yet been matched.
 #endif
 void RFLiInitCharModelRes(RFLCharModelRes* res, RFLCharInfo* info) {
-    ;
-    ;
+#pragma unused(res)
+#pragma unused(info)
 }
 
 #ifndef NON_MATCHING
@@ -528,25 +523,25 @@ void RFLiInitShapeRes(RFLShape* shape) {
     res += sizeof(u16);
     vtxPtr = (s16*)res;
 
-    if (shape->BOOL_0x8 != 0) {
-        x1 = 256.0f * shape->FLOAT_0x30;
+    if (shape->transform) {
+        x1 = 256.0f * shape->posScale;
         x2 = 256.0f * shape->posTrans->x;
         x3 = 256.0f * shape->posTrans->y;
         x4 = 256.0f * shape->posTrans->z;
         for (i = 0; i < shape->numVtxPos; i++) {
-            const s16 coord[3] = {
-                (shape->BOOL_0xC != 0) ? (s16)((((-vtxPtr[0]) * x1) >> 8) + x2)
-                                       : (s16)(((vtxPtr[0] * x1) >> 8) + x2),
-                ((vtxPtr[1] * x1) >> 8) + x3, ((vtxPtr[2] * x1) >> 8) + x4};
-            RFLiTransformCoordinate(shape->vtxPosBuf + (i * 3), coord);
-            vtxPtr += 3;
+            // const s16 coord[3] = {
+            //     (shape->flipX != 0) ? (s16)((((-vtxPtr[0]) * x1) >> 8) + x2)
+            //                         : (s16)(((vtxPtr[0] * x1) >> 8) + x2),
+            //     ((vtxPtr[1] * x1) >> 8) + x3, ((vtxPtr[2] * x1) >> 8) + x4};
+            // RFLiTransformCoordinate(shape->vtxPosBuf + (i * 3), coord);
+            // vtxPtr += 3;
         }
 
-    } else if (shape->BOOL_0xC != 0) {
+    } else if (shape->flipX != 0) {
         for (i = 0; i < shape->numVtxPos; i++) {
-            const s16 coord[3] = {-vtxPtr[0], vtxPtr[1], vtxPtr[2]};
-            RFLiTransformCoordinate(shape->vtxPosBuf + (i * 3), coord);
-            vtxPtr += 3;
+            // const s16 coord[3] = {-vtxPtr[0], vtxPtr[1], vtxPtr[2]};
+            // RFLiTransformCoordinate(shape->vtxPosBuf + (i * 3), coord);
+            // vtxPtr += 3;
         }
 
     } else {
@@ -562,11 +557,11 @@ void RFLiInitShapeRes(RFLShape* shape) {
     vtxNrmSize = shape->numVtxNrm * sizeof(s16[3]);
     nrmPtr = (s16*)res;
 
-    if (shape->BOOL_0xC != 0) {
+    if (shape->flipX != 0) {
         for (i = 0; i < shape->numVtxNrm; i++) {
-            const s16 coord[3] = {-nrmPtr[0], nrmPtr[1], nrmPtr[2]};
-            RFLiTransformCoordinate(shape->vtxNrmBuf + (i * 3), coord);
-            nrmPtr += 3;
+            // const s16 coord[3] = {-nrmPtr[0], nrmPtr[1], nrmPtr[2]};
+            // RFLiTransformCoordinate(shape->vtxNrmBuf + (i * 3), coord);
+            // nrmPtr += 3;
         }
 
     } else {
@@ -581,8 +576,9 @@ void RFLiInitShapeRes(RFLShape* shape) {
     if (noTxc) {
         shape->numVtxTxc = 0;
     } else {
+        size_t len;
         shape->numVtxTxc = *(u16*)res;
-        const size_t len = shape->numVtxTxc * sizeof(s16[2]);
+        len = shape->numVtxTxc * sizeof(s16[2]);
         res += sizeof(u16);
         memcpy(shape->vtxTxcBuf, (u16*)res, len);
         res += len;
@@ -663,7 +659,7 @@ void RFLDrawShape(const RFLCharModel* model) {
     GXSetVtxAttrFmt(0, GX_VA_NRM, 0, 3, 14);
     GXSetVtxAttrFmt(0, GX_VA_TEX0, 1, 3, 13);
 
-    GXLoadPosMtxImm(model->viewMtx, 0);
+    GXLoadPosMtxImm(model->posMtx, 0);
     GXLoadNrmMtxImm(model->nrmMtx, 0);
     GXSetCurrentMtx(0);
 
@@ -679,7 +675,7 @@ void RFLDrawShape(const RFLCharModel* model) {
         GXCallDisplayList(res->noseDl, res->noseDlSize);
     }
 
-    if (res->WORD_0x824C > 0) {
+    if (res->flipHair) {
         GXGetCullMode(&cullMode);
         switch (cullMode) {
         case GX_CULL_BACK:
@@ -711,7 +707,7 @@ void RFLDrawShape(const RFLCharModel* model) {
         GXCallDisplayList(res->capDl, res->capDlSize);
     }
 
-    if (res->WORD_0x824C > 0) {
+    if (res->flipHair) {
         switch (cullMode) {
         case GX_CULL_BACK:
             GXSetCullMode(GX_CULL_BACK);

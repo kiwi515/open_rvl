@@ -305,6 +305,19 @@ typedef enum _GXLogicOp {
     GX_LO_SET
 } GXLogicOp;
 
+typedef enum _GXPosNrmMtx {
+    GX_PNMTX0 = 0,
+    GX_PNMTX1 = 3,
+    GX_PNMTX2 = 6,
+    GX_PNMTX3 = 9,
+    GX_PNMTX4 = 12,
+    GX_PNMTX5 = 15,
+    GX_PNMTX6 = 18,
+    GX_PNMTX7 = 21,
+    GX_PNMTX8 = 24,
+    GX_PNMTX9 = 27
+} GXPosNrmMtx;
+
 typedef enum _GXPrimitive {
     GX_POINTS = 0xB8,
     GX_LINES = 0xA8,
@@ -613,14 +626,14 @@ typedef enum _GXTexGenType {
 } GXTexGenType;
 
 typedef enum _GXTexMapID {
-    GX_TEXMAP_0,
-    GX_TEXMAP_1,
-    GX_TEXMAP_2,
-    GX_TEXMAP_3,
-    GX_TEXMAP_4,
-    GX_TEXMAP_5,
-    GX_TEXMAP_6,
-    GX_TEXMAP_7,
+    GX_TEXMAP0,
+    GX_TEXMAP1,
+    GX_TEXMAP2,
+    GX_TEXMAP3,
+    GX_TEXMAP4,
+    GX_TEXMAP5,
+    GX_TEXMAP6,
+    GX_TEXMAP7,
     GX_MAX_TEXMAP,
 
     GX_TEXMAP_NULL = 255,

@@ -1,11 +1,11 @@
 #ifndef RVL_FACE_LIBRARY_SYSTEM_H
 #define RVL_FACE_LIBRARY_SYSTEM_H
-#include <RVLFaceLibrary/RFL_Controller.h>
-#include <RVLFaceLibrary/RFL_Database.h>
-#include <RVLFaceLibrary/RFL_HiddenDatabase.h>
-#include <RVLFaceLibrary/RFL_NANDAccess.h>
-#include <RVLFaceLibrary/RFL_NANDLoader.h>
-#include <RVLFaceLibrary/RFL_Types.h>
+#include <RVLFaceLib/RFL_Controller.h>
+#include <RVLFaceLib/RFL_Database.h>
+#include <RVLFaceLib/RFL_HiddenDatabase.h>
+#include <RVLFaceLib/RFL_NANDAccess.h>
+#include <RVLFaceLib/RFL_NANDLoader.h>
+#include <RVLFaceLib/RFL_Types.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {

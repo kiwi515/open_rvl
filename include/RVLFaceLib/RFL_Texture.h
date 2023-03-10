@@ -1,6 +1,6 @@
 #ifndef RVL_FACE_LIBRARY_TEXTURE_H
 #define RVL_FACE_LIBRARY_TEXTURE_H
-#include <RVLFaceLibrary/RFL_Types.h>
+#include <RVLFaceLib/RFL_Types.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
@@ -13,8 +13,8 @@ typedef struct RFLTexture {
     u16 height;         // at 0x4
     u8 wrapS;           // at 0x6
     u8 wrapT;           // at 0x7
-    u16 indexTexture;   // at 0x8
-    u16 colorFormat;    // at 0x9
+    u8 indexTexture;    // at 0x8
+    u8 colorFormat;     // at 0x9
     u16 numColors;      // at 0xA
     u32 paletteOfs;     // at 0xC
     u8 enableLOD;       // at 0x10

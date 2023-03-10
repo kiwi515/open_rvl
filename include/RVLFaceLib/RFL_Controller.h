@@ -1,6 +1,6 @@
 #ifndef RVL_FACE_LIBRARY_CONTROLLER_H
 #define RVL_FACE_LIBRARY_CONTROLLER_H
-#include <RVLFaceLibrary/RFL_Types.h>
+#include <RVLFaceLib/RFL_Types.h>
 #include <revolution/CARD.h>
 #include <revolution/types.h>
 #ifdef __cplusplus

@@ -118,7 +118,7 @@ void GXSetIndTexCoordScale(GXIndTexStageID stage, GXIndTexScale scaleS,
 void GXSetIndTexOrder(GXIndTexStageID stage, GXTexCoordID coord,
                       GXTexMapID map) {
     if (map == GX_TEXMAP_NULL) {
-        map = GX_TEXMAP_0;
+        map = GX_TEXMAP0;
     }
 
     if (coord == GX_TEXCOORD_NULL) {

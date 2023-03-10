@@ -1,4 +1,4 @@
-#include <RVLFaceLibrary.h>
+#include <RVLFaceLib.h>
 #include <revolution/MEM.h>
 #include <revolution/OS.h>
 #include <string.h>
@@ -36,8 +36,8 @@ static void closecallback_(s32 result, NANDCommandBlock* block);
 static void getlengthcallback_(s32 result, NANDCommandBlock* block);
 static void deletecallback_(s32 result, NANDCommandBlock* block);
 static void createdircallback1_(s32 result, NANDCommandBlock* block);
-static void createdircallback2_(s32 result, NANDCommandBlock* block)
-    __attribute__((never_inline));
+static void createdircallback2_(s32 result,
+                                NANDCommandBlock* block) DONT_INLINE;
 
 void RFLiInitAccessInfo(MEMiHeapHead* heap) {
     u16 i;

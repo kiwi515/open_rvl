@@ -1,6 +1,6 @@
 #ifndef RVL_FACE_LIBRARY_DATABASE_H
 #define RVL_FACE_LIBRARY_DATABASE_H
-#include <RVLFaceLibrary/RFL_Types.h>
+#include <RVLFaceLib/RFL_Types.h>
 #include <revolution/OS.h>
 #include <revolution/types.h>
 #ifdef __cplusplus

@@ -1,4 +1,4 @@
-#include <RVLFaceLibrary.h>
+#include <RVLFaceLib.h>
 #include <revolution/NAND.h>
 #include <string.h>
 
@@ -31,7 +31,7 @@ void RFLiInitLoader(void) {
  * RFL_Res.dat documentation from:
  * https://wiki.tockdom.com/wiki/RFL_Res.dat_(File_Format)
  */
-static void parseOnmemoryRes_(void) __attribute__((never_inline)) {
+static void parseOnmemoryRes_(void) DONT_INLINE {
     RFLLoader* loader;
     int i;
 

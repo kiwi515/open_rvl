@@ -188,7 +188,7 @@ static void SetRun(OSThread* thread) {
     RunQueueHint = TRUE;
 }
 
-static void UnsetRun(OSThread* thread) __attribute__((never_inline)) {
+static void UnsetRun(OSThread* thread) DONT_INLINE {
     OSThreadQueue* queue;
     OSThread* next;
     OSThread* prev;

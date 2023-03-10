@@ -443,8 +443,8 @@ static BOOL SCFindIntegerItem(void* dst, SCItemID id, u8 primType) {
     return success;
 }
 
-static BOOL SCReplaceIntegerItem(const void* src, SCItemID id, u8 primType)
-    __attribute__((never_inline)) {
+static BOOL SCReplaceIntegerItem(const void* src, SCItemID id,
+                                 u8 primType) DONT_INLINE {
     BOOL success;
     BOOL enabled;
     SCItem item;

@@ -4,7 +4,7 @@
 #include <string.h>
 
 static void nandSplitPerm(u8 perm, u32* ownerPerm, u32* groupPerm,
-                          u32* otherPerm) __attribute__((never_inline));
+                          u32* otherPerm) DONT_INLINE;
 static void nandGetStatusCallback(s32 result, void* arg);
 static void nandGetFileStatusAsyncCallback(s32 result, void* arg);
 static BOOL nandInspectPermission(u8 perm);
@@ -354,7 +354,7 @@ NANDResult NANDGetLengthAsync(NANDFileInfo* info, u32* lengthOut,
 }
 
 static void nandComposePerm(u8* out, u32 ownerPerm, u32 groupPerm,
-                            u32 otherPerm) __attribute__((never_inline)) {
+                            u32 otherPerm) DONT_INLINE {
     u32 perm = 0;
 
     if (ownerPerm & NAND_ACCESS_READ) {

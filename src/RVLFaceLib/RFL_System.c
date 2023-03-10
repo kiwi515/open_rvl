@@ -1,4 +1,4 @@
-#include <RVLFaceLibrary.h>
+#include <RVLFaceLib.h>
 #include <revolution/MEM.h>
 #include <string.h>
 
