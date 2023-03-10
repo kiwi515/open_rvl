@@ -1,12 +1,12 @@
-#ifndef RVL_FACE_LIBRARY_TEXTURE_H
-#define RVL_FACE_LIBRARY_TEXTURE_H
-#include <RVLFaceLib/RFL_Types.h>
+#ifndef RVL_FACE_LIBRARY_INTERNAL_TEXTURE_H
+#define RVL_FACE_LIBRARY_INTERNAL_TEXTURE_H
+#include <RVLFaceLib/RFLi_Types.h>
 #include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct RFLTexture {
+typedef struct RFLiTexture {
     u8 format;          // at 0x0
     u8 alpha;           // at 0x1
     u16 width;          // at 0x2
@@ -29,9 +29,9 @@ typedef struct RFLTexture {
     s8 reserved;        // at 0x19
     s16 lodBias;        // at 0x1A
     u32 imageOfs;       // at 0x1C
-} RFLTexture;
+} RFLiTexture;
 
-inline void* RFLiGetTexImage(const RFLTexture* tex) {
+inline void* RFLiGetTexImage(const RFLiTexture* tex) {
     return (u8*)tex + tex->imageOfs;
 }
 

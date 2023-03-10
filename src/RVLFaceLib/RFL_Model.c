@@ -1,4 +1,4 @@
-#include <RVLFaceLib.h>
+#include <RVLFaceLib/RVLFaceLibInternal.h>
 #include <revolution/OS.h>
 #include <string.h>
 
@@ -103,14 +103,14 @@ u32 RFLGetModelBufferSize(RFLResolution res, u32 exprFlags) {
     const s32 texSize = RFLiGetMaskBufSize(res);
 
     return ROUND_UP(exprNum * sizeof(GXTexObj), 32) +
-           ROUND_UP(sizeof(RFLCharModelRes), 32) +
+           ROUND_UP(sizeof(RFLiCharModelRes), 32) +
            ROUND_UP(texSize * exprNum, 32);
 }
 
 RFLErrcode RFLInitCharModel(RFLCharModel* model, RFLDataSource src,
                             RFLMiddleDB* db, u16 id, void* work,
                             RFLResolution res, u32 exprFlags) {
-    RFLCharInfo info;
+    RFLiCharInfo info;
 
     RFLErrcode err = RFLiPickupCharInfo(&info, src, db, id);
     if (err == RFLErrcode_Success) {
@@ -120,9 +120,9 @@ RFLErrcode RFLInitCharModel(RFLCharModel* model, RFLDataSource src,
     return err;
 }
 
-void RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
+void RFLiInitCharModel(RFLCharModel* model, RFLiCharInfo* info, void* work,
                        RFLResolution res, u32 exprFlags) {
-    RFLCharModel* model_;
+    RFLiCharModel* model_;
     u32 maskSize;
     u8* maskImages[RFLExp_Max];
     u32 maskRes;
@@ -133,7 +133,7 @@ void RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
     u8 mipmap;
     int i;
 
-    model_ = (RFLCharModel*)model;
+    model_ = (RFLiCharModel*)model;
 
     model_->resolution = res;
     maskSize = RFLiGetMaskBufSize(res);
@@ -142,7 +142,7 @@ void RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
 
     // Expression texobjs
     exprTexObj =
-        (GXTexObj*)ROUND_UP_PTR((char*)work + sizeof(RFLCharModelRes), 32);
+        (GXTexObj*)ROUND_UP_PTR((char*)work + sizeof(RFLiCharModelRes), 32);
     for (i = 0; i < RFLExp_Max; i++) {
         if (exprFlags & (1 << i)) {
             model_->maskTexObj[i] = exprTexObj;
@@ -209,24 +209,26 @@ void RFLiInitCharModel(RFLCharModel* model, RFLCharInfo* info, void* work,
 }
 
 void RFLSetMtx(RFLCharModel* model, const Mtx mvMtx) {
-    RFLCharModel* model_ = (RFLCharModel*)model;
+    RFLiCharModel* model_ = (RFLiCharModel*)model;
     PSMTXCopy(mvMtx, model_->posMtx);
     PSMTXInvXpose(mvMtx, model_->nrmMtx);
 }
 
 void RFLSetExpression(RFLCharModel* model, RFLExpression expr) {
-    model->expression = expr;
+    RFLiCharModel* model_ = (RFLiCharModel*)model;
+    model_->expression = expr;
 }
 
 RFLExpression RFLGetExpression(RFLCharModel* model) {
-    return model->expression;
+    RFLiCharModel* model_ = (RFLiCharModel*)model;
+    return model_->expression;
 }
 
 GXColor RFLGetFavoriteColor(RFLFavoriteColor color) {
     return cFavoriteColor[color];
 }
 
-GXColor RFLiGetFacelineColor(RFLCharInfo* info) {
+GXColor RFLiGetFacelineColor(RFLiCharInfo* info) {
     s32 color = 0;
 
     if (info->faceline.color < ARRAY_LENGTH(cFacelineColor)) {
@@ -314,7 +316,8 @@ void RFLLoadMaterialSetting(const RFLDrawCoreSetting* setting) {
 
 void RFLDrawOpaCore(const RFLCharModel* model,
                     const RFLDrawCoreSetting* setting) {
-    RFLCharModelRes* res = model->res;
+    RFLiCharModel* model_ = (RFLiCharModel*)model;
+    RFLiCharModelRes* res = model_->res;
 
     GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO,
                     GX_CA_KONST);
@@ -327,8 +330,8 @@ void RFLDrawOpaCore(const RFLCharModel* model,
 
     GXSetCullMode(setting->reverseCulling ? GX_CULL_FRONT : GX_CULL_BACK);
 
-    GXLoadPosMtxImm(model->posMtx, setting->posNrmMtxID);
-    GXLoadNrmMtxImm(model->nrmMtx, setting->posNrmMtxID);
+    GXLoadPosMtxImm(model_->posMtx, setting->posNrmMtxID);
+    GXLoadNrmMtxImm(model_->nrmMtx, setting->posNrmMtxID);
     GXSetCurrentMtx(setting->posNrmMtxID);
 
     GXSetTexCoordGen(setting->txcID, GX_TG_MTX2x4, GX_TG_POS, 0x3C);
@@ -412,7 +415,8 @@ void RFLDrawOpaCore(const RFLCharModel* model,
 
 void RFLDrawXluCore(const RFLCharModel* model,
                     const RFLDrawCoreSetting* setting) {
-    RFLCharModelRes* res = model->res;
+    RFLiCharModel* model_ = (RFLiCharModel*)model;
+    RFLiCharModelRes* res = model_->res;
 
     GXSetTevOrder(GX_TEVSTAGE0, setting->txcID, setting->texMapID,
                   GX_COLOR_NULL);
@@ -421,8 +425,8 @@ void RFLDrawXluCore(const RFLCharModel* model,
     GXSetTevSwapMode(GX_TEVSTAGE0, setting->tevSwapTable,
                      setting->tevSwapTable);
 
-    GXLoadPosMtxImm(model->posMtx, setting->posNrmMtxID);
-    GXLoadNrmMtxImm(model->nrmMtx, setting->posNrmMtxID);
+    GXLoadPosMtxImm(model_->posMtx, setting->posNrmMtxID);
+    GXLoadNrmMtxImm(model_->nrmMtx, setting->posNrmMtxID);
     GXSetCurrentMtx(setting->posNrmMtxID);
 
     GXSetTexCoordGen(setting->txcID, GX_TG_MTX2x4, GX_TG_TEX0, 0x3C);
@@ -430,7 +434,7 @@ void RFLDrawXluCore(const RFLCharModel* model,
                     GX_CC_TEXC);
     GXSetCullMode(setting->reverseCulling ? GX_CULL_FRONT : GX_CULL_BACK);
 
-    GXLoadTexObj(model->maskTexObj[model->expression], setting->texMapID);
+    GXLoadTexObj(model_->maskTexObj[model_->expression], setting->texMapID);
     GXSetArray(GX_VA_POS, res->maskVtxPos, 6);
     GXSetArray(GX_VA_NRM, res->maskVtxNrm, 6);
     GXSetArray(GX_VA_TEX0, res->maskVtxTxc, 4);
@@ -462,7 +466,7 @@ void RFLDrawXluCore(const RFLCharModel* model,
 #ifndef NON_MATCHING
 #error RFLiInitCharModelRes has not yet been matched.
 #endif
-void RFLiInitCharModelRes(RFLCharModelRes* res, RFLCharInfo* info) {
+void RFLiInitCharModelRes(RFLiCharModelRes* res, RFLiCharInfo* info) {
 #pragma unused(res)
 #pragma unused(info)
 }
@@ -475,7 +479,7 @@ void RFLiInitCharModelRes(RFLCharModelRes* res, RFLCharInfo* info) {
  * See "Model format"
  * The format changes based on the model type, so the code is a little messy.
  */
-void RFLiInitShapeRes(RFLShape* shape) {
+void RFLiInitShapeRes(RFLiShapeRes* shape) {
     static const u32 csHeader[RFLiPartsShp_Max] = {
         'nose', 'frhd', 'face', 'hair', 'cap_', 'berd', 'nsln', 'mask', 'glas'};
 
@@ -616,9 +620,9 @@ void RFLiInitShapeRes(RFLShape* shape) {
 void RFLiInitTexRes(GXTexObj* texObj, RFLiPartsShpTex part, u16 file,
                     void* buffer) {
     u32 texSize;
-    RFLTexture* tex;
+    RFLiTexture* tex;
 
-    tex = (RFLTexture*)RFLiAlloc32(RFLiGetShpTexSize(part, file));
+    tex = (RFLiTexture*)RFLiAlloc32(RFLiGetShpTexSize(part, file));
     RFLiLoadShpTexture(part, file, tex);
 
     switch (part) {
@@ -650,7 +654,8 @@ void RFLiTransformCoordinate(s16* to, const s16* from) {
 
 void RFLDrawShape(const RFLCharModel* model) {
     GXCullMode cullMode;
-    RFLCharModelRes* res = model->res;
+    RFLiCharModel* model_ = (RFLiCharModel*)model;
+    RFLiCharModelRes* res = model_->res;
 
     GXClearVtxDesc();
     GXSetVtxDesc(GX_VA_POS, GX_VA_TEX1MTXIDX);
@@ -659,8 +664,8 @@ void RFLDrawShape(const RFLCharModel* model) {
     GXSetVtxAttrFmt(0, GX_VA_NRM, 0, 3, 14);
     GXSetVtxAttrFmt(0, GX_VA_TEX0, 1, 3, 13);
 
-    GXLoadPosMtxImm(model->posMtx, 0);
-    GXLoadNrmMtxImm(model->nrmMtx, 0);
+    GXLoadPosMtxImm(model_->posMtx, 0);
+    GXLoadNrmMtxImm(model_->nrmMtx, 0);
     GXSetCurrentMtx(0);
 
     if (res->beardDlSize > 0) {

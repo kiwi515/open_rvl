@@ -1,4 +1,4 @@
-#include <RVLFaceLib.h>
+#include <RVLFaceLib/RVLFaceLibInternal.h>
 #include <revolution/NAND.h>
 #include <string.h>
 
@@ -9,7 +9,7 @@
 static const char* scResFileFullPathName = "/shared2/FaceLib/RFL_Res.dat";
 
 void RFLiInitLoader(void) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
     int i;
 
     loader = RFLiGetLoader();
@@ -32,7 +32,7 @@ void RFLiInitLoader(void) {
  * https://wiki.tockdom.com/wiki/RFL_Res.dat_(File_Format)
  */
 static void parseOnmemoryRes_(void) DONT_INLINE {
-    RFLLoader* loader;
+    RFLiLoader* loader;
     int i;
 
     loader = RFLiGetLoader();
@@ -50,9 +50,9 @@ static void parseOnmemoryRes_(void) DONT_INLINE {
 }
 
 static void loadResRead2ndcallback_(void) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
     BOOL free;
-    RFLAccessCallback cb;
+    RFLiAccessCallback cb;
     u32* headerBuf1;
     u32* headerBuf2;
 
@@ -99,7 +99,7 @@ static void loadResRead2ndcallback_(void) {
 static void errclosecallback_(void) { RFLExit(); }
 
 static void loadResRead1stcallback_(void) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
     BOOL free;
     u32* headerBuf1;
     void* headerBuf2;
@@ -143,7 +143,7 @@ static void loadResRead1stcallback_(void) {
 }
 
 static void loadResGetlengthcallback_(void) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
     void* headerBuf1;
 
     loader = RFLiGetLoader();
@@ -168,7 +168,7 @@ static void loadResGetlengthcallback_(void) {
 }
 
 static void loadResOpencallback_(void) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
 
     if (RFLGetAsyncStatus() == RFLErrcode_Success) {
         loader = RFLiGetLoader();
@@ -188,7 +188,7 @@ static void loadResOpencallback_(void) {
 }
 
 RFLErrcode RFLiLoadResourceHeaderAsync(void) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
 
     loader = RFLiGetLoader();
     if (loader == NULL) {
@@ -206,17 +206,17 @@ RFLErrcode RFLiLoadResourceHeaderAsync(void) {
                          loadResOpencallback_);
 }
 
-static u32 getCachedLength_(RFLLoader* loader, u32 arcIdx, u16 fileIdx) {
-    RFLArchive* arc = &loader->archives[arcIdx];
+static u32 getCachedLength_(RFLiLoader* loader, u32 arcIdx, u16 fileIdx) {
+    RFLiArchive* arc = &loader->archives[arcIdx];
     const void* arcBuf = (u8*)loader->cache + arc->offset;
     const u32 next = ((u32*)arcBuf)[fileIdx + 1];
     const u32 self = ((u32*)arcBuf)[fileIdx];
     return next - self;
 }
 
-static u32 getNANDLength_(RFLLoader* loader, u32 arcIdx, u16 fileIdx) {
+static u32 getNANDLength_(RFLiLoader* loader, u32 arcIdx, u16 fileIdx) {
     NANDFileInfo file;
-    RFLArchive* arc;
+    RFLiArchive* arc;
     void* tmpBuf;
     u32 length = 0;
 
@@ -242,7 +242,7 @@ static u32 getNANDLength_(RFLLoader* loader, u32 arcIdx, u16 fileIdx) {
 }
 
 static u32 getLength_(u32 arcIdx, u16 fileIdx) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
 
     loader = RFLiGetLoader();
     if (loader == NULL) {
@@ -260,10 +260,10 @@ static u32 getLength_(u32 arcIdx, u16 fileIdx) {
     }
 }
 
-static void* getCachedFile_(void* dst, RFLLoader* loader, u32 arcIdx,
+static void* getCachedFile_(void* dst, RFLiLoader* loader, u32 arcIdx,
                             u16 fileIdx) {
     const u8* cache = (u8*)loader->cache;
-    RFLArchive* arc = &loader->archives[arcIdx];
+    RFLiArchive* arc = &loader->archives[arcIdx];
     const void* arcBuf = cache + arc->offset;
     const u32 self = ((u32*)arcBuf)[fileIdx];
     const u32 next = ((u32*)arcBuf)[fileIdx + 1];
@@ -274,10 +274,10 @@ static void* getCachedFile_(void* dst, RFLLoader* loader, u32 arcIdx,
     return dst;
 }
 
-static void* getNANDFile_(void* dst, RFLLoader* loader, u32 arcIdx,
+static void* getNANDFile_(void* dst, RFLiLoader* loader, u32 arcIdx,
                           u16 fileIdx) {
     NANDFileInfo file;
-    RFLArchive* arc;
+    RFLiArchive* arc;
     void* tmpBuf;
     void* arcBuf;
     void* ret;
@@ -338,7 +338,7 @@ static void* getNANDFile_(void* dst, RFLLoader* loader, u32 arcIdx,
 }
 
 static void* getFile_(void* dst, u32 arcIdx, u16 fileIdx) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
 
     if (!RFLAvailable()) {
         return NULL;
@@ -367,11 +367,11 @@ u32 RFLiGetTexSize(RFLiPartsTex part, u16 file) {
     return getLength_(scParts2Arc[part], file);
 }
 
-RFLTexture* RFLiLoadTexture(RFLiPartsTex part, u16 file, void* dst) {
+RFLiTexture* RFLiLoadTexture(RFLiPartsTex part, u16 file, void* dst) {
     static const u32 scParts2Arc[] = {RFLiArcID_Eye, RFLiArcID_Eyebrow,
                                       RFLiArcID_Mouth, RFLiArcID_Mustache,
                                       RFLiArcID_Mole};
-    return (RFLTexture*)getFile_(dst, scParts2Arc[part], file);
+    return (RFLiTexture*)getFile_(dst, scParts2Arc[part], file);
 }
 
 u32 RFLiGetShpTexSize(RFLiPartsShpTex part, u16 file) {
@@ -380,10 +380,10 @@ u32 RFLiGetShpTexSize(RFLiPartsShpTex part, u16 file) {
     return getLength_(scParts2Arc[part], file);
 }
 
-RFLTexture* RFLiLoadShpTexture(RFLiPartsShpTex part, u16 file, void* dst) {
+RFLiTexture* RFLiLoadShpTexture(RFLiPartsShpTex part, u16 file, void* dst) {
     static const u32 scParts2Arc[] = {RFLiArcID_FaceTex, RFLiArcID_CapTex,
                                       RFLiArcID_NlineTex, RFLiArcID_GlassTex};
-    return (RFLTexture*)getFile_(dst, scParts2Arc[part], file);
+    return (RFLiTexture*)getFile_(dst, scParts2Arc[part], file);
 }
 
 u32 RFLiGetShapeSize(RFLiPartsShp part, u16 file) {
@@ -403,7 +403,7 @@ void* RFLiLoadShape(RFLiPartsShp part, u16 file, void* dst) {
 }
 
 BOOL RFLFreeCachedResource(void) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
 
     if (!RFLAvailable()) {
         return TRUE;
@@ -425,7 +425,7 @@ BOOL RFLFreeCachedResource(void) {
 }
 
 BOOL RFLIsResourceCached(void) {
-    RFLLoader* loader;
+    RFLiLoader* loader;
 
     if (!RFLAvailable()) {
         return FALSE;

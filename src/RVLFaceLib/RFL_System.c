@@ -1,4 +1,4 @@
-#include <RVLFaceLib.h>
+#include <RVLFaceLib/RVLFaceLibInternal.h>
 #include <revolution/MEM.h>
 #include <string.h>
 
@@ -20,16 +20,16 @@
 static const char* __RFLVersion =
     "<< RVL_SDK - RFL \trelease build: Jun  9 2007 17:25:33 (0x4199_60831) >>";
 
-static const RFLCoordinateData scCoordinate = {1, 2, 0, FALSE, FALSE, FALSE};
+static const RFLiCoordinateData scCoordinate = {1, 2, 0, FALSE, FALSE, FALSE};
 
-static RFLManager* sRFLManager = NULL;
+static RFLiManager* sRFLiManager = NULL;
 static RFLErrcode sRFLLastErrCode = RFLErrcode_NotAvailable;
 static u8 sRFLiFileBrokenType;
 static s32 sRFLLastReason;
 
 u32 RFLGetWorkSize(BOOL deluxeTex) {
-    return deluxeTex ? RFL_DELUXE_WORK_SIZE + sizeof(RFLManager)
-                     : RFL_WORK_SIZE + sizeof(RFLManager);
+    return deluxeTex ? RFL_DELUXE_WORK_SIZE + sizeof(RFLiManager)
+                     : RFL_WORK_SIZE + sizeof(RFLiManager);
 }
 
 RFLErrcode RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
@@ -49,14 +49,14 @@ RFLErrcode RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         workSize = deluxeTex ? RFL_DELUXE_WORK_SIZE : RFL_WORK_SIZE;
         memset(workBuffer, 0, workSize);
 
-        sRFLManager = (RFLManager*)workBuffer;
+        sRFLiManager = (RFLiManager*)workBuffer;
         sRFLLastErrCode = RFLErrcode_NotAvailable;
         sRFLLastReason = NAND_RESULT_OK;
         sRFLiFileBrokenType = RFLiFileBrokenType_DBNotFound;
-        sRFLManager->workBuffer = (u8*)workBuffer + sizeof(RFLManager);
+        sRFLiManager->workBuffer = (u8*)workBuffer + sizeof(RFLiManager);
 
-        heapSize = deluxeTex ? RFL_DELUXE_WORK_SIZE - sizeof(RFLManager)
-                             : RFL_WORK_SIZE - sizeof(RFLManager);
+        heapSize = deluxeTex ? RFL_DELUXE_WORK_SIZE - sizeof(RFLiManager)
+                             : RFL_WORK_SIZE - sizeof(RFLiManager);
 
         RFLiGetManager()->rootHeap = MEMCreateExpHeapEx(
             RFLiGetManager()->workBuffer, heapSize, MEM_HEAP_OPT_CLEAR_ALLOC);
@@ -89,7 +89,7 @@ RFLErrcode RFLInitResAsync(void* workBuffer, void* resBuffer, u32 resSize,
         RFLiSetCoordinateData(&scCoordinate);
 
         if (resBuffer != NULL) {
-            RFLLoader* loader = RFLiGetLoader_();
+            RFLiLoader* loader = RFLiGetLoader_();
             loader->cached = TRUE;
             loader->cacheSize = resSize;
             loader->cache = resBuffer;
@@ -133,7 +133,7 @@ void RFLExit(void) {
     MEMDestroyExpHeap(RFLiGetManager()->systemHeap);
     MEMDestroyExpHeap(RFLiGetManager()->rootHeap);
 
-    sRFLManager = NULL;
+    sRFLiManager = NULL;
 }
 
 static void bootloadDB2Res_(void) {
@@ -153,7 +153,7 @@ RFLErrcode RFLiBootLoadAsync(void) {
     return RFLiBootLoadDatabaseAsync(bootloadDB2Res_);
 }
 
-BOOL RFLAvailable(void) { return sRFLManager != NULL; }
+BOOL RFLAvailable(void) { return sRFLiManager != NULL; }
 
 static void* allocal_(u32 size, s32 align) {
     return MEMAllocFromExpHeapEx(RFLiGetManager()->tmpHeap, size, align);
@@ -167,15 +167,15 @@ void RFLiFree(void* block) {
     MEMFreeToExpHeap(RFLiGetManager()->tmpHeap, block);
 }
 
-RFLDBManager* RFLiGetDBManager(void) {
+RFLiDBManager* RFLiGetDBManager(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->dbMgr;
 }
 
-RFLHDBManager* RFLiGetHDBManager(void) {
+RFLiHDBManager* RFLiGetHDBManager(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->hdbMgr;
 }
 
-RFLLoader* RFLiGetLoader(void) {
+RFLiLoader* RFLiGetLoader(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->loader;
 }
 
@@ -185,7 +185,7 @@ BOOL RFLiGetWorking(void) {
 
 void RFLiSetWorking(BOOL working) { RFLiGetManager()->working = working; }
 
-RFLManager* RFLiGetManager(void) { return sRFLManager; }
+RFLiManager* RFLiGetManager(void) { return sRFLiManager; }
 
 RFLErrcode RFLGetAsyncStatus(void) {
     if (!RFLAvailable()) {
@@ -217,11 +217,11 @@ RFLErrcode RFLWaitAsync(void) {
     return status;
 }
 
-RFLAccessInfo* RFLiGetAccInfo(RFLiFileType type) {
+RFLiAccessInfo* RFLiGetAccInfo(RFLiFileType type) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->info[type];
 }
 
-RFLCtrlBufManager* RFLiGetCtrlBufManager(void) {
+RFLiCtrlBufManager* RFLiGetCtrlBufManager(void) {
     return !RFLAvailable() ? NULL : &RFLiGetManager()->ctrlMgr;
 }
 

@@ -4,18 +4,12 @@
 extern "C" {
 #endif
 
-#include <RVLFaceLib/RFL_Controller.h>
-#include <RVLFaceLib/RFL_DataUtility.h>
-#include <RVLFaceLib/RFL_Database.h>
-#include <RVLFaceLib/RFL_HiddenDatabase.h>
 #include <RVLFaceLib/RFL_Icon.h>
-#include <RVLFaceLib/RFL_MakeTex.h>
 #include <RVLFaceLib/RFL_MiddleDatabase.h>
 #include <RVLFaceLib/RFL_Model.h>
-#include <RVLFaceLib/RFL_NANDAccess.h>
 #include <RVLFaceLib/RFL_NANDLoader.h>
 #include <RVLFaceLib/RFL_System.h>
-#include <RVLFaceLib/RFL_Texture.h>
+#include <RVLFaceLib/RFL_Types.h>
 
 #ifdef __cplusplus
 }
