@@ -1,10 +1,4 @@
-#include "scsystem.h"
-#include "scapi_prdinfo.h"
-
-#include <OS.h>
-
-#include <NAND.h>
-
+#include <revolution/SC.h>
 #include <string.h>
 
 #define SYSCONF_SIZE 0x4000
@@ -39,18 +33,20 @@ typedef struct SCConfHeader {
     // . . .
 } SCConfHeader;
 
-static void SetBgJobStatus(SCStatus);
-static NANDResult SCReloadConfFileAsync(u8*, u32, SCAsyncCallback);
-static void OpenCallbackFromReload(NANDResult, NANDCommandBlock*);
-static void ReadCallbackFromReload(NANDResult, NANDCommandBlock*);
-static void CloseCallbackFromReload(NANDResult, NANDCommandBlock*);
+static void SetBgJobStatus(SCStatus status);
+static NANDResult SCReloadConfFileAsync(u8* buf, u32 size,
+                                        SCAsyncCallback callback);
+static void OpenCallbackFromReload(NANDResult result, NANDCommandBlock* block);
+static void ReadCallbackFromReload(NANDResult result, NANDCommandBlock* block);
+static void CloseCallbackFromReload(NANDResult result, NANDCommandBlock* block);
 static void FinishFromReload(void);
-static void ErrorFromReload(NANDResult);
-static void CloseCallbackFromReloadError(NANDResult, NANDCommandBlock*);
-static void ClearConfBuf(u8*);
-static s32 ParseConfBuf(u8*, u32);
-static BOOL UnpackItem(const u8*, SCItem*);
-static void MyNandCallback(NANDResult, NANDCommandBlock*);
+static void ErrorFromReload(NANDResult result);
+static void CloseCallbackFromReloadError(NANDResult result,
+                                         NANDCommandBlock* block);
+static void ClearConfBuf(u8* conf);
+static s32 ParseConfBuf(u8* conf, u32 size);
+static BOOL UnpackItem(const u8* data, SCItem* item);
+static void MyNandCallback(NANDResult result, NANDCommandBlock* block);
 static void FinishFromFlush(void);
 static void ErrorFromFlush(void);
 
@@ -288,7 +284,7 @@ static void ClearConfBuf(u8* conf) {
 #ifndef NON_MATCHING
 #error ParseConfBuf has not yet been matched.
 #endif
-static s32 ParseConfBuf(u8* conf, u32 len) {
+static s32 ParseConfBuf(u8* conf, u32 size) {
     ;
     ;
 }
@@ -473,16 +469,16 @@ exit:
     return success;
 }
 
-BOOL SCFindU8Item(u8* src, SCItemID id) {
-    return SCFindIntegerItem(src, id, SC_ITEM_BYTE);
+BOOL SCFindU8Item(u8* dst, SCItemID id) {
+    return SCFindIntegerItem(dst, id, SC_ITEM_BYTE);
 }
 
-BOOL SCFindS8Item(s8* src, SCItemID id) {
-    return SCFindIntegerItem(src, id, SC_ITEM_BYTE);
+BOOL SCFindS8Item(s8* dst, SCItemID id) {
+    return SCFindIntegerItem(dst, id, SC_ITEM_BYTE);
 }
 
-BOOL SCFindU32Item(u32* src, SCItemID id) {
-    return SCFindIntegerItem(src, id, SC_ITEM_LONG);
+BOOL SCFindU32Item(u32* dst, SCItemID id) {
+    return SCFindIntegerItem(dst, id, SC_ITEM_LONG);
 }
 
 BOOL SCReplaceU8Item(u8 data, SCItemID id) {

@@ -1,8 +1,6 @@
-#include "scapi_prdinfo.h"
-
+#include <revolution/OS.h>
+#include <revolution/SC.h>
 #include <string.h>
-
-#include <OS.h>
 
 #define XOR_KEY 0x73B5DBFA
 
@@ -26,29 +24,29 @@ BOOL __SCF1(const char* type, char* buf, u32 sz) {
     u32 i;
     const u8* settings = (const u8*)OSPhysicalToCached(OS_PHYS_SC_PRDINFO);
     u32 key = XOR_KEY;
-    u32 type_ofs = 0;
-    u32 buf_ofs = 0;
+    u32 typeOfs = 0;
+    u32 bufOfs = 0;
 
     for (i = 0; i < SC_PRDINFO_SIZE; i++, key = key >> 31 | key << 1) {
         ptext = settings[i];
 
         if (ptext != 0x00) {
             ptext ^= key;
-            if (type[type_ofs] == 0x00 && ptext == '=') {
+            if (type[typeOfs] == 0x00 && ptext == '=') {
                 found = TRUE;
                 break;
             }
 
-            if (((ptext ^ type[type_ofs]) & 0xDF) == 0) {
-                type_ofs++;
+            if (((ptext ^ type[typeOfs]) & 0xDF) == 0) {
+                typeOfs++;
             } else {
-                type_ofs = 0;
+                typeOfs = 0;
             }
         }
     }
 
     if (found) {
-        for (i++; i < SC_PRDINFO_SIZE && buf_ofs < sz; i++) {
+        for (i++; i < SC_PRDINFO_SIZE && bufOfs < sz; i++) {
             key = key >> 31 | key << 1;
             ptext = settings[i];
 
@@ -59,7 +57,7 @@ BOOL __SCF1(const char* type, char* buf, u32 sz) {
                 }
             }
 
-            buf[buf_ofs++] = ptext;
+            buf[bufOfs++] = ptext;
 
             if (ptext == 0x00) {
                 return TRUE;

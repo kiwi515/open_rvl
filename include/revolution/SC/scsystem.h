@@ -75,8 +75,8 @@ typedef enum {
     SC_ITEM_BOOL = (7 << 5)
 } SCItemType;
 
-typedef void (*SCAsyncCallback)(NANDResult);
-typedef void (*SCFlushCallback)(SCStatus);
+typedef void (*SCAsyncCallback)(NANDResult result);
+typedef void (*SCFlushCallback)(SCStatus status);
 
 typedef struct SCItem {
     char UNK_0x0[0x8];
@@ -112,16 +112,16 @@ typedef struct SCControl {
 void SCInit(void);
 u32 SCCheckStatus(void);
 
-BOOL SCFindByteArrayItem(void*, u32, SCItemID);
-BOOL SCReplaceByteArrayItem(const void*, u32, SCItemID);
+BOOL SCFindByteArrayItem(void* dst, u32 len, SCItemID id);
+BOOL SCReplaceByteArrayItem(const void* src, u32 len, SCItemID id);
 
-BOOL SCFindU8Item(u8*, SCItemID);
-BOOL SCFindS8Item(s8*, SCItemID);
-BOOL SCFindU32Item(u32*, SCItemID);
+BOOL SCFindU8Item(u8* dst, SCItemID id);
+BOOL SCFindS8Item(s8* dst, SCItemID id);
+BOOL SCFindU32Item(u32* dst, SCItemID id);
 
-BOOL SCReplaceU8Item(u8, SCItemID);
+BOOL SCReplaceU8Item(u8 data, SCItemID id);
 
-void SCFlushAsync(SCFlushCallback);
+void SCFlushAsync(SCFlushCallback callback);
 
 BOOL __SCIsDirty(void);
 void __SCSetDirtyFlag(void);

@@ -26,8 +26,8 @@ typedef struct SCRegion {
     char name[4]; // at 0x1
 } SCRegion;
 
-BOOL __SCF1(const char*, char*, u32);
-BOOL SCGetProductAreaString(char*, u32);
+BOOL __SCF1(const char* type, char* buf, u32 sz);
+BOOL SCGetProductAreaString(char* buf, u32 sz);
 s8 SCGetProductArea(void);
 
 #ifdef __cplusplus

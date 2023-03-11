@@ -1,6 +1,4 @@
-#include "scapi.h"
-#include "scapi_prdinfo.h"
-#include "scsystem.h"
+#include <revolution/SC.h>
 
 u8 SCGetAspectRatio(void) {
     u8 item;
@@ -40,8 +38,8 @@ u8 SCGetEuRgb60Mode(void) {
     return item;
 }
 
-void SCGetIdleMode(SCIdleMode* item) {
-    SCFindByteArrayItem(item, sizeof(SCIdleMode), SC_ITEM_IPL_IDL);
+void SCGetIdleMode(SCIdleMode* mode) {
+    SCFindByteArrayItem(mode, sizeof(SCIdleMode), SC_ITEM_IPL_IDL);
 }
 
 u8 SCGetLanguage(void) {
@@ -141,7 +139,7 @@ u8 SCGetWpadMotorMode(void) {
     return item;
 }
 
-void SCSetWpadMotorMode(u8 mot) { SCReplaceU8Item(mot, SC_ITEM_BT_MOT); }
+void SCSetWpadMotorMode(u8 mode) { SCReplaceU8Item(mode, SC_ITEM_BT_MOT); }
 
 u8 SCGetWpadSensorBarPosition(void) {
     u8 item;
@@ -167,4 +165,4 @@ u8 SCGetWpadSpeakerVolume(void) {
     return item;
 }
 
-void SCSetWpadSpeakerVolume(u8 spkv) { SCReplaceU8Item(spkv, SC_ITEM_BT_SPKV); }
+void SCSetWpadSpeakerVolume(u8 vol) { SCReplaceU8Item(vol, SC_ITEM_BT_SPKV); }
