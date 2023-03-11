@@ -48,8 +48,8 @@ typedef struct TPLPalette {
     TPLDescriptor* descriptors; // at 0x8
 } TPLPalette;
 
-void TPLBind(TPLPalette*);
-TPLDescriptor* TPLGet(TPLPalette*, u32);
+void TPLBind(TPLPalette* pal);
+TPLDescriptor* TPLGet(TPLPalette* pal, u32 id);
 
 #ifdef __cplusplus
 }
