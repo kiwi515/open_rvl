@@ -9,6 +9,15 @@
 extern "C" {
 #endif
 
+#define VTX_COORDS_IN_POS 3
+#define VTX_COORDS_IN_NRM 3
+#define VTX_COORDS_IN_TXC 2
+
+#define VTX_COORD_SIZE sizeof(s16)
+#define VTX_POS_SIZE (VTX_COORD_SIZE * VTX_COORDS_IN_POS)
+#define VTX_NRM_SIZE (VTX_COORD_SIZE * VTX_COORDS_IN_NRM)
+#define VTX_TXC_SIZE (VTX_COORD_SIZE * VTX_COORDS_IN_TXC)
+
 typedef struct RFLiCoordinateData {
     u8 uOff;   // at 0x0
     u8 fOff;   // at 0x1
@@ -32,31 +41,31 @@ typedef struct RFLiCharModelRes {
     u8 noseTex[0x400];     // at 0x5280
     u8 glassesTex[0x1000]; // at 0x5680
 
-    u8 noseVtxPos[23 * sizeof(s16[3])]; // at 0x6680
-    u8 noseVtxNrm[23 * sizeof(s16[3])]; // at 0x670A
+    s16 noseVtxPos[23 * VTX_COORDS_IN_POS]; // at 0x6680
+    s16 noseVtxNrm[23 * VTX_COORDS_IN_NRM]; // at 0x670A
 
-    u8 capVtxPos[173 * sizeof(s16[3])]; // at 0x6794
-    u8 capVtxNrm[246 * sizeof(s16[3])]; // at 0x6BA2
-    u8 capVtxTxc[95 * sizeof(s16[2])];  // at 0x7166
+    s16 capVtxPos[173 * VTX_COORDS_IN_POS]; // at 0x6794
+    s16 capVtxNrm[246 * VTX_COORDS_IN_NRM]; // at 0x6BA2
+    s16 capVtxTxc[95 * VTX_COORDS_IN_TXC];  // at 0x7166
 
-    u8 faceVtxPos[66 * sizeof(s16[3])];  // at 0x72E2
-    u8 faceVtxNrm[66 * sizeof(s16[3])];  // at 0x746E
-    u8 faceVtxTxc[115 * sizeof(s16[2])]; // at 0x75FA
+    s16 faceVtxPos[66 * VTX_COORDS_IN_POS];  // at 0x72E2
+    s16 faceVtxNrm[66 * VTX_COORDS_IN_NRM];  // at 0x746E
+    s16 faceVtxTxc[115 * VTX_COORDS_IN_TXC]; // at 0x75FA
 
-    u8 beardVtxPos[40 * sizeof(s16[3])]; // at 0x77C6
-    u8 beardVtxNrm[68 * sizeof(s16[3])]; // at 0x78B6
+    s16 beardVtxPos[40 * VTX_COORDS_IN_POS]; // at 0x77C6
+    s16 beardVtxNrm[68 * VTX_COORDS_IN_NRM]; // at 0x78B6
 
-    u8 noselineVtxPos[6 * sizeof(s16[3])]; // at 0x7A4E
-    u8 noselineVtxNrm[2 * sizeof(s16[3])]; // at 0x7A72
-    u8 noselineVtxTxc[7 * sizeof(s16[2])]; // at 0x7A7E
+    s16 noselineVtxPos[6 * VTX_COORDS_IN_POS]; // at 0x7A4E
+    s16 noselineVtxNrm[2 * VTX_COORDS_IN_NRM]; // at 0x7A72
+    s16 noselineVtxTxc[7 * VTX_COORDS_IN_TXC]; // at 0x7A7E
 
-    u8 maskVtxPos[88 * sizeof(s16[3])];  // at 0x7A9A
-    u8 maskVtxNrm[86 * sizeof(s16[3])];  // at 0x7CAA
-    u8 maskVtxTxc[176 * sizeof(s16[2])]; // at 0x7EAE
+    s16 maskVtxPos[88 * VTX_COORDS_IN_POS];  // at 0x7A9A
+    s16 maskVtxNrm[86 * VTX_COORDS_IN_NRM];  // at 0x7CAA
+    s16 maskVtxTxc[176 * VTX_COORDS_IN_TXC]; // at 0x7EAE
 
-    u8 glassesVtxPos[4 * sizeof(s16[3])]; // at 0x816E
-    u8 glassesVtxNrm[1 * sizeof(s16[3])]; // at 0x8186
-    u8 glassesVtxTxc[4 * sizeof(s16[2])]; // at 0x818C
+    s16 glassesVtxPos[4 * VTX_COORDS_IN_POS]; // at 0x816E
+    s16 glassesVtxNrm[1 * VTX_COORDS_IN_NRM]; // at 0x8186
+    s16 glassesVtxTxc[4 * VTX_COORDS_IN_TXC]; // at 0x818C
 
     GXTexObj faceTexObj;    // at 0x819C
     GXTexObj capTexObj;     // at 0x81BC
@@ -87,6 +96,8 @@ typedef struct RFLiCharModelRes {
     u8 favoriteColor; // at 0x824A
 
     BOOL flipHair; // at 0x824C
+
+    char UNK_0x8250[0x10];
 } RFLiCharModelRes;
 
 typedef struct RFLiShapeRes {
@@ -106,11 +117,11 @@ typedef struct RFLiShapeRes {
     u16 numVtxNrm;     // at 0x2A
     u16 numVtxTxc;     // at 0x2C
     u16 dlSize;        // at 0x2E
-    f32 posScale;
-    Vec* posTrans;   // at 0x34
-    Vec* noseTrans;  // at 0x38
-    Vec* beardTrans; // at 0x3C
-    Vec* hairTrans;  // at 0x40
+    f32 posScale;      // at 0x30
+    Vec* posTrans;     // at 0x34
+    Vec* noseTrans;    // at 0x38
+    Vec* beardTrans;   // at 0x3C
+    Vec* hairTrans;    // at 0x40
 } RFLiShapeRes;
 
 typedef struct RFLiCharModel {
@@ -252,7 +263,7 @@ u32 RFLiGetExpressionNum(u32 exprFlags);
 void RFLiInitCharModel(RFLCharModel* model, RFLiCharInfo* info, void* work,
                        RFLResolution res, u32 exprFlags);
 GXColor RFLiGetFacelineColor(RFLiCharInfo* info);
-void RFLiInitCharModelRes(RFLiCharModelRes* res, RFLiCharInfo* info);
+void RFLiInitCharModelRes(RFLiCharModelRes* res, const RFLiCharInfo* info);
 void RFLiInitShapeRes(RFLiShapeRes* shape);
 void RFLiInitTexRes(GXTexObj* texObj, RFLiPartsShpTex part, u16 file,
                     void* buffer);

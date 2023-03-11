@@ -12,7 +12,15 @@ extern "C" {
 typedef struct RFLMiddleDB;
 
 typedef enum {
-    RFL_COORDINATE_TYPE_0,
+    RFLCoordinateType_X = 0x01000000,
+    RFLCoordinateType_Y = 0x00010000,
+    RFLCoordinateType_Z = 0x00000100,
+
+    RFLCoordinateType_RevX = 0x11000000,
+    RFLCoordinateType_RevY = 0x00110000,
+    RFLCoordinateType_RevZ = 0x00001100,
+
+    RFLCoordinateType_RevMask = 0x10101000
 } RFLCoordinateType;
 
 typedef struct RFLCharModel {

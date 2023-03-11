@@ -2,6 +2,17 @@
 #include <revolution/OS.h>
 #include <string.h>
 
+#define NON_MATCHING
+
+#define NUM_VTX_POS(size) ((size) / VTX_POS_SIZE)
+#define SIZE_VTX_POS(count) ((count)*VTX_POS_SIZE)
+
+#define NUM_VTX_NRM(size) ((size) / VTX_NRM_SIZE)
+#define SIZE_VTX_NRM(count) ((count)*VTX_NRM_SIZE)
+
+#define NUM_VTX_TXC(size) ((size) / VTX_TXC_SIZE)
+#define SIZE_VTX_TXC(count) ((count)*VTX_TXC_SIZE)
+
 const RFLDrawCoreSetting cDefaultDrawCoreSetting2Tev = {
     1,          GX_TEXCOORD0, GX_TEXMAP0, 2,    GX_TEV_SWAP0,
     GX_KCOLOR0, GX_TEVPREV,   GX_PNMTX0,  FALSE};
@@ -78,11 +89,50 @@ static const GXColor cFavoriteColor[RFLFavoriteColor_Max] = {
 static const GXColor cWhite = {255, 255, 255, 255};
 
 #ifndef NON_MATCHING
-#error RFLSetCoordinate has not yet been matched.
+#error RFLSetCoordinate has not yet been matched. (https://decomp.me/scratch/hwzcs)
 #endif
-void RFLSetCoordinate(RFLCoordinateType t1, RFLCoordinateType t2){
-#pragma unused(t1)
-#pragma unused(t2)
+void RFLSetCoordinate(RFLCoordinateType u, RFLCoordinateType f) {
+    RFLCoordinateType r;
+    u8 bu[3];
+    u8 bf[3];
+    u8 br[3];
+
+    *((RFLCoordinateType*)bu) = u;
+    *((RFLCoordinateType*)bf) = f;
+
+    br[0] = (bu[2] * bf[1]) - (bu[1] * bf[2]);
+    br[1] = (bu[0] * bf[2]) - (bu[2] * bf[0]);
+    br[2] = (bu[1] * bf[0]) - (bu[0] * bf[1]);
+
+    r = *((RFLCoordinateType*)br);
+
+    if (u & RFLCoordinateType_X) {
+        coordinateData.uOff = 0; // U -> X
+    } else if (u & RFLCoordinateType_Y) {
+        coordinateData.uOff = 1; // U -> Y
+    } else {
+        coordinateData.uOff = 2; // U -> Z
+    }
+
+    if (f & RFLCoordinateType_X) {
+        coordinateData.fOff = 0; // F -> X
+    } else if (f & RFLCoordinateType_Y) {
+        coordinateData.fOff = 1; // F -> Y
+    } else {
+        coordinateData.fOff = 2; // F -> Z
+    }
+
+    if (r & RFLCoordinateType_X) {
+        coordinateData.rOff = 0; // R -> X
+    } else if (r & RFLCoordinateType_Y) {
+        coordinateData.rOff = 1; // R -> Y
+    } else {
+        coordinateData.rOff = 2; // R -> Z
+    }
+
+    coordinateData.uRev = (u & RFLCoordinateType_RevMask) != 0;
+    coordinateData.fRev = (f & RFLCoordinateType_RevMask) != 0;
+    coordinateData.rRev = (r & RFLCoordinateType_RevMask) != 0;
 }
 
 u32 RFLiGetExpressionNum(u32 exprFlags) {
@@ -142,7 +192,7 @@ void RFLiInitCharModel(RFLCharModel* model, RFLiCharInfo* info, void* work,
 
     // Expression texobjs
     exprTexObj =
-        (GXTexObj*)ROUND_UP_PTR((char*)work + sizeof(RFLiCharModelRes), 32);
+        (GXTexObj*)ROUND_UP_PTR((u8*)work + sizeof(RFLiCharModelRes), 32);
     for (i = 0; i < RFLExp_Max; i++) {
         if (exprFlags & (1 << i)) {
             model_->maskTexObj[i] = exprTexObj;
@@ -153,7 +203,7 @@ void RFLiInitCharModel(RFLCharModel* model, RFLiCharInfo* info, void* work,
     }
 
     // Expression images
-    image = ROUND_UP_PTR(exprTexObj, 32);
+    image = (u8*)ROUND_UP_PTR(exprTexObj, 32);
     for (i = 0; i < RFLExp_Max; i++) {
         if (exprFlags & (1 << i)) {
             maskImages[i] = image;
@@ -464,157 +514,518 @@ void RFLDrawXluCore(const RFLCharModel* model,
 }
 
 #ifndef NON_MATCHING
-#error RFLiInitCharModelRes has not yet been matched.
+#error RFLiInitCharModelRes has not yet been matched. (https://decomp.me/scratch/ykVdn)
 #endif
-void RFLiInitCharModelRes(RFLiCharModelRes* res, RFLiCharInfo* info) {
-#pragma unused(res)
-#pragma unused(info)
+void RFLiInitCharModelRes(RFLiCharModelRes* res, const RFLiCharInfo* info) {
+    Vec noseTrans;
+    Vec beardTrans;
+    Vec hairTrans;
+
+    GXSetMisc(1, 0);
+    GXSetMisc(2, 1);
+
+    /**
+     * Faceline shape
+     */
+    {
+        RFLiShapeRes arg;
+        arg.part = RFLiPartsShp_Faceline;
+        arg.file = info->faceline.type;
+        arg.vtxPosBuf = res->faceVtxPos;
+        arg.vtxNrmBuf = res->faceVtxNrm;
+        arg.vtxTxcBuf = res->faceVtxTxc;
+        arg.dlBuf = res->faceDl;
+        arg.vtxPosBufSize = NUM_VTX_POS(sizeof(res->faceVtxPos));
+        arg.vtxNrmBufSize = NUM_VTX_NRM(sizeof(res->faceVtxNrm));
+        arg.vtxTxcBufSize = NUM_VTX_TXC(sizeof(res->faceVtxTxc));
+        arg.dlBufSize = sizeof(res->faceDl);
+        arg.noseTrans = &noseTrans;
+        arg.beardTrans = &beardTrans;
+        arg.hairTrans = &hairTrans;
+        arg.flipX = FALSE;
+        arg.transform = FALSE;
+        RFLiInitShapeRes(&arg);
+
+        res->faceDlSize = arg.dlSize;
+    }
+
+    /**
+     * Cap shape
+     */
+    {
+        RFLiShapeRes arg;
+        arg.part = RFLiPartsShp_Cap;
+        arg.file = info->hair.type;
+        arg.vtxPosBuf = res->capVtxPos;
+        arg.vtxNrmBuf = res->capVtxNrm;
+        arg.vtxTxcBuf = res->capVtxTxc;
+        arg.dlBuf = res->capDl;
+        arg.vtxPosBufSize = NUM_VTX_POS(sizeof(res->capVtxPos));
+        arg.vtxNrmBufSize = NUM_VTX_NRM(sizeof(res->capVtxNrm));
+        arg.vtxTxcBufSize = NUM_VTX_TXC(sizeof(res->capVtxTxc));
+        arg.dlBufSize = sizeof(res->capDl);
+        arg.flipX = info->hair.flip;
+        arg.transform = TRUE;
+        arg.posScale = 1.0f;
+        arg.posTrans = &hairTrans;
+        RFLiInitShapeRes(&arg);
+
+        res->capDlSize = arg.dlSize;
+
+        res->hairVtxPos = (s16*)((u8*)res->capVtxPos +
+                                 (arg.numVtxPos * 4 - arg.numVtxPos) * 2);
+        res->hairVtxNrm = (s16*)((u8*)res->capVtxNrm +
+                                 (arg.numVtxNrm * 4 - arg.numVtxNrm) * 2);
+
+        res->hairDl = res->noseDl + ROUND_UP(arg.dlSize, 32) +
+                      offsetof(RFLiCharModelRes, capDl);
+    }
+
+    /**
+     * Hair shape
+     */
+    {
+        RFLiShapeRes arg;
+        arg.part = RFLiPartsShp_Hair;
+        arg.file = info->hair.type;
+        arg.vtxPosBuf = res->hairVtxPos;
+        arg.vtxNrmBuf = res->hairVtxNrm;
+        arg.dlBuf = res->hairDl;
+
+        arg.vtxPosBufSize =
+            NUM_VTX_POS(sizeof(res->capVtxPos)) -
+            (((uintptr_t)res->hairVtxPos - (uintptr_t)res->capVtxPos) /
+             VTX_COORD_SIZE) /
+                VTX_COORDS_IN_POS;
+
+        arg.vtxNrmBufSize =
+            NUM_VTX_POS(sizeof(res->capVtxNrm)) -
+            (((uintptr_t)res->hairVtxNrm - (uintptr_t)res->capVtxNrm) /
+             VTX_COORD_SIZE) /
+                VTX_COORDS_IN_NRM;
+
+        arg.dlBufSize = sizeof(res->capDl) -
+                        ((uintptr_t)res->hairDl - (uintptr_t)res->capDl);
+
+        arg.flipX = info->hair.flip;
+        arg.transform = TRUE;
+        arg.posScale = 1.0f;
+        arg.posTrans = &hairTrans;
+        RFLiInitShapeRes(&arg);
+
+        res->hairDlSize = arg.dlSize;
+
+        res->foreheadVtxPos = (s16*)((u8*)res->hairVtxPos +
+                                     (arg.numVtxPos * 4 - arg.numVtxPos) * 2);
+
+        res->foreheadVtxNrm = (s16*)((u8*)res->hairVtxNrm +
+                                     (arg.numVtxNrm * 4 - arg.numVtxNrm) * 2);
+
+        res->foreheadDl = res->hairDl + ROUND_UP(arg.dlSize, 32);
+
+        res->flipHair = info->hair.flip;
+    }
+
+    /**
+     * Forehead shape
+     */
+    {
+        RFLiShapeRes arg;
+        arg.part = RFLiPartsShp_Forehead;
+        arg.file = info->hair.type;
+        arg.vtxPosBuf = res->foreheadVtxPos;
+        arg.vtxNrmBuf = res->foreheadVtxNrm;
+        arg.dlBuf = res->foreheadDl;
+
+        arg.vtxPosBufSize =
+            NUM_VTX_POS(sizeof(res->capVtxPos)) -
+            (((uintptr_t)res->foreheadVtxPos - (uintptr_t)res->capVtxPos) /
+             VTX_COORD_SIZE) /
+                VTX_COORDS_IN_POS;
+
+        arg.vtxNrmBufSize =
+            NUM_VTX_POS(sizeof(res->capVtxNrm)) -
+            (((uintptr_t)res->foreheadVtxNrm - (uintptr_t)res->capVtxNrm) /
+             VTX_COORD_SIZE) /
+                VTX_COORDS_IN_NRM;
+
+        arg.dlBufSize = sizeof(res->capDl) -
+                        ((uintptr_t)res->foreheadDl - (uintptr_t)res->capDl);
+
+        arg.flipX = info->hair.flip;
+        arg.transform = TRUE;
+        arg.posScale = 1.0f;
+        arg.posTrans = &hairTrans;
+        RFLiInitShapeRes(&arg);
+
+        res->foreheadDlSize = arg.dlSize;
+    }
+
+    /**
+     * Beard shape
+     */
+    {
+        RFLiShapeRes arg;
+        arg.part = RFLiPartsShp_Beard;
+        arg.file = info->beard.type;
+        arg.vtxPosBuf = res->beardVtxPos;
+        arg.vtxNrmBuf = res->beardVtxNrm;
+        arg.dlBuf = res->beardDl;
+        arg.vtxPosBufSize = NUM_VTX_POS(sizeof(res->beardVtxPos));
+        arg.vtxNrmBufSize = NUM_VTX_NRM(sizeof(res->beardVtxNrm));
+        arg.dlBufSize = sizeof(res->beardDl);
+        arg.flipX = FALSE;
+        arg.transform = TRUE;
+        arg.posScale = 1.0f;
+        arg.posTrans = &beardTrans;
+        RFLiInitShapeRes(&arg);
+
+        res->beardDlSize = arg.dlSize;
+    }
+
+    {
+        f32 scale;
+        Vec trans;
+
+        /**
+         * Nose shape
+         */
+        {
+            RFLiShapeRes arg;
+
+            scale = 0.4f + 0.175f * info->nose.scale;
+
+            trans.x = noseTrans.x;
+            trans.y = +noseTrans.y + -1.5f * (info->nose.y - 8);
+            trans.z = noseTrans.z;
+
+            arg.part = RFLiPartsShp_Nose;
+            arg.file = info->nose.type;
+            arg.vtxPosBuf = res->noseVtxPos;
+            arg.vtxNrmBuf = res->noseVtxNrm;
+            arg.dlBuf = res->noseDl;
+            arg.vtxPosBufSize = NUM_VTX_POS(sizeof(res->noseVtxPos));
+            arg.vtxNrmBufSize = NUM_VTX_NRM(sizeof(res->noseVtxNrm));
+            arg.dlBufSize = sizeof(res->noseDl);
+            arg.flipX = FALSE;
+            arg.transform = TRUE;
+            arg.posScale = scale;
+            arg.posTrans = &trans;
+            RFLiInitShapeRes(&arg);
+
+            res->noseDlSize = arg.dlSize;
+        }
+
+        /**
+         * Noseline shape
+         */
+        {
+            RFLiShapeRes arg;
+
+            arg.part = RFLiPartsShp_Noseline;
+            arg.file = info->nose.type;
+            arg.vtxPosBuf = res->noselineVtxPos;
+            arg.vtxNrmBuf = res->noselineVtxNrm;
+            arg.vtxTxcBuf = res->noselineVtxTxc;
+            arg.dlBuf = res->noselineDl;
+            arg.vtxPosBufSize = NUM_VTX_POS(sizeof(res->noselineVtxPos));
+            arg.vtxNrmBufSize = NUM_VTX_NRM(sizeof(res->noselineVtxNrm));
+            arg.vtxTxcBufSize = NUM_VTX_TXC(sizeof(res->noselineVtxTxc));
+            arg.dlBufSize = sizeof(res->noselineDl);
+            arg.flipX = FALSE;
+            arg.transform = TRUE;
+            arg.posScale = scale;
+            arg.posTrans = &trans;
+            RFLiInitShapeRes(&arg);
+
+            res->noselineDlSize = arg.dlSize;
+        }
+    }
+
+    /**
+     * Mask shape
+     */
+    {
+        RFLiShapeRes arg;
+        arg.part = RFLiPartsShp_Mask;
+        arg.file = info->faceline.type;
+        arg.vtxPosBuf = res->maskVtxPos;
+        arg.vtxNrmBuf = res->maskVtxNrm;
+        arg.vtxTxcBuf = res->maskVtxTxc;
+        arg.dlBuf = res->maskDl;
+        arg.vtxPosBufSize = NUM_VTX_POS(sizeof(res->maskVtxPos));
+        arg.vtxNrmBufSize = NUM_VTX_NRM(sizeof(res->maskVtxNrm));
+        arg.vtxTxcBufSize = NUM_VTX_TXC(sizeof(res->maskVtxTxc));
+        arg.dlBufSize = sizeof(res->maskDl);
+        arg.flipX = FALSE;
+        arg.transform = FALSE;
+        RFLiInitShapeRes(&arg);
+
+        res->maskDlSize = arg.dlSize;
+    }
+
+    /**
+     * Glasses shape
+     */
+    {
+        RFLiShapeRes arg;
+        f32 scale;
+        Vec trans;
+
+        scale = 0.15f * info->glass.scale + 0.4f;
+
+        trans.x = noseTrans.x;
+        trans.y = 5.0f + noseTrans.y + -1.5f * (info->glass.y - 11);
+        trans.z = 2.0f + noseTrans.z;
+
+        arg.part = RFLiPartsShp_Glass;
+        arg.file = 0;
+        arg.vtxPosBuf = res->glassesVtxPos;
+        arg.vtxNrmBuf = res->glassesVtxNrm;
+        arg.vtxTxcBuf = res->glassesVtxTxc;
+        arg.dlBuf = res->glassesDl;
+        arg.vtxPosBufSize = NUM_VTX_POS(sizeof(res->glassesVtxPos));
+        arg.vtxNrmBufSize = NUM_VTX_NRM(sizeof(res->glassesVtxNrm));
+        arg.vtxTxcBufSize = NUM_VTX_TXC(sizeof(res->glassesVtxTxc));
+        arg.dlBufSize = sizeof(res->glassesDl);
+        arg.flipX = FALSE;
+        arg.transform = TRUE;
+        arg.posScale = scale;
+        arg.posTrans = &trans;
+        RFLiInitShapeRes(&arg);
+
+        res->glassesDlSize = arg.dlSize;
+    }
+
+    RFLiInitTexRes(&res->faceTexObj, RFLiPartsShpTex_Face,
+                   info->faceline.texture, res->faceTex);
+
+    if (res->capDlSize > 0) {
+        RFLiInitTexRes(&res->capTexObj, RFLiPartsShpTex_Cap, info->hair.type,
+                       res->capTex);
+    }
+
+    if (res->noselineDlSize > 0) {
+        RFLiInitTexRes(&res->noseTexObj, RFLiPartsShpTex_Noseline,
+                       info->nose.type, res->noseTex);
+    }
+
+    RFLiInitTexRes(&res->glassesTexObj, RFLiPartsShpTex_Glass, info->glass.type,
+                   res->glassesTex);
+
+    res->facelineColor = info->faceline.color;
+    res->hairColor = info->hair.color;
+    res->beardColor = info->beard.color;
+    res->glassesColor = info->glass.color;
+    res->favoriteColor = info->personal.color;
+
+    DCFlushRange(res, sizeof(RFLiCharModelRes));
 }
 
 #ifndef NON_MATCHING
 #error RFLiInitShapeRes has not yet been matched. (https://decomp.me/scratch/eYP1o)
 #endif
-/**
- * https://wiki.tockdom.com/wiki/RFL_Res.dat_(File_Format)
- * See "Model format"
- * The format changes based on the model type, so the code is a little messy.
- */
 void RFLiInitShapeRes(RFLiShapeRes* shape) {
+    // TODO: Keep this from being stripped
     static const u32 csHeader[RFLiPartsShp_Max] = {
         'nose', 'frhd', 'face', 'hair', 'cap_', 'berd', 'nsln', 'mask', 'glas'};
 
-    u8 indices;
-    s32 vtxPosSize;
-    s16* vtxPtr;
-    s32 vtxNrmSize;
-    s32 x2;
-    GXPrimitive prim;
-    int i;
-    int j;
-    s32 x3;
-    s32 x1;
-    s32 x4;
-    u8 dlSize;
-    s16* nrmPtr;
+    void* res;
+    u8* ptr8;
+    BOOL skipTxc;
+    u32 fileSize;
 
-    BOOL noTxc = (((u32)shape->part) <= RFLiPartsShp_Beard) &&
-                 (((1 << shape->part) & 0x2B) != 0);
-    u8* res = (u8*)RFLiAlloc32(RFLiGetShapeSize(shape->part, shape->file));
+    // Not all shapes have tex coords
+    skipTxc = shape->part == RFLiPartsShp_Forehead ||
+              shape->part == RFLiPartsShp_Hair ||
+              shape->part == RFLiPartsShp_Beard ||
+              shape->part == RFLiPartsShp_Nose;
+
+    fileSize = RFLiGetShapeSize(shape->part, shape->file);
+    res = RFLiAlloc32(fileSize);
     RFLiLoadShape(shape->part, shape->file, res);
 
-    res += sizeof(u32);
+    ptr8 = (u8*)res;
+    ptr8 += sizeof(u32);
 
+    // Faceline extra data
     if (shape->part == RFLiPartsShp_Faceline) {
-        memcpy(shape->noseTrans, res, sizeof(Vec));
-        res += sizeof(Vec);
-        memcpy(shape->beardTrans, res, sizeof(Vec));
-        res += sizeof(Vec);
-        memcpy(shape->hairTrans, res, sizeof(Vec));
-        res += sizeof(Vec);
+        memcpy(shape->noseTrans, ptr8, sizeof(Vec));
+        ptr8 += sizeof(Vec);
+        memcpy(shape->beardTrans, ptr8, sizeof(Vec));
+        ptr8 += sizeof(Vec);
+        memcpy(shape->hairTrans, ptr8, sizeof(Vec));
+        ptr8 += sizeof(Vec);
     }
 
-    if (*(u16*)res == 0) {
+    /**
+     * Vertex positions
+     */
+
+    if (*(u16*)ptr8 == 0) {
         shape->numVtxPos = 0;
         shape->numVtxNrm = 0;
         shape->numVtxTxc = 0;
         shape->dlSize = 0;
-        RFLiFree(res);
+        RFLiFree(ptr8);
         return;
     }
 
-    shape->numVtxPos = *(u16*)res;
-    vtxPosSize = shape->numVtxPos * (sizeof(s16[3]));
-    res += sizeof(u16);
-    vtxPtr = (s16*)res;
+    shape->numVtxPos = *(u16*)ptr8;
+    ptr8 += sizeof(u16);
 
-    if (shape->transform) {
-        x1 = 256.0f * shape->posScale;
-        x2 = 256.0f * shape->posTrans->x;
-        x3 = 256.0f * shape->posTrans->y;
-        x4 = 256.0f * shape->posTrans->z;
-        for (i = 0; i < shape->numVtxPos; i++) {
-            // const s16 coord[3] = {
-            //     (shape->flipX != 0) ? (s16)((((-vtxPtr[0]) * x1) >> 8) + x2)
-            //                         : (s16)(((vtxPtr[0] * x1) >> 8) + x2),
-            //     ((vtxPtr[1] * x1) >> 8) + x3, ((vtxPtr[2] * x1) >> 8) + x4};
-            // RFLiTransformCoordinate(shape->vtxPosBuf + (i * 3), coord);
-            // vtxPtr += 3;
-        }
+    {
+        u32 byteSize;
+        s16* ptr16;
+        int i;
 
-    } else if (shape->flipX != 0) {
-        for (i = 0; i < shape->numVtxPos; i++) {
-            // const s16 coord[3] = {-vtxPtr[0], vtxPtr[1], vtxPtr[2]};
-            // RFLiTransformCoordinate(shape->vtxPosBuf + (i * 3), coord);
-            // vtxPtr += 3;
-        }
+        ptr16 = (s16*)ptr8;
+        byteSize = SIZE_VTX_POS(shape->numVtxPos);
 
-    } else {
-        for (i = 0; i < shape->numVtxPos; i++) {
-            RFLiTransformCoordinate(shape->vtxPosBuf + (i * 3), vtxPtr);
-            vtxPtr += 3;
-        }
-    }
+        if (shape->transform) {
+            s32 s, tx, ty, tz;
 
-    res += vtxPosSize;
-    shape->numVtxNrm = *(u16*)res;
-    res += sizeof(u16);
-    vtxNrmSize = shape->numVtxNrm * sizeof(s16[3]);
-    nrmPtr = (s16*)res;
+            s = 256.0f * shape->posScale;
+            tx = 256.0f * shape->posTrans->x;
+            ty = 256.0f * shape->posTrans->y;
+            tz = 256.0f * shape->posTrans->z;
 
-    if (shape->flipX != 0) {
-        for (i = 0; i < shape->numVtxNrm; i++) {
-            // const s16 coord[3] = {-nrmPtr[0], nrmPtr[1], nrmPtr[2]};
-            // RFLiTransformCoordinate(shape->vtxNrmBuf + (i * 3), coord);
-            // nrmPtr += 3;
-        }
+            for (i = 0; i < shape->numVtxPos; i++) {
+                s16 temp[3];
 
-    } else {
-        for (i = 0; i < shape->numVtxNrm; i++) {
-            RFLiTransformCoordinate(shape->vtxNrmBuf + (i * 3), nrmPtr);
-            nrmPtr += 3;
-        }
-    }
+                if (shape->flipX) {
+                    temp[0] = ((-ptr16[0] * s) >> 8) + tx;
+                } else {
+                    temp[0] = ((ptr16[0] * s) >> 8) + tx;
+                }
 
-    res += vtxNrmSize;
+                temp[1] = ((ptr16[1] * s) >> 8) + ty;
+                temp[2] = ((ptr16[2] * s) >> 8) + tz;
 
-    if (noTxc) {
-        shape->numVtxTxc = 0;
-    } else {
-        size_t len;
-        shape->numVtxTxc = *(u16*)res;
-        len = shape->numVtxTxc * sizeof(s16[2]);
-        res += sizeof(u16);
-        memcpy(shape->vtxTxcBuf, (u16*)res, len);
-        res += len;
-    }
+                RFLiTransformCoordinate(
+                    &shape->vtxPosBuf[i * VTX_COORDS_IN_POS], temp);
+                ptr16 += VTX_COORDS_IN_POS;
+            }
 
-    dlSize = *(u8*)res;
-    res += sizeof(u8);
-    DCInvalidateRange(shape->dlBuf, shape->dlBufSize);
-    GXBeginDisplayList(shape->dlBuf, shape->dlBufSize);
-    for (i = 0; i < dlSize; i++) {
-        indices = *(u8*)res;
-        res += sizeof(u8);
-        prim = (GXPrimitive)(*(u8*)res);
-        res += sizeof(u8);
-        GXBegin(prim, 0, indices);
-        for (j = 0; j < indices; j++) {
-            GXPosition1x8(*(u8*)res);
-            res += sizeof(u8);
-            GXNormal1x8(*(u8*)res);
-            res += sizeof(u8);
+        } else if (shape->flipX != 0) {
+            for (i = 0; i < shape->numVtxPos; i++) {
+                s16 temp[3];
 
-            if (!noTxc) {
-                GXTexCoord1x8(*(u8*)res);
-                res += sizeof(u8);
+                temp[0] = -ptr16[0];
+                temp[1] = ptr16[1];
+                temp[2] = ptr16[2];
+
+                RFLiTransformCoordinate(
+                    &shape->vtxPosBuf[i * VTX_COORDS_IN_POS], temp);
+                ptr16 += VTX_COORDS_IN_POS;
+            }
+        } else {
+            for (i = 0; i < shape->numVtxPos; i++) {
+                RFLiTransformCoordinate(
+                    &shape->vtxPosBuf[i * VTX_COORDS_IN_POS], ptr16);
+                ptr16 += VTX_COORDS_IN_POS;
             }
         }
 
-        GXEnd();
+        ptr8 += byteSize;
+    }
+
+    /**
+     * Vertex normals
+     */
+
+    shape->numVtxNrm = *(u16*)ptr8;
+    ptr8 += sizeof(u16);
+
+    {
+        int i;
+        u32 byteSize;
+        s16* ptr16;
+
+        ptr16 = (s16*)ptr8;
+        byteSize = SIZE_VTX_NRM(shape->numVtxNrm);
+
+        if (shape->flipX != 0) {
+            for (i = 0; i < shape->numVtxNrm; i++) {
+                s16 temp[3];
+
+                temp[0] = -ptr16[0];
+                temp[1] = ptr16[1];
+                temp[2] = ptr16[2];
+
+                RFLiTransformCoordinate(
+                    &shape->vtxNrmBuf[i * VTX_COORDS_IN_NRM], temp);
+                ptr16 += VTX_COORDS_IN_NRM;
+            }
+        } else {
+            for (i = 0; i < shape->numVtxNrm; i++) {
+                RFLiTransformCoordinate(
+                    &shape->vtxNrmBuf[i * VTX_COORDS_IN_NRM], ptr16);
+                ptr16 += VTX_COORDS_IN_NRM;
+            }
+        }
+
+        ptr8 += byteSize;
+    }
+
+    /**
+     * Vertex texcoords
+     */
+
+    {
+        u32 byteSize;
+
+        if (skipTxc) {
+            shape->numVtxTxc = 0;
+        } else {
+            shape->numVtxTxc = *(u16*)ptr8;
+            ptr8 += sizeof(u16);
+
+            byteSize = SIZE_VTX_TXC(shape->numVtxTxc);
+            memcpy(shape->vtxTxcBuf, ptr8, byteSize);
+            ptr8 += byteSize;
+        }
+    }
+
+    /**
+     * Display list
+     */
+
+    {
+        int i;
+        s32 primitiveNum;
+
+        primitiveNum = *ptr8;
+        ptr8 += sizeof(u8);
+
+        DCInvalidateRange(shape->dlBuf, shape->dlBufSize);
+        GXBeginDisplayList(shape->dlBuf, shape->dlBufSize);
+
+        for (i = 0; i < primitiveNum; i++) {
+            int j;
+            u16 vtxNum;
+            GXPrimitive prim;
+
+            vtxNum = *ptr8++;
+            prim = (GXPrimitive)*ptr8++;
+
+            GXBegin(prim, 0, vtxNum);
+            {
+                for (j = 0; j < vtxNum; j++) {
+                    GXPosition1x8(*ptr8++);
+                    GXNormal1x8(*ptr8++);
+
+                    if (!skipTxc) {
+                        GXTexCoord1x8(*ptr8++);
+                    }
+                }
+            }
+            GXEnd();
+        }
     }
 
     shape->dlSize = GXEndDisplayList();
-    RFLiFree(res);
+    RFLiFree(ptr8);
 }
 
 void RFLiInitTexRes(GXTexObj* texObj, RFLiPartsShpTex part, u16 file,
