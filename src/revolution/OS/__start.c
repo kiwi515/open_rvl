@@ -1,7 +1,6 @@
-#include <DB.h>
-#include <OS.h>
-#include <TRK/dolphin_trk.h>
-
+#include <MetroTRK.h>
+#include <revolution/DB.h>
+#include <revolution/OS.h>
 #include <string.h>
 
 static u8 Debug_BBA;
@@ -66,15 +65,15 @@ asm void __start(void) {
     lwz r7, OSBI2.debugFlag(r6)
     b _handle_bi2_debug_flag
 
-/**
- * At this point, we do one last check to decide whether we want to
- * setup the TRK debugger.
- *
- * If the OS boot info specifies an arena hi, we grab the BI2 debug
- * flag using the global OS_BI2_DEBUG_FLAG.
- *
- * (This must be some heuristic, but I don't understand it)
- */
+    /**
+     * At this point, we do one last check to decide whether we want to
+     * setup the TRK debugger.
+     *
+     * If the OS boot info specifies an arena hi, we grab the BI2 debug
+     * flag using the global OS_BI2_DEBUG_FLAG.
+     *
+     * (This must be some heuristic, but I don't understand it)
+     */
 _no_dvd_bi2:
     lis r5, (OS_BOOT_INFO + OSBootInfo.arenaHi)@ha
     addi r5, r5, (OS_BOOT_INFO + OSBootInfo.arenaHi)@l
@@ -87,21 +86,21 @@ _no_dvd_bi2:
     addi r7, r7, OS_BI2_DEBUG_FLAG@l
     lwz r7, 0(r7)
 
-/**
- * The BI2 debug flag/level decides how to set up TRK.
- *
- * Most importantly, it decides how InitMetroTRKCommTable is called, by
- * specifying a type of hardware.
- *
- * ID 1: NDEV hardware
- * ID 2: BBA hardware
- * Anything else: "Unknown" to TRK, defaults to GDEV hardware
- *
- * BI2 debug level maps to TRK comm hardware ID as follows:
- * - BI2 Level 2 -> ID 0 (GDEV)
- * - BI2 Level 3 -> ID 1 (NDEV)
- * - BI2 Level 4 -> ID 2 (BBA)
- */
+    /**
+     * The BI2 debug flag/level decides how to set up TRK.
+     *
+     * Most importantly, it decides how InitMetroTRKCommTable is called, by
+     * specifying a type of hardware.
+     *
+     * ID 1: NDEV hardware
+     * ID 2: BBA hardware
+     * Anything else: "Unknown" to TRK, defaults to GDEV hardware
+     *
+     * BI2 debug level maps to TRK comm hardware ID as follows:
+     * - BI2 Level 2 -> ID 0 (GDEV)
+     * - BI2 Level 3 -> ID 1 (NDEV)
+     * - BI2 Level 4 -> ID 2 (BBA)
+     */
 _handle_bi2_debug_flag:
     // BI2 Debug Level 3: Init TRK as GDEV hardware 
     li r5, 0
@@ -132,32 +131,32 @@ _handle_bi2_debug_flag:
     bl __set_debug_bba
     b _check_for_exec_args
 
-/**
- * Call InitMetroTRK
- * The MetroTRK hardware ID is specified in r5
- */
+    /**
+     * Call InitMetroTRK
+     * The MetroTRK hardware ID is specified in r5
+     */
 _call_init_metro_trk:
     lis r6, InitMetroTRK@ha
     addi r6, r6, InitMetroTRK@l
     mtlr r6
     blrl
 
-/**
- * After setting up the hardware and the debugger, we next setup
- * the program arguments. This label checks whether any arguments
- * exist.
- *
- * BI2 contains an offset from itself to the argument data, which
- * is formatted as follows:
- *
- * typedef struct BI2Args {
- *     int argc;
- *     union {
- *         char* argument;
- *         u32 offset;
- *     } argv[];
- * } BI2Args;
- */
+    /**
+     * After setting up the hardware and the debugger, we next setup
+     * the program arguments. This label checks whether any arguments
+     * exist.
+     *
+     * BI2 contains an offset from itself to the argument data, which
+     * is formatted as follows:
+     *
+     * typedef struct BI2Args {
+     *     int argc;
+     *     union {
+     *         char* argument;
+     *         u32 offset;
+     *     } argv[];
+     * } BI2Args;
+     */
 _check_for_exec_args:
     lis r6, OS_DVD_BI2@ha
     addi r6, r6, OS_DVD_BI2@l
@@ -181,13 +180,13 @@ _check_for_exec_args:
     // Move argc to the counter to prepare the loop
     mtctr r14
 
-/**
- * This loop unpacks the arguments by converting them from offsets
- * to pointers, in-place.
- *
- * The offsets are relative to the start of the BI2, so we just
- * add the offset to the BI2 pointer and write it back.
- */
+    /**
+     * This loop unpacks the arguments by converting them from offsets
+     * to pointers, in-place.
+     *
+     * The offsets are relative to the start of the BI2, so we just
+     * add the offset to the BI2 pointer and write it back.
+     */
 _unpack_args_loop:
     // Skip over argc
     addi r6, r6, 4
@@ -217,30 +216,30 @@ _unpack_args_loop:
     stw r7, 0(r5)
     b _init_os
 
-/**
- * Either there was no BI2 available, or it did not contain any arguments
- */
+    /**
+     * Either there was no BI2 available, or it did not contain any arguments
+     */
 _no_args:
     li r14, 0 // argc = 0
     li r15, 0 // argv = NULL
 
-/**
- * Here, the OS and its debug monitor are initialized, and
- * then we check if we should call __check_pad3.
- *
- * __check_pad3 is called before future initialization if:
- * 1. Bit 0 in the DVD device code address is NOT set ((code & 0x8000) == 0x0000)
- * 2. The DVD device code address ends in 001 ((code & 0x7FFF) == 0x0001)
- *
- * OSGetConsole type also uses the DVD device code address, but none
- * of its results seem to match anything that would meet these
- * requirements.
- *
- * The apploader reads the button state of the fourth GCN controller
- * and writes it to GC_PAD_3_BTN (zero-indexed), which is used in
- * __check_pad3. WiiBrew states that this is for GameCube NR disc
- * support, so that could explain the unusual DVD device code address.
- */
+    /**
+     * Here, the OS and its debug monitor are initialized, and
+     * then we check if we should call __check_pad3.
+     *
+     * __check_pad3 is called before future initialization if:
+     * 1. Bit 0 in the DVD device code address is NOT set ((code & 0x8000) == 0x0000)
+     * 2. The DVD device code address ends in 001 ((code & 0x7FFF) == 0x0001)
+     *
+     * OSGetConsole type also uses the DVD device code address, but none
+     * of its results seem to match anything that would meet these
+     * requirements.
+     *
+     * The apploader reads the button state of the fourth GCN controller
+     * and writes it to GC_PAD_3_BTN (zero-indexed), which is used in
+     * __check_pad3. WiiBrew states that this is for GameCube NR disc
+     * support, so that could explain the unusual DVD device code address.
+     */
 _init_os:
     // Initialize the OS and its debug monitor
     bl DBInit
@@ -260,21 +259,21 @@ _init_os:
 _call_check_pad3:
     bl __check_pad3
 
-/**
- * If the BI2 debug level from earlier was set to four, we need to
- * initialize the debugger for BBA hardware.
- */
+    /**
+     * If the BI2 debug level from earlier was set to four, we need to
+     * initialize the debugger for BBA hardware.
+     */
 _check_debug_bba:
     bl __get_debug_bba
     cmplwi r3, 1
     bne _after_init_metro_trk_bba // <- Debug_BBA == false
     bl InitMetroTRK_BBA
 
-/**
- * 1. Initialize C++ runtime
- * 2. Call main(argc, argv)
- * 3. Teardown C++ runtime
- */
+    /**
+     * 1. Initialize C++ runtime
+     * 2. Call main(argc, argv)
+     * 3. Teardown C++ runtime
+     */
 _after_init_metro_trk_bba:
     bl __init_user
     mr r3, r14

@@ -53,7 +53,7 @@ s32 contentFastOpenNAND(CNTHandle* handle, s32 entrynum, CNTFileInfo* info) {
 
     info->handle = handle;
     info->offset = arcInfo.offset;
-    info->size = arcInfo.size;
+    info->length = arcInfo.size;
     info->position = 0;
 
     return 0;
@@ -63,20 +63,20 @@ s32 contentConvertPathToEntrynumNAND(CNTHandle* handle, const char* path) {
     return ARCConvertPathToEntrynum(&handle->arcHandle, path);
 }
 
-u32 contentGetLengthNAND(CNTFileInfo* info) { return info->size; }
+u32 contentGetLengthNAND(CNTFileInfo* info) { return info->length; }
 
-s32 contentReadNAND(CNTFileInfo* info, void* dst, s32 len, s32 skip) {
-    if (info->position + skip > info->size) {
+s32 contentReadNAND(CNTFileInfo* info, void* dst, s32 len, s32 offset) {
+    if (info->position + offset > info->length) {
         return -0x1391;
     }
 
-    if (ESP_SeekContentFile(info->handle->WORD_0x1C,
-                            info->offset + info->position + skip, 0) < 0) {
+    if (ESP_SeekContentFile(info->handle->fd,
+                            info->offset + info->position + offset, 0) < 0) {
         return -0x138C;
     }
 
     return __CNTConvertErrorCode(
-        ESP_ReadContentFile(info->handle->WORD_0x1C, dst, len));
+        ESP_ReadContentFile(info->handle->fd, dst, len));
 }
 
 s32 contentCloseNAND(CNTFileInfo* info) {

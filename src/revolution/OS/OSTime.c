@@ -1,4 +1,4 @@
-#include <OS.h>
+#include <revolution/OS.h>
 
 #define USEC_MAX 1000
 #define MSEC_MAX 1000
@@ -74,8 +74,7 @@ static s32 GetLeapDays(s32 year) {
     return (year + 3) / 4 - (year - 1) / 100 + (year - 1) / 400;
 }
 
-static void GetDates(s32 days, OSCalendarTime* cal)
-    __attribute__((never_inline)) {
+static void GetDates(s32 days, OSCalendarTime* cal) DONT_INLINE {
     s32 year;
     s32 totalDays;
     s32* p_days;

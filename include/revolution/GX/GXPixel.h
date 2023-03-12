@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_GX_PIXEL_H
 #define RVL_SDK_GX_PIXEL_H
-#include <revolution/GX/GX.h>
-#include <types.h>
+#include <revolution/GX/GXTypes.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

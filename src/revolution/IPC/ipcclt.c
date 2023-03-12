@@ -2,6 +2,15 @@
 #include <revolution/OS.h>
 
 #define IPC_QUEUE_CAPACITY 16
+#define IPC_HEAP_SIZE 0x800
+
+typedef struct IPCRequestQueue {
+    u32 sent;                                // at 0x0
+    u32 queued;                              // at 0x4
+    u32 front;                               // at 0x8
+    u32 back;                                // at 0xC
+    IPCRequestEx* queue[IPC_QUEUE_CAPACITY]; // at 0x10
+} IPCRequestQueue;
 
 static s32 __mailboxAck = 1;
 static s32 hid = -1;
@@ -9,13 +18,7 @@ static s32 hid = -1;
 static BOOL __relnchFl = FALSE;
 static IPCRequestEx* __relnchRpc = NULL;
 
-static struct {
-    u32 sent;                                // at 0x0
-    u32 queued;                              // at 0x4
-    u32 front;                               // at 0x8
-    u32 back;                                // at 0xC
-    IPCRequestEx* queue[IPC_QUEUE_CAPACITY]; // at 0x10
-} __responses;
+static IPCRequestQueue __responses;
 
 size_t strnlen(const char* s, size_t maxlen);
 
@@ -24,20 +27,20 @@ size_t strnlen(const char* s, size_t maxlen) {
     while (*p && maxlen-- > 0) {
         p++;
     }
-    return (u32)p - (u32)s;
+    return (uintptr_t)p - (uintptr_t)s;
 }
 
 static IPCRequestEx* ipcAllocReq(void) {
     return (IPCRequestEx*)iosAllocAligned(hid, sizeof(IPCRequestEx), 32);
 }
 
-static IPCResult ipcFree(void* block) {
+static s32 ipcFree(void* block) {
     iosFree(hid, block);
     return IPC_RESULT_OK;
 }
 
-static inline IPCResult __ipcQueueRequest(IPCRequestEx* req) {
-    IPCResult ret = IPC_RESULT_OK;
+static inline s32 __ipcQueueRequest(IPCRequestEx* req) {
+    s32 ret = IPC_RESULT_OK;
     s32 waiting;
 
     waiting =
@@ -59,8 +62,8 @@ static inline IPCResult __ipcQueueRequest(IPCRequestEx* req) {
     return ret;
 }
 
-static inline IPCResult __ipcSendRequest(void) {
-    IPCResult ret = IPC_RESULT_OK;
+static inline s32 __ipcSendRequest(void) {
+    s32 ret = IPC_RESULT_OK;
     IPCRequestEx* req;
     s32 waiting;
 
@@ -141,10 +144,10 @@ static void IpcReplyHandler(s16 intr, OSContext* ctx) {
                     : NULL;
 
             DCInvalidateRange(req->base.ioctlv.vectors,
-                              (args->inCount + args->ioCount) *
+                              (args->inCount + args->outCount) *
                                   sizeof(IPCIOVector));
 
-            for (i = 0; i < args->inCount + args->ioCount; i++) {
+            for (i = 0; i < args->inCount + args->outCount; i++) {
                 // Just trust me
                 i++;
                 i--;
@@ -215,10 +218,10 @@ static void IPCInterruptHandler(s16 intr, OSContext* ctx) {
     }
 }
 
-IPCResult IPCCltInit(void) {
+s32 IPCCltInit(void) {
     static BOOL initialized = FALSE;
 
-    IPCResult err = 0;
+    s32 err = 0;
     void* lo;
 
     if (!initialized) {
@@ -226,11 +229,11 @@ IPCResult IPCCltInit(void) {
         IPCInit();
 
         lo = IPCGetBufferLo();
-        if ((char*)lo + 0x800 > IPCGetBufferHi()) {
+        if ((char*)lo + IPC_HEAP_SIZE > IPCGetBufferHi()) {
             err = IPC_RESULT_ALLOC_FAILED;
         } else {
-            hid = iosCreateHeap(lo, 0x800);
-            IPCSetBufferLo((char*)lo + 0x800);
+            hid = iosCreateHeap(lo, IPC_HEAP_SIZE);
+            IPCSetBufferLo((char*)lo + IPC_HEAP_SIZE);
             __OSSetInterruptHandler(OS_INTR_PI_ACR, IPCInterruptHandler);
             __OSUnmaskInterrupts(OS_INTR_MASK(OS_INTR_PI_ACR));
             IPCWriteReg(1, 0x38);
@@ -241,11 +244,10 @@ IPCResult IPCCltInit(void) {
     return err;
 }
 
-static IPCResult __ios_Ipc1(s32 fd, IPCRequestType type,
-                            IPCAsyncCallback callback, void* callbackArg,
-                            IPCRequestEx** out) {
+static s32 __ios_Ipc1(s32 fd, IPCRequestType type, IPCAsyncCallback callback,
+                      void* callbackArg, IPCRequestEx** out) {
     IPCRequest* req;
-    IPCResult ret = IPC_RESULT_OK;
+    s32 ret = IPC_RESULT_OK;
 
     if (out == NULL) {
         ret = IPC_RESULT_INVALID_INTERNAL;
@@ -268,8 +270,8 @@ static IPCResult __ios_Ipc1(s32 fd, IPCRequestType type,
     return ret;
 }
 
-static IPCResult __ios_Ipc2(IPCRequestEx* req, IPCAsyncCallback callback) {
-    IPCResult ret = IPC_RESULT_OK;
+static s32 __ios_Ipc2(IPCRequestEx* req, IPCAsyncCallback callback) {
+    s32 ret = IPC_RESULT_OK;
     BOOL enabled;
 
     if (req == NULL) {
@@ -312,9 +314,8 @@ static IPCResult __ios_Ipc2(IPCRequestEx* req, IPCAsyncCallback callback) {
     return ret;
 }
 
-static IPCResult __ios_Open(IPCRequestEx* req, const char* path,
-                            IPCOpenMode mode) {
-    IPCResult ret = IPC_RESULT_OK;
+static s32 __ios_Open(IPCRequestEx* req, const char* path, IPCOpenMode mode) {
+    s32 ret = IPC_RESULT_OK;
 
     if (req == NULL) {
         ret = IPC_RESULT_INVALID_INTERNAL;
@@ -327,10 +328,10 @@ static IPCResult __ios_Open(IPCRequestEx* req, const char* path,
     return ret;
 }
 
-IPCResult IOS_OpenAsync(const char* path, IPCOpenMode mode,
-                        IPCAsyncCallback callback, void* callbackArg) {
+s32 IOS_OpenAsync(const char* path, IPCOpenMode mode, IPCAsyncCallback callback,
+                  void* callbackArg) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(0, IPC_REQ_OPEN, callback, callbackArg, &req);
+    s32 ret = __ios_Ipc1(0, IPC_REQ_OPEN, callback, callbackArg, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Open(req, path, mode);
         if (ret == IPC_RESULT_OK) {
@@ -341,9 +342,9 @@ IPCResult IOS_OpenAsync(const char* path, IPCOpenMode mode,
     return ret;
 }
 
-IPCResult IOS_Open(const char* path, IPCOpenMode mode) {
+s32 IOS_Open(const char* path, IPCOpenMode mode) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(0, IPC_REQ_OPEN, NULL, NULL, &req);
+    s32 ret = __ios_Ipc1(0, IPC_REQ_OPEN, NULL, NULL, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Open(req, path, mode);
         if (ret == IPC_RESULT_OK) {
@@ -354,9 +355,9 @@ IPCResult IOS_Open(const char* path, IPCOpenMode mode) {
     return ret;
 }
 
-IPCResult IOS_CloseAsync(s32 fd, IPCAsyncCallback callback, void* callbackArg) {
+s32 IOS_CloseAsync(s32 fd, IPCAsyncCallback callback, void* callbackArg) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_CLOSE, callback, callbackArg, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_CLOSE, callback, callbackArg, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Ipc2(req, callback);
     }
@@ -364,9 +365,9 @@ IPCResult IOS_CloseAsync(s32 fd, IPCAsyncCallback callback, void* callbackArg) {
     return ret;
 }
 
-IPCResult IOS_Close(s32 fd) {
+s32 IOS_Close(s32 fd) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_CLOSE, NULL, NULL, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_CLOSE, NULL, NULL, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Ipc2(req, NULL);
     }
@@ -374,8 +375,8 @@ IPCResult IOS_Close(s32 fd) {
     return ret;
 }
 
-static IPCResult __ios_Read(IPCRequestEx* req, void* buf, s32 len) {
-    IPCResult ret = IPC_RESULT_OK;
+static s32 __ios_Read(IPCRequestEx* req, void* buf, s32 len) {
+    s32 ret = IPC_RESULT_OK;
 
     if (req == NULL) {
         ret = IPC_RESULT_INVALID_INTERNAL;
@@ -388,10 +389,10 @@ static IPCResult __ios_Read(IPCRequestEx* req, void* buf, s32 len) {
     return ret;
 }
 
-IPCResult IOS_ReadAsync(s32 fd, void* buf, s32 len, IPCAsyncCallback callback,
-                        void* callbackArg) {
+s32 IOS_ReadAsync(s32 fd, void* buf, s32 len, IPCAsyncCallback callback,
+                  void* callbackArg) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_READ, callback, callbackArg, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_READ, callback, callbackArg, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Read(req, buf, len);
         if (ret == IPC_RESULT_OK) {
@@ -402,9 +403,9 @@ IPCResult IOS_ReadAsync(s32 fd, void* buf, s32 len, IPCAsyncCallback callback,
     return ret;
 }
 
-IPCResult IOS_Read(s32 fd, void* buf, s32 len) {
+s32 IOS_Read(s32 fd, void* buf, s32 len) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_READ, NULL, NULL, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_READ, NULL, NULL, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Read(req, buf, len);
         if (ret == IPC_RESULT_OK) {
@@ -415,8 +416,8 @@ IPCResult IOS_Read(s32 fd, void* buf, s32 len) {
     return ret;
 }
 
-static IPCResult __ios_Write(IPCRequestEx* req, const void* buf, s32 len) {
-    IPCResult ret = IPC_RESULT_OK;
+static s32 __ios_Write(IPCRequestEx* req, const void* buf, s32 len) {
+    s32 ret = IPC_RESULT_OK;
 
     if (req == NULL) {
         ret = IPC_RESULT_INVALID_INTERNAL;
@@ -429,10 +430,10 @@ static IPCResult __ios_Write(IPCRequestEx* req, const void* buf, s32 len) {
     return ret;
 }
 
-IPCResult IOS_WriteAsync(s32 fd, const void* buf, s32 len,
-                         IPCAsyncCallback callback, void* callbackArg) {
+s32 IOS_WriteAsync(s32 fd, const void* buf, s32 len, IPCAsyncCallback callback,
+                   void* callbackArg) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_WRITE, callback, callbackArg, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_WRITE, callback, callbackArg, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Write(req, buf, len);
         if (ret == IPC_RESULT_OK) {
@@ -443,9 +444,9 @@ IPCResult IOS_WriteAsync(s32 fd, const void* buf, s32 len,
     return ret;
 }
 
-IPCResult IOS_Write(s32 fd, const void* buf, s32 len) {
+s32 IOS_Write(s32 fd, const void* buf, s32 len) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_WRITE, NULL, NULL, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_WRITE, NULL, NULL, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Write(req, buf, len);
         if (ret == IPC_RESULT_OK) {
@@ -456,8 +457,8 @@ IPCResult IOS_Write(s32 fd, const void* buf, s32 len) {
     return ret;
 }
 
-static IPCResult __ios_Seek(IPCRequestEx* req, s32 offset, IPCSeekMode mode) {
-    IPCResult ret = IPC_RESULT_OK;
+static s32 __ios_Seek(IPCRequestEx* req, s32 offset, IPCSeekMode mode) {
+    s32 ret = IPC_RESULT_OK;
 
     if (req == NULL) {
         ret = IPC_RESULT_INVALID_INTERNAL;
@@ -469,10 +470,10 @@ static IPCResult __ios_Seek(IPCRequestEx* req, s32 offset, IPCSeekMode mode) {
     return ret;
 }
 
-IPCResult IOS_SeekAsync(s32 fd, s32 offset, IPCSeekMode mode,
-                        IPCAsyncCallback callback, void* callbackArg) {
+s32 IOS_SeekAsync(s32 fd, s32 offset, IPCSeekMode mode,
+                  IPCAsyncCallback callback, void* callbackArg) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_SEEK, callback, callbackArg, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_SEEK, callback, callbackArg, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Seek(req, offset, mode);
         if (ret == IPC_RESULT_OK) {
@@ -483,9 +484,9 @@ IPCResult IOS_SeekAsync(s32 fd, s32 offset, IPCSeekMode mode,
     return ret;
 }
 
-IPCResult IOS_Seek(s32 fd, s32 offset, IPCSeekMode mode) {
+s32 IOS_Seek(s32 fd, s32 offset, IPCSeekMode mode) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_SEEK, NULL, NULL, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_SEEK, NULL, NULL, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Seek(req, offset, mode);
         if (ret == IPC_RESULT_OK) {
@@ -496,9 +497,9 @@ IPCResult IOS_Seek(s32 fd, s32 offset, IPCSeekMode mode) {
     return ret;
 }
 
-static IPCResult __ios_Ioctl(IPCRequestEx* req, s32 type, void* in, s32 inSize,
-                             void* out, s32 outSize) {
-    IPCResult ret = IPC_RESULT_OK;
+static s32 __ios_Ioctl(IPCRequestEx* req, s32 type, void* in, s32 inSize,
+                       void* out, s32 outSize) {
+    s32 ret = IPC_RESULT_OK;
 
     if (req == NULL) {
         ret = IPC_RESULT_INVALID_INTERNAL;
@@ -516,11 +517,10 @@ static IPCResult __ios_Ioctl(IPCRequestEx* req, s32 type, void* in, s32 inSize,
     return ret;
 }
 
-IPCResult IOS_IoctlAsync(s32 fd, s32 type, void* in, s32 inSize, void* out,
-                         s32 outSize, IPCAsyncCallback callback,
-                         void* callbackArg) {
+s32 IOS_IoctlAsync(s32 fd, s32 type, void* in, s32 inSize, void* out,
+                   s32 outSize, IPCAsyncCallback callback, void* callbackArg) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_IOCTL, callback, callbackArg, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_IOCTL, callback, callbackArg, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Ioctl(req, type, in, inSize, out, outSize);
         if (ret == IPC_RESULT_OK) {
@@ -531,10 +531,9 @@ IPCResult IOS_IoctlAsync(s32 fd, s32 type, void* in, s32 inSize, void* out,
     return ret;
 }
 
-IPCResult IOS_Ioctl(s32 fd, s32 type, void* in, s32 inSize, void* out,
-                    s32 outSize) {
+s32 IOS_Ioctl(s32 fd, s32 type, void* in, s32 inSize, void* out, s32 outSize) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_IOCTL, NULL, NULL, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_IOCTL, NULL, NULL, &req);
     if (ret == IPC_RESULT_OK) {
         ret = __ios_Ioctl(req, type, in, inSize, out, outSize);
         if (ret == IPC_RESULT_OK) {
@@ -545,20 +544,20 @@ IPCResult IOS_Ioctl(s32 fd, s32 type, void* in, s32 inSize, void* out,
     return ret;
 }
 
-static IPCResult __ios_Ioctlv(IPCRequestEx* req, s32 type, s32 inCount,
-                              s32 ioCount, IPCIOVector* vectors) {
+static s32 __ios_Ioctlv(IPCRequestEx* req, s32 type, s32 inCount, s32 outCount,
+                        IPCIOVector* vectors) {
     int i;
-    IPCResult ret = IPC_RESULT_OK;
+    s32 ret = IPC_RESULT_OK;
 
     if (req == NULL) {
         ret = IPC_RESULT_INVALID_INTERNAL;
     } else {
         req->base.ioctlv.type = type;
         req->base.ioctlv.inCount = inCount;
-        req->base.ioctlv.ioCount = ioCount;
+        req->base.ioctlv.outCount = outCount;
         req->base.ioctlv.vectors = vectors;
 
-        for (i = 0; i < req->base.ioctlv.ioCount; i++) {
+        for (i = 0; i < req->base.ioctlv.outCount; i++) {
             DCFlushRange(req->base.ioctlv.vectors[inCount + i].base,
                          req->base.ioctlv.vectors[inCount + i].length);
 
@@ -580,7 +579,7 @@ static IPCResult __ios_Ioctlv(IPCRequestEx* req, s32 type, s32 inCount,
         }
 
         DCFlushRange(req->base.ioctlv.vectors,
-                     (req->base.ioctlv.inCount + req->base.ioctlv.ioCount) *
+                     (req->base.ioctlv.inCount + req->base.ioctlv.outCount) *
                          sizeof(IPCIOVector));
 
         req->base.ioctlv.vectors =
@@ -590,13 +589,13 @@ static IPCResult __ios_Ioctlv(IPCRequestEx* req, s32 type, s32 inCount,
     return ret;
 }
 
-IPCResult IOS_IoctlvAsync(s32 fd, s32 type, s32 inCount, s32 ioCount,
-                          IPCIOVector* vectors, IPCAsyncCallback callback,
-                          void* callbackArg) {
+s32 IOS_IoctlvAsync(s32 fd, s32 type, s32 inCount, s32 outCount,
+                    IPCIOVector* vectors, IPCAsyncCallback callback,
+                    void* callbackArg) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_IOCTLV, callback, callbackArg, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_IOCTLV, callback, callbackArg, &req);
     if (ret == IPC_RESULT_OK) {
-        ret = __ios_Ioctlv(req, type, inCount, ioCount, vectors);
+        ret = __ios_Ioctlv(req, type, inCount, outCount, vectors);
         if (ret == IPC_RESULT_OK) {
             ret = __ios_Ipc2(req, callback);
         }
@@ -605,12 +604,12 @@ IPCResult IOS_IoctlvAsync(s32 fd, s32 type, s32 inCount, s32 ioCount,
     return ret;
 }
 
-IPCResult IOS_Ioctlv(s32 fd, s32 type, s32 inCount, s32 ioCount,
-                     IPCIOVector* vectors) {
+s32 IOS_Ioctlv(s32 fd, s32 type, s32 inCount, s32 outCount,
+               IPCIOVector* vectors) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_IOCTLV, NULL, NULL, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_IOCTLV, NULL, NULL, &req);
     if (ret == IPC_RESULT_OK) {
-        ret = __ios_Ioctlv(req, type, inCount, ioCount, vectors);
+        ret = __ios_Ioctlv(req, type, inCount, outCount, vectors);
         if (ret == IPC_RESULT_OK) {
             ret = __ios_Ipc2(req, NULL);
         }
@@ -619,13 +618,13 @@ IPCResult IOS_Ioctlv(s32 fd, s32 type, s32 inCount, s32 ioCount,
     return ret;
 }
 
-IPCResult IOS_IoctlvReboot(s32 fd, s32 type, s32 inCount, s32 ioCount,
-                           IPCIOVector* vectors) {
+s32 IOS_IoctlvReboot(s32 fd, s32 type, s32 inCount, s32 outCount,
+                     IPCIOVector* vectors) {
     IPCRequestEx* req;
-    IPCResult ret = __ios_Ipc1(fd, IPC_REQ_IOCTLV, NULL, NULL, &req);
+    s32 ret = __ios_Ipc1(fd, IPC_REQ_IOCTLV, NULL, NULL, &req);
     if (ret == IPC_RESULT_OK) {
         req->reboot = TRUE;
-        ret = __ios_Ioctlv(req, type, inCount, ioCount, vectors);
+        ret = __ios_Ioctlv(req, type, inCount, outCount, vectors);
         if (ret == IPC_RESULT_OK) {
             ret = __ios_Ipc2(req, NULL);
         }

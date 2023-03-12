@@ -1,4 +1,4 @@
-#include <OS.h>
+#include <revolution/OS.h>
 
 extern wchar_t UcsAnsiTable[32];
 extern wchar_t* UcsSjisTable[256];
@@ -92,20 +92,20 @@ const wchar_t* OSUTF16to32(const wchar_t* utf16, u32* utf32) {
     return utf16;
 }
 
-u8 OSUTF32toANSI(u32 utf) {
+u8 OSUTF32toANSI(u32 utf32) {
     int i;
 
-    if (utf > 0xFF) {
+    if (utf32 > 0xFF) {
         return 0;
     }
 
-    if (utf < 0x80 || utf > 0x9F) {
-        return utf & 0xFF;
+    if (utf32 < 0x80 || utf32 > 0x9F) {
+        return utf32 & 0xFF;
     }
 
-    if (utf >= 0x152 && utf <= 0x2122) {
+    if (utf32 >= 0x152 && utf32 <= 0x2122) {
         for (i = 0; i < ARRAY_LENGTH(UcsAnsiTable); i++) {
-            if (UcsAnsiTable[i] == utf) {
+            if (UcsAnsiTable[i] == utf32) {
                 return i + 0x80 & 0xFF;
             }
         }
@@ -114,13 +114,13 @@ u8 OSUTF32toANSI(u32 utf) {
     return 0;
 }
 
-wchar_t OSUTF32toSJIS(u32 utf) {
-    if (utf >= 0x10000) {
+wchar_t OSUTF32toSJIS(u32 utf32) {
+    if (utf32 >= 0x10000) {
         return 0;
     }
 
-    if (UcsSjisTable[utf >> 8 & 0xFF] != NULL) {
-        return UcsSjisTable[utf >> 8 & 0xFF][utf & 0xFF];
+    if (UcsSjisTable[utf32 >> 8 & 0xFF] != NULL) {
+        return UcsSjisTable[utf32 >> 8 & 0xFF][utf32 & 0xFF];
     }
 
     return 0;

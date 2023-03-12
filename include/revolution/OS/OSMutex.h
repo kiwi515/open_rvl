@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_OS_MUTEX_H
 #define RVL_SDK_OS_MUTEX_H
 #include <revolution/OS/OSThread.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -14,11 +14,11 @@ typedef struct OSMutex {
     struct OSMutex* prev; // at 0x14
 } OSMutex;
 
-void OSInitMutex(OSMutex*);
-void OSLockMutex(OSMutex*);
-void OSUnlockMutex(OSMutex*);
-void __OSUnlockAllMutex(OSThread*);
-BOOL OSTryLockMutex(OSMutex*);
+void OSInitMutex(OSMutex* mutex);
+void OSLockMutex(OSMutex* mutex);
+void OSUnlockMutex(OSMutex* mutex);
+void __OSUnlockAllMutex(OSThread* thread);
+BOOL OSTryLockMutex(OSMutex* mutex);
 
 #ifdef __cplusplus
 }

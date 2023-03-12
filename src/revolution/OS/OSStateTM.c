@@ -1,6 +1,15 @@
-#include <IPC.h>
-#include <OS.h>
-#include <VI/vihardware.h>
+#include <revolution/IPC.h>
+#include <revolution/OS.h>
+#include <revolution/VI.h>
+
+typedef enum {
+    STM_IOCTL_REG_STM_EVENT = 0x1000,
+    STM_IOCTL_HOT_RESET = 0x2001,
+    STM_IOCTL_SHUTDOWN_TO_SBY = 0x2003,
+    STM_IOCTL_UNREG_STM_EVENT = 0x3002,
+    STM_IOCTL_SET_VI_DIM = 0x5001,
+    STM_IOCTL_SET_IDLE_LED_MODE = 0x6002,
+} OSStateTMIoctl;
 
 static u8 StmEhInBuf[32] ALIGN(32);
 static u8 StmEhOutBuf[32] ALIGN(32);
@@ -25,11 +34,11 @@ static BOOL StmReady;
 static BOOL ResetDown;
 
 static s32 AccessVIDimRegs(void);
-static s32 __OSVIDimReplyHandler(s32, void*);
+static s32 __OSVIDimReplyHandler(s32 result, void* arg);
 static void __OSRegisterStateEvent(void);
 static void __OSDefaultResetCallback(void);
 static void __OSDefaultPowerCallback(void);
-static s32 __OSStateEventHandler(s32, void*);
+static s32 __OSStateEventHandler(s32 result, void* arg);
 static void LockUp(void);
 
 OSStateCallback OSSetResetCallback(OSStateCallback callback) {
@@ -110,7 +119,7 @@ void __OSShutdownToSBY(void) {
              "Error: The firmware doesn't support shutdown feature.\n");
 
     in_args[0] = 0;
-    IOS_Ioctl(StmImDesc, IPC_IOCTL_SHUTDOWN_TO_SBY, StmImInBuf,
+    IOS_Ioctl(StmImDesc, STM_IOCTL_SHUTDOWN_TO_SBY, StmImInBuf,
               sizeof(StmImInBuf), StmImOutBuf, sizeof(StmImOutBuf));
     LockUp();
 
@@ -123,13 +132,13 @@ void __OSHotReset(void) {
 #line 340
     OSAssert(StmReady, "Error: The firmware doesn't support reboot feature.\n");
 
-    IOS_Ioctl(StmImDesc, IPC_IOCTL_HOT_RESET, StmImInBuf, sizeof(StmImInBuf),
+    IOS_Ioctl(StmImDesc, STM_IOCTL_HOT_RESET, StmImInBuf, sizeof(StmImInBuf),
               StmImOutBuf, sizeof(StmImOutBuf));
     LockUp();
 }
 
 BOOL __OSGetResetButtonStateRaw(void) {
-    return (!(OS_PI_INTSR & 0x10000)) ? TRUE : FALSE;
+    return (!(PI_HW_REGS[PI_INTSR] & PI_INTSR_RSWST)) ? TRUE : FALSE;
 }
 
 s32 __OSSetVIForceDimming(u32 arg0, u32 arg1, u32 arg2) {
@@ -178,7 +187,7 @@ s32 __OSSetIdleLEDMode(u32 mode) {
 
     in_args[0] = mode;
 
-    return IOS_Ioctl(StmImDesc, IPC_IOCTL_SET_IDLE_LED_MODE, StmImInBuf,
+    return IOS_Ioctl(StmImDesc, STM_IOCTL_SET_IDLE_LED_MODE, StmImInBuf,
                      sizeof(StmImInBuf), StmImOutBuf, sizeof(StmImOutBuf));
 
 #undef in_args
@@ -195,7 +204,7 @@ s32 __OSUnRegisterStateEvent(void) {
         return -6;
     }
 
-    result = IOS_Ioctl(StmImDesc, IPC_IOCTL_UNREG_STM_EVENT, StmImInBuf,
+    result = IOS_Ioctl(StmImDesc, STM_IOCTL_UNREG_STM_EVENT, StmImInBuf,
                        sizeof(StmImInBuf), StmImOutBuf, sizeof(StmImOutBuf));
     if (result == IPC_RESULT_OK) {
         StmEhRegistered = FALSE;
@@ -206,7 +215,7 @@ s32 __OSUnRegisterStateEvent(void) {
 
 static s32 AccessVIDimRegs(void) {
     const IPCResult result = IOS_IoctlAsync(
-        StmImDesc, IPC_IOCTL_SET_VI_DIM, StmVdInBuf, sizeof(StmVdInBuf),
+        StmImDesc, STM_IOCTL_SET_VI_DIM, StmVdInBuf, sizeof(StmVdInBuf),
         StmVdOutBuf, sizeof(StmVdOutBuf), __OSVIDimReplyHandler, NULL);
     return result != IPC_RESULT_OK ? result : 1;
 }
@@ -222,7 +231,7 @@ static s32 __OSVIDimReplyHandler(s32 result, void* arg) {
 static void __OSRegisterStateEvent(void) {
     BOOL enabled = OSDisableInterrupts();
 
-    if (IOS_IoctlAsync(StmEhDesc, IPC_IOCTL_REG_STM_EVENT, StmEhInBuf,
+    if (IOS_IoctlAsync(StmEhDesc, STM_IOCTL_REG_STM_EVENT, StmEhInBuf,
                        sizeof(StmEhInBuf), StmEhOutBuf, sizeof(StmEhOutBuf),
                        __OSStateEventHandler, NULL) == IPC_RESULT_OK) {
         StmEhRegistered = TRUE;

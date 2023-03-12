@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_IPC_CLT_H
 #define RVL_SDK_IPC_CLT_H
 #include <revolution/OS.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -52,33 +52,6 @@ typedef enum {
 } IPCRequestType;
 
 typedef enum {
-    // Ioctl
-    IPC_IOCTL_GET_NAND_STATS = 2,
-    IPC_IOCTL_CREATE_DIR = 3,
-    IPC_IOCTL_READ_DIR = 4,
-    IPC_IOCTL_GET_ATTR = 6,
-    IPC_IOCTL_DELETE_PATH = 7,
-    IPC_IOCTL_RENAME_PATH = 8,
-    IPC_IOCTL_CREATE_FILE = 9,
-    IPC_IOCTL_GET_FILE_STATS = 11,
-    IPC_IOCTL_SHUTDOWN_FS = 13,
-    IPC_IOCTL_REG_STM_EVENT = 0x1000,
-    IPC_IOCTL_HOT_RESET = 0x2001,
-    IPC_IOCTL_SHUTDOWN_TO_SBY = 0x2003,
-    IPC_IOCTL_UNREG_STM_EVENT = 0x3002,
-    IPC_IOCTL_SET_VI_DIM = 0x5001,
-    IPC_IOCTL_SET_IDLE_LED_MODE = 0x6002,
-
-    // Ioctlv
-    IPC_IOCTLV_LAUNCH_TITLE = 8,
-    IPC_IOCTLV_GET_USAGE = 12,
-    IPC_IOCTLV_GET_NUM_TICKET_VIEWS = 18,
-    IPC_IOCTLV_GET_TICKET_VIEWS = 19,
-    IPC_IOCTLV_GET_DATA_DIR = 29,
-    IPC_IOCTLV_GET_TITLE_ID = 32,
-} IPCIoctlType;
-
-typedef enum {
     IPC_OPEN_NONE = 0,
     IPC_OPEN_READ = (1 << 0),
     IPC_OPEN_WRITE = (1 << 1),
@@ -91,7 +64,7 @@ typedef enum {
     IPC_SEEK_END,
 } IPCSeekMode;
 
-typedef s32 (*IPCAsyncCallback)(s32, void*);
+typedef s32 (*IPCAsyncCallback)(s32 result, void* arg);
 
 typedef struct IPCIOVector {
     void* base; // at 0x0
@@ -124,7 +97,7 @@ typedef struct IPCIoctlArgs {
 typedef struct IPCIoctlvArgs {
     s32 type;             // at 0x0
     u32 inCount;          // at 0x4
-    u32 ioCount;          // at 0x8
+    u32 outCount;         // at 0x8
     IPCIOVector* vectors; // at 0xC
 } IPCIoctlvArgs;
 
@@ -150,24 +123,31 @@ typedef struct IPCRequestEx {
     char padding[64 - 0x34];
 } IPCRequestEx;
 
-IPCResult IPCCltInit(void);
-IPCResult IOS_OpenAsync(const char*, IPCOpenMode, IPCAsyncCallback, void*);
-IPCResult IOS_Open(const char*, IPCOpenMode);
-IPCResult IOS_CloseAsync(s32, IPCAsyncCallback, void*);
-IPCResult IOS_Close(s32);
-IPCResult IOS_ReadAsync(s32, void*, s32, IPCAsyncCallback, void*);
-IPCResult IOS_Read(s32, void*, s32);
-IPCResult IOS_WriteAsync(s32, const void*, s32, IPCAsyncCallback, void*);
-IPCResult IOS_Write(s32, const void*, s32);
-IPCResult IOS_SeekAsync(s32, s32, IPCSeekMode, IPCAsyncCallback, void*);
-IPCResult IOS_Seek(s32, s32, IPCSeekMode);
-IPCResult IOS_IoctlAsync(s32, s32, void*, s32, void*, s32, IPCAsyncCallback,
-                         void*);
-IPCResult IOS_Ioctl(s32, s32, void*, s32, void*, s32);
-IPCResult IOS_IoctlvAsync(s32, s32, s32, s32, IPCIOVector*, IPCAsyncCallback,
-                          void*);
-IPCResult IOS_Ioctlv(s32, s32, s32, s32, IPCIOVector*);
-IPCResult IOS_IoctlvReboot(s32, s32, s32, s32, IPCIOVector*);
+s32 IPCCltInit(void);
+s32 IOS_OpenAsync(const char* path, IPCOpenMode mode, IPCAsyncCallback callback,
+                  void* callbackArg);
+s32 IOS_Open(const char* path, IPCOpenMode mode);
+s32 IOS_CloseAsync(s32 fd, IPCAsyncCallback callback, void* callbackArg);
+s32 IOS_Close(s32 fd);
+s32 IOS_ReadAsync(s32 fd, void* buf, s32 len, IPCAsyncCallback callback,
+                  void* callbackArg);
+s32 IOS_Read(s32 fd, void* buf, s32 len);
+s32 IOS_WriteAsync(s32 fd, const void* buf, s32 len, IPCAsyncCallback callback,
+                   void* callbackArg);
+s32 IOS_Write(s32 fd, const void* buf, s32 len);
+s32 IOS_SeekAsync(s32 fd, s32 offset, IPCSeekMode mode,
+                  IPCAsyncCallback callback, void* callbackArg);
+s32 IOS_Seek(s32 fd, s32 offset, IPCSeekMode mode);
+s32 IOS_IoctlAsync(s32 fd, s32 type, void* in, s32 inSize, void* out,
+                   s32 outSize, IPCAsyncCallback callback, void* callbackArg);
+s32 IOS_Ioctl(s32 fd, s32 type, void* in, s32 inSize, void* out, s32 outSize);
+s32 IOS_IoctlvAsync(s32 fd, s32 type, s32 inCount, s32 outCount,
+                    IPCIOVector* vectors, IPCAsyncCallback callback,
+                    void* callbackArg);
+s32 IOS_Ioctlv(s32 fd, s32 type, s32 inCount, s32 outCount,
+               IPCIOVector* vectors);
+s32 IOS_IoctlvReboot(s32 fd, s32 type, s32 inCount, s32 outCount,
+                     IPCIOVector* vectors);
 
 #ifdef __cplusplus
 }

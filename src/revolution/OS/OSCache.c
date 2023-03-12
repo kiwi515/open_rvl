@@ -1,6 +1,6 @@
-#include <BASE.h>
-#include <DB.h>
-#include <OS.h>
+#include <revolution/BASE.h>
+#include <revolution/DB.h>
+#include <revolution/OS.h>
 
 asm void DCEnable(void) {
     // clang-format off
@@ -340,8 +340,8 @@ u32 LCStoreData(void* dst, const void* src, u32 len) {
             LCStoreBlocks(dst, src, 0);
             blocks -= 128;
 
-            dst = (char*)dst + 0x1000;
-            src = (char*)src + 0x1000;
+            dst = (u8*)dst + 0x1000;
+            src = (u8*)src + 0x1000;
         }
     }
 

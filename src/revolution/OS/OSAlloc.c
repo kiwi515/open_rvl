@@ -1,4 +1,4 @@
-#include <OS.h>
+#include <revolution/OS.h>
 
 typedef struct OSHeapDescriptor {
     s32 size;                    // at 0x0
@@ -179,7 +179,7 @@ s32 OSCreateHeap(void* start, void* end) {
         OSHeapCell* cell = (OSHeapCell*)start;
         OSHeapDescriptor* hd = &HeapArray[handle];
         if (hd->size < 0) {
-            hd->size = (u32)end - (u32)start;
+            hd->size = (uintptr_t)end - (uintptr_t)start;
 
             cell->prev = NULL;
             cell->next = NULL;

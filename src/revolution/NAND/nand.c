@@ -3,17 +3,18 @@
 #include <stdio.h>
 #include <string.h>
 
-static void nandSplitPerm(u8, u32*, u32*, u32*);
-static void nandGetStatusCallback(s32, void*);
-static void nandGetFileStatusAsyncCallback(s32, void*);
-static BOOL nandInspectPermission(u8);
+static void nandSplitPerm(u8 perm, u32* ownerPerm, u32* groupPerm,
+                          u32* otherPerm) DONT_INLINE;
+static void nandGetStatusCallback(s32 result, void* arg);
+static void nandGetFileStatusAsyncCallback(s32 result, void* arg);
+static BOOL nandInspectPermission(u8 perm);
 
-static IPCResult nandCreate(const char* path, u8 perm, u8 attr,
-                            NANDCommandBlock* block, BOOL async, BOOL priv) {
+static s32 nandCreate(const char* path, u8 perm, u8 attr,
+                      NANDCommandBlock* block, BOOL async, BOOL priv) {
     char absPath[64];
     u32 ownerPerm, groupPerm, otherPerm;
 
-    __memclr(absPath, sizeof(absPath));
+    CLEAR_PATH(absPath);
 
     ownerPerm = 0;
     groupPerm = 0;
@@ -69,12 +70,11 @@ NANDResult NANDPrivateCreateAsync(const char* path, u8 perm, u8 attr,
         nandCreate(path, perm, attr, block, TRUE, TRUE));
 }
 
-static IPCResult nandDelete(const char* path, NANDCommandBlock* block,
-                            BOOL async, BOOL priv) {
+static s32 nandDelete(const char* path, NANDCommandBlock* block, BOOL async,
+                      BOOL priv) {
     char absPath[64];
 
-    __memclr(absPath, sizeof(absPath));
-
+    CLEAR_PATH(absPath);
     nandGenerateAbsPath(absPath, path);
 
     if (!priv && nandIsPrivatePath(absPath)) {
@@ -152,8 +152,8 @@ NANDResult NANDWriteAsync(NANDFileInfo* info, const void* buf, u32 len,
         ISFS_WriteAsync(info->fd, buf, len, nandCallback, block));
 }
 
-static IPCResult nandSeek(s32 fd, s32 offset, NANDSeekMode whence,
-                          NANDCommandBlock* block, BOOL async) {
+static s32 nandSeek(s32 fd, s32 offset, NANDSeekMode whence,
+                    NANDCommandBlock* block, BOOL async) {
     IPCSeekMode mode = (IPCSeekMode)-1;
 
     switch (whence) {
@@ -195,13 +195,12 @@ NANDResult NANDSeekAsync(NANDFileInfo* info, s32 offset, NANDSeekMode whence,
         nandSeek(info->fd, offset, whence, block, TRUE));
 }
 
-static IPCResult nandCreateDir(const char* path, u8 perm, u8 attr,
-                               NANDCommandBlock* block, BOOL async, BOOL priv) {
+static s32 nandCreateDir(const char* path, u8 perm, u8 attr,
+                         NANDCommandBlock* block, BOOL async, BOOL priv) {
     char absPath[64];
     u32 ownerPerm, groupPerm, otherPerm;
 
-    __memclr(absPath, sizeof(absPath));
-
+    CLEAR_PATH(absPath);
     nandGenerateAbsPath(absPath, path);
 
     if (!priv && nandIsPrivatePath(absPath)) {
@@ -246,15 +245,15 @@ NANDResult NANDPrivateCreateDirAsync(const char* path, u8 perm, u8 attr,
         nandCreateDir(path, perm, attr, block, TRUE, TRUE));
 }
 
-static IPCResult nandMove(const char* from, const char* to,
-                          NANDCommandBlock* block, BOOL async, BOOL priv) {
+static s32 nandMove(const char* from, const char* to, NANDCommandBlock* block,
+                    BOOL async, BOOL priv) {
     char absPathFrom[64];
     char absPathTo[64];
     char relativeName[13];
 
-    __memclr(absPathFrom, sizeof(absPathFrom));
-    __memclr(absPathTo, sizeof(absPathTo));
-    __memclr(relativeName, sizeof(relativeName));
+    CLEAR_PATH(absPathFrom);
+    CLEAR_PATH(absPathTo);
+    CLEAR_PATH(relativeName);
 
     relativeName[12] = '\0';
 
@@ -289,9 +288,9 @@ NANDResult NANDMove(const char* from, const char* to) {
     return nandConvertErrorCode(nandMove(from, to, NULL, FALSE, FALSE));
 }
 
-static IPCResult nandGetFileStatus(s32 fd, u32* lengthOut, u32* positionOut) {
+static s32 nandGetFileStatus(s32 fd, u32* lengthOut, u32* positionOut) {
     FSFileStats stats;
-    IPCResult result;
+    s32 result;
 
     result = ISFS_GetFileStats(fd, &stats);
     if (result == IPC_RESULT_OK) {
@@ -315,7 +314,7 @@ NANDResult NANDGetLength(NANDFileInfo* info, u32* length) {
     return nandConvertErrorCode(nandGetFileStatus(info->fd, length, NULL));
 }
 
-static IPCResult nandGetFileStatusAsync(s32 fd, NANDCommandBlock* block) {
+static s32 nandGetFileStatusAsync(s32 fd, NANDCommandBlock* block) {
     // Work buffer???
     return ISFS_GetFileStatsAsync(fd,
                                   (FSFileStats*)ROUND_UP_PTR(block->path, 32),
@@ -329,12 +328,12 @@ static void nandGetFileStatusAsyncCallback(s32 result, void* arg) {
     FSFileStats* stats = (FSFileStats*)ROUND_UP_PTR(block->path, 32);
 
     if (result == IPC_RESULT_OK) {
-        if (block->lengthOut != NULL) {
-            *block->lengthOut = stats->length;
+        if (block->length != NULL) {
+            *block->length = stats->length;
         }
 
-        if (block->positionOut != NULL) {
-            *block->positionOut = stats->position;
+        if (block->position != NULL) {
+            *block->position = stats->position;
         }
     }
 
@@ -349,13 +348,13 @@ NANDResult NANDGetLengthAsync(NANDFileInfo* info, u32* lengthOut,
     }
 
     block->callback = callback;
-    block->lengthOut = lengthOut;
-    block->positionOut = NULL;
+    block->length = lengthOut;
+    block->position = NULL;
     return nandConvertErrorCode(nandGetFileStatusAsync(info->fd, block));
 }
 
 static void nandComposePerm(u8* out, u32 ownerPerm, u32 groupPerm,
-                            u32 otherPerm) __attribute__((never_inline)) {
+                            u32 otherPerm) DONT_INLINE {
     u32 perm = 0;
 
     if (ownerPerm & NAND_ACCESS_READ) {
@@ -386,7 +385,7 @@ static void nandComposePerm(u8* out, u32 ownerPerm, u32 groupPerm,
 }
 
 static void nandSplitPerm(u8 perm, u32* ownerPerm, u32* groupPerm,
-                          u32* otherPerm) __attribute__((never_inline)) {
+                          u32* otherPerm) {
     *ownerPerm = 0;
     *groupPerm = 0;
     *otherPerm = 0;
@@ -416,14 +415,14 @@ static void nandSplitPerm(u8 perm, u32* ownerPerm, u32* groupPerm,
     }
 }
 
-static IPCResult nandGetStatus(const char* path, FSFileAttr* fileAttr,
-                               NANDCommandBlock* block, BOOL async, BOOL priv) {
-    IPCResult result;
+static s32 nandGetStatus(const char* path, NANDStatus* status,
+                         NANDCommandBlock* block, BOOL async, BOOL priv) {
+    s32 result;
     u32 attr;
     u32 ownerPerm, groupPerm, otherPerm;
     char absPath[64];
-    __memclr(absPath, sizeof(absPath));
 
+    CLEAR_PATH(absPath);
     nandGenerateAbsPath(absPath, path);
 
     if (!priv && nandIsUnderPrivatePath(absPath)) {
@@ -431,22 +430,22 @@ static IPCResult nandGetStatus(const char* path, FSFileAttr* fileAttr,
     }
 
     if (async) {
-        return ISFS_GetAttrAsync(
-            absPath, &fileAttr->ownerId, &fileAttr->groupId, &block->attr,
-            &block->ownerPerm, &block->groupPerm, &block->otherPerm,
-            nandGetStatusCallback, block);
+        return ISFS_GetAttrAsync(absPath, &status->ownerId, &status->groupId,
+                                 &block->attr, &block->ownerPerm,
+                                 &block->groupPerm, &block->otherPerm,
+                                 nandGetStatusCallback, block);
     } else {
         attr = 0;
         ownerPerm = 0;
         groupPerm = 0;
         otherPerm = 0;
 
-        result = ISFS_GetAttr(absPath, &fileAttr->ownerId, &fileAttr->groupId,
+        result = ISFS_GetAttr(absPath, &status->ownerId, &status->groupId,
                               &attr, &ownerPerm, &groupPerm, &otherPerm);
 
         if (result == IPC_RESULT_OK) {
-            nandComposePerm(&fileAttr->perm, ownerPerm, groupPerm, otherPerm);
-            fileAttr->attr = attr;
+            nandComposePerm(&status->perm, ownerPerm, groupPerm, otherPerm);
+            status->attr = attr;
         }
 
         return result;
@@ -455,28 +454,28 @@ static IPCResult nandGetStatus(const char* path, FSFileAttr* fileAttr,
 
 static void nandGetStatusCallback(s32 result, void* arg) {
     NANDCommandBlock* block = (NANDCommandBlock*)arg;
-    FSFileAttr* fileAttr;
+    NANDStatus* status;
 
     if (result == IPC_RESULT_OK) {
-        fileAttr = block->fileAttr;
-        fileAttr->attr = block->attr;
-        nandComposePerm(&fileAttr->perm, block->ownerPerm, block->groupPerm,
+        status = block->status;
+        status->attr = block->attr;
+        nandComposePerm(&status->perm, block->ownerPerm, block->groupPerm,
                         block->otherPerm);
     }
 
     block->callback(nandConvertErrorCode(result), block);
 }
 
-NANDResult NANDGetStatus(const char* path, FSFileAttr* fileAttr) {
+NANDResult NANDGetStatus(const char* path, NANDStatus* status) {
     if (!nandIsInitialized()) {
         return NAND_RESULT_FATAL_ERROR;
     }
 
     return nandConvertErrorCode(
-        nandGetStatus(path, fileAttr, NULL, FALSE, FALSE));
+        nandGetStatus(path, status, NULL, FALSE, FALSE));
 }
 
-NANDResult NANDPrivateGetStatusAsync(const char* path, FSFileAttr* fileAttr,
+NANDResult NANDPrivateGetStatusAsync(const char* path, NANDStatus* status,
                                      NANDAsyncCallback callback,
                                      NANDCommandBlock* block) {
     if (!nandIsInitialized()) {
@@ -484,9 +483,8 @@ NANDResult NANDPrivateGetStatusAsync(const char* path, FSFileAttr* fileAttr,
     }
 
     block->callback = callback;
-    block->fileAttr = fileAttr;
-    return nandConvertErrorCode(
-        nandGetStatus(path, fileAttr, block, TRUE, TRUE));
+    block->status = status;
+    return nandConvertErrorCode(nandGetStatus(path, status, block, TRUE, TRUE));
 }
 
 void NANDSetUserData(NANDCommandBlock* block, void* data) {

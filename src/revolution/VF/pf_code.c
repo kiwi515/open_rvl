@@ -1,13 +1,12 @@
-#include <revolution/VF/pf_code.h>
+#include <revolution/VF.h>
 
-#define VF_FN_MIN_CHAR 0x20 // (Space)
-#define VF_FN_MAX_CHAR 0x80 // (DEL)
+int VFiPFCODE_Combine_Width(s16 oem_width, s16 uni_width) {
+    return (oem_width << 16) + uni_width;
+}
 
-int VFiPFCODE_Combine_Width(s16 lo, s16 hi) { return (lo << 16) + hi; }
-
-void VFiPFCODE_Divide_Width(u32 ch, s16* loOut, s16* hiOut) {
-    *loOut = ch >> 16;
-    *hiOut = ch;
+void VFiPFCODE_Divide_Width(u32 width, s16* oem_width, s16* uni_width) {
+    *oem_width = width >> 16;
+    *uni_width = width;
 }
 
 const u8 VFipf_valid_fn_char[VF_FN_MAX_CHAR - VF_FN_MIN_CHAR] = {

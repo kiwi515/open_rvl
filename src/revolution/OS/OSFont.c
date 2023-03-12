@@ -1,14 +1,14 @@
-#include <GX/GXTypes.h>
-#include <OS.h>
-#include <VI/vi.h>
-#include <VI/vihardware.h>
+#include <revolution/GX.h>
+#include <revolution/OS.h>
+#include <revolution/VI.h>
 
 #define ROM_FONT_SJIS_START ((void*)0x001AFF00)
 #define ROM_FONT_SJIS_SIZE 0x0004D000
 #define ROM_FONT_ANSI_START ((void*)0x001FCF00)
 #define ROM_FONT_ANSI_SIZE 0x00003000
 
-typedef const u8* (*ParseStringFunc)(u16, const u8*, OSFontHeader**, u32*);
+typedef const u8* (*ParseStringFunc)(u16 encode, const u8* str,
+                                     OSFontHeader** fontOut, u32* codeOut);
 
 static u16 FontEncode = 0xFFFF;
 
@@ -20,8 +20,10 @@ static ParseStringFunc ParseString;
 extern u16 HankakuToCode[];
 extern u16 Zenkaku2Code[];
 
-static const u8* ParseStringS(u16, const u8*, OSFontHeader**, u32*);
-static const u8* ParseStringW(u16, const u8*, OSFontHeader**, u32*);
+static const u8* ParseStringS(u16 encode, const u8* str, OSFontHeader** fontOut,
+                              u32* codeOut);
+static const u8* ParseStringW(u16 encode, const u8* str, OSFontHeader** fontOut,
+                              u32* codeOut);
 
 static BOOL IsSjisLeadByte(u8 ch) {
     return (0x81 <= ch && ch <= 0x9F) || (0xE0 <= ch && ch <= 0xFC);
@@ -402,7 +404,7 @@ const char* OSGetFontTexel(const char* str, void* dst, s32 xOfs, s32 arg3,
 
     str = (const char*)ParseString(OSGetFontEncode(), (const u8*)str, &font,
                                    &code);
-    local_4C = (u8*)font + sizeof(OSFontHeader);
+    local_4C = &font->c0;
 
     /**
      * Find font code texture (See OSGetFontTexture)
@@ -455,7 +457,7 @@ const char* OSGetFontTexel(const char* str, void* dst, s32 xOfs, s32 arg3,
 
 static void ExpandFontSheet(const OSFontHeader* font, u8* src, u8* dst) {
     int i;
-    const u8* tmp = (const u8*)font + sizeof(OSFontHeader);
+    const u8* tmp = &font->c0;
 
     if (font->sheetFormat == GX_TF_I4) {
         for (i = (s32)font->sheetFullSize / 2 - 1; i >= 0; i--) {

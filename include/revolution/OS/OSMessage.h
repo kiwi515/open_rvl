@@ -1,7 +1,7 @@
 #ifndef RVL_SDK_OS_MESSAGE_H
 #define RVL_SDK_OS_MESSAGE_H
 #include <revolution/OS/OSThread.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -20,10 +20,10 @@ typedef struct OSMessageQueue {
     s32 size;                // at 0x1C
 } OSMessageQueue;
 
-void OSInitMessageQueue(OSMessageQueue*, OSMessage*, s32);
-BOOL OSSendMessage(OSMessageQueue*, OSMessage, u32);
-BOOL OSReceiveMessage(OSMessageQueue*, OSMessage*, u32);
-BOOL OSJamMessage(OSMessageQueue*, OSMessage, u32);
+void OSInitMessageQueue(OSMessageQueue* queue, OSMessage* buffer, s32 capacity);
+BOOL OSSendMessage(OSMessageQueue* queue, OSMessage mesg, u32 flags);
+BOOL OSReceiveMessage(OSMessageQueue* queue, OSMessage* mesg, u32 flags);
+BOOL OSJamMessage(OSMessageQueue* queue, OSMessage mesg, u32 flags);
 
 #ifdef __cplusplus
 }

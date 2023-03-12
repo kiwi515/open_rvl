@@ -2,8 +2,8 @@
 #define RVL_SDK_MEM_HEAP_COMMON_H
 #include <revolution/MEM/mem_list.h>
 #include <revolution/OS.h>
+#include <revolution/types.h>
 #include <string.h>
-#include <types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,24 +16,25 @@ typedef enum {
 
 typedef struct MEMiHeapHead {
     u32 magic;     // at 0x0
-    MEMNode node;  // at 0x4
+    MEMLink link;  // at 0x4
     MEMList list;  // at 0xC
     u8* start;     // at 0x18
     u8* end;       // at 0x1C
     OSMutex mutex; // at 0x20
 
     union {
-        u32 WORD_0x38;
+        u32 attribute;
         struct {
-            u32 WORD_0x38_0_24 : 24;
+            u32 attribute_0_24 : 24;
             u32 opt : 8;
         };
     }; // at 0x38
 } MEMiHeapHead;
 
-void MEMiInitHeapHead(MEMiHeapHead*, u32, void*, void*, u16);
-void MEMiFinalizeHeap(MEMiHeapHead*);
-MEMiHeapHead* MEMFindContainHeap(const void*);
+void MEMiInitHeapHead(MEMiHeapHead* heap, u32 magic, void* start, void* end,
+                      u16 opt);
+void MEMiFinalizeHeap(MEMiHeapHead* heap);
+MEMiHeapHead* MEMFindContainHeap(const void* memBlock);
 
 static inline uintptr_t GetUIntPtr(const void* p) { return (uintptr_t)p; }
 

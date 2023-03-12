@@ -1,14 +1,13 @@
-#include <BASE.h>
-#include <DB.h>
-#include <DVD.h>
-#include <EXI/EXIBios.h>
-#include <IPC.h>
-#include <OS.h>
-#include <PAD/Pad.h>
-#include <SC.h>
-#include <SI/SIBios.h>
-#include <TRK/dolphin_trk.h>
-
+#include <MetroTRK.h>
+#include <revolution/BASE.h>
+#include <revolution/DB.h>
+#include <revolution/DVD.h>
+#include <revolution/EXI.h>
+#include <revolution/IPC.h>
+#include <revolution/OS.h>
+#include <revolution/PAD.h>
+#include <revolution/SC.h>
+#include <revolution/SI.h>
 #include <string.h>
 
 OSExecParams __OSRebootParams;
@@ -36,6 +35,16 @@ const char* __OSVersion =
     "<< RVL_SDK - OS \trelease build: Apr 24 2007 11:50:47 (0x4199_60831) >>";
 
 static void OSExceptionInit(void);
+
+void __OSDBINTSTART(void);
+void __OSDBINTEND(void);
+void __OSDBJUMPSTART(void);
+void __OSDBJUMPDEST(void);
+void __OSDBJUMPEND(void);
+void __OSEVStart(void);
+void __DBVECTOR(void);
+void __OSEVSetNumber(void);
+void __OSEVEnd(void);
 
 CW_FORCE_BSS(OS_c, __OSRebootParams);
 
@@ -247,7 +256,7 @@ static void MemClear(void* mem, u32 size) {
     DCFlushRange(flush, 0x40000);
 }
 
-static void ClearArena(void) __attribute__((never_inline)) {
+static void ClearArena(void) DONT_INLINE {
     // System reset
     if (!((OSGetResetCode() >> 31) & 1)) {
         MemClear(OSGetArenaLo(), (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
@@ -279,7 +288,7 @@ static void ClearArena(void) __attribute__((never_inline)) {
     }
 }
 
-static void ClearMEM2Arena(void) __attribute__((never_inline)) {
+static void ClearMEM2Arena(void) DONT_INLINE {
     // System reset
     if (!((OSGetResetCode() >> 31) & 1)) {
         MemClear(OSGetMEM2ArenaLo(),
@@ -746,9 +755,9 @@ static asm void OSExceptionVector(void) {
     mfsprg0 r3
     stw r3, OSContext.gprs[4](r4)
     stw r5, OSContext.gprs[5](r4)
-    lhz r3, OSContext.SHORT_0x1A2(r4)
+    lhz r3, OSContext.state(r4)
     ori r3, r3, 0x2
-    sth r3, OSContext.SHORT_0x1A2(r4)
+    sth r3, OSContext.state(r4)
     mfcr r3
     stw r3, OSContext.cr(r4)
     mflr r3

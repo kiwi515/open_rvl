@@ -1,12 +1,10 @@
-#include <revolution/EXI/EXIBios.h>
-#include <revolution/EXI/EXIUart.h>
-
-#include <OS.h>
-
+#include <revolution/EXI.h>
+#include <revolution/OS.h>
 #include <string.h>
 
 const char* __EXIVersion =
     "<< RVL_SDK - EXI \trelease build: Nov 30 2006 03:26:56 (0x4199_60831) >>";
+
 static EXIData Ecb[EXI_MAX_CHAN];
 static u32 IDSerialPort1;
 
@@ -54,7 +52,7 @@ static void CompleteTransfer(EXIChannel chan) {
             int i;
 
             buf = (u8*)exi->buffer;
-            data = EXI_CD006800[chan].WORD_0x10;
+            data = EXI_CHAN_CTRL[chan].imm;
             for (i = 0; i < len; i++) {
                 *buf++ = data >> (3 - i) * 8;
             }
@@ -90,12 +88,12 @@ BOOL EXIImm(EXIChannel chan, void* buf, s32 len, u32 type,
             word |= ((u8*)buf)[i] << (3 - i) * 8;
         }
 
-        EXI_CD006800[chan].WORD_0x10 = word;
+        EXI_CHAN_CTRL[chan].imm = word;
     }
 
     exi->buffer = buf;
     exi->bytesRead = (type != EXI_WRITE) ? len : 0;
-    EXI_CD006800[chan].WORD_0xC = type << 2 | 1 | (len - 1) * 16;
+    EXI_CHAN_CTRL[chan].cr = type << 2 | 1 | (len - 1) * 16;
 
     OSRestoreInterrupts(enabled);
     return TRUE;
@@ -139,9 +137,9 @@ BOOL EXIDma(EXIChannel chan, void* buf, s32 len, u32 type,
 
     exi->state |= EXI_STATE_DMA_ACCESS;
 
-    EXI_CD006800[chan].WORD_0x4 = (u32)buf & 0xFFFFFFE0;
-    EXI_CD006800[chan].WORD_0x8 = len;
-    EXI_CD006800[chan].WORD_0xC = type << 2 | 3;
+    EXI_CHAN_CTRL[chan].dmaAddr = ROUND_DOWN_PTR(buf, 32);
+    EXI_CHAN_CTRL[chan].dmaLen = len;
+    EXI_CHAN_CTRL[chan].cr = type << 2 | 3;
 
     OSRestoreInterrupts(enabled);
     return TRUE;
@@ -152,7 +150,7 @@ BOOL EXISync(EXIChannel chan) {
     BOOL ret = FALSE;
 
     while (exi->state & EXI_STATE_SELECTED) {
-        if (!(EXI_CD006800[chan].WORD_0xC & 1)) {
+        if (!(EXI_CHAN_CTRL[chan].cr & 1)) {
             BOOL enabled = OSDisableInterrupts();
 
             if (exi->state & EXI_STATE_SELECTED) {
@@ -161,10 +159,10 @@ BOOL EXISync(EXIChannel chan) {
                 if (__OSGetDIConfig() != 0xFF ||
                     (OSGetConsoleType() & OS_CONSOLE_MASK) ==
                         OS_CONSOLE_MASK_TDEV ||
-                    exi->bytesRead != 4 || EXI_CD006800[chan].WORD_0x0 & 0x70 ||
-                    (EXI_CD006800[chan].WORD_0x10 != 0x01010000 &&
-                     EXI_CD006800[chan].WORD_0x10 != 0x05070000 &&
-                     EXI_CD006800[chan].WORD_0x10 != 0x04220001) ||
+                    exi->bytesRead != 4 || EXI_CHAN_CTRL[chan].csr & 0x70 ||
+                    (EXI_CHAN_CTRL[chan].imm != 0x01010000 &&
+                     EXI_CHAN_CTRL[chan].imm != 0x05070000 &&
+                     EXI_CHAN_CTRL[chan].imm != 0x04220001) ||
                     OS_DVD_DEVICE_CODE_ADDR == 0x8200) {
                     ret = TRUE;
                 }
@@ -178,22 +176,22 @@ BOOL EXISync(EXIChannel chan) {
     return ret;
 }
 
-void EXIClearInterrupts(EXIChannel chan, BOOL r4, BOOL r5, BOOL r6) {
-    u32 val = EXI_CD006800[chan].WORD_0x0 & 0x7F5;
+void EXIClearInterrupts(EXIChannel chan, BOOL exi, BOOL tc, BOOL ext) {
+    u32 val = EXI_CHAN_CTRL[chan].csr & 0x7F5;
 
-    if (r4) {
+    if (exi) {
         val |= 0x2;
     }
 
-    if (r5) {
+    if (tc) {
         val |= 0x8;
     }
 
-    if (r6) {
+    if (ext) {
         val |= 0x800;
     }
 
-    EXI_CD006800[chan].WORD_0x0 = val;
+    EXI_CHAN_CTRL[chan].csr = val;
 }
 
 EXICallback EXISetExiCallback(EXIChannel chan, EXICallback callback) {
@@ -236,7 +234,7 @@ static BOOL __EXIProbe(EXIChannel chan) {
 
     ret = TRUE;
     enabled = OSDisableInterrupts();
-    flag = EXI_CD006800[chan].WORD_0x0;
+    flag = EXI_CHAN_CTRL[chan].csr;
 
     if (!(exi->state & EXI_STATE_ATTACHED)) {
         if (flag & 0x800) {
@@ -360,10 +358,10 @@ BOOL EXISelect(EXIChannel chan, u32 dev, u32 freq) {
 
     exi->state |= EXI_STATE_SELECTED;
 
-    flag = EXI_CD006800[chan].WORD_0x0;
+    flag = EXI_CHAN_CTRL[chan].csr;
     flag &= 0x405;
     flag |= (1 << dev) << 7 | freq << 4;
-    EXI_CD006800[chan].WORD_0x0 = flag;
+    EXI_CHAN_CTRL[chan].csr = flag;
 
     if (exi->state & EXI_STATE_ATTACHED) {
         switch (chan) {
@@ -393,8 +391,8 @@ BOOL EXIDeselect(EXIChannel chan) {
     }
 
     exi->state &= ~EXI_STATE_SELECTED;
-    flag = EXI_CD006800[chan].WORD_0x0;
-    EXI_CD006800[chan].WORD_0x0 = flag & 0x405;
+    flag = EXI_CHAN_CTRL[chan].csr;
+    EXI_CHAN_CTRL[chan].csr = flag & 0x405;
 
     if (exi->state & EXI_STATE_ATTACHED) {
         switch (chan) {
@@ -491,9 +489,9 @@ void EXIInit(void) {
 
     do {
         do {
-        } while ((EXI_CD006800[EXI_CHAN_0].WORD_0xC & 1) == 1);
-    } while ((EXI_CD006800[EXI_CHAN_1].WORD_0xC & 1) == 1 ||
-             (EXI_CD006800[EXI_CHAN_2].WORD_0xC & 1) == 1);
+        } while ((EXI_CHAN_CTRL[EXI_CHAN_0].cr & 1) == 1);
+    } while ((EXI_CHAN_CTRL[EXI_CHAN_1].cr & 1) == 1 ||
+             (EXI_CHAN_CTRL[EXI_CHAN_2].cr & 1) == 1);
 
     __OSMaskInterrupts(
         OS_INTR_MASK(OS_INTR_EXI_0_EXI) | OS_INTR_MASK(OS_INTR_EXI_0_TC) |
@@ -501,11 +499,11 @@ void EXIInit(void) {
         OS_INTR_MASK(OS_INTR_EXI_1_TC) | OS_INTR_MASK(OS_INTR_EXI_1_EXT) |
         OS_INTR_MASK(OS_INTR_EXI_2_EXI) | OS_INTR_MASK(OS_INTR_EXI_2_TC));
 
-    EXI_CD006800[EXI_CHAN_0].WORD_0x0 = 0;
-    EXI_CD006800[EXI_CHAN_1].WORD_0x0 = 0;
-    EXI_CD006800[EXI_CHAN_2].WORD_0x0 = 0;
+    EXI_CHAN_CTRL[EXI_CHAN_0].csr = 0;
+    EXI_CHAN_CTRL[EXI_CHAN_1].csr = 0;
+    EXI_CHAN_CTRL[EXI_CHAN_2].csr = 0;
 
-    EXI_CD006800[EXI_CHAN_0].WORD_0x0 = 0x2000;
+    EXI_CHAN_CTRL[EXI_CHAN_0].csr = 0x2000;
 
     __OSSetInterruptHandler(OS_INTR_EXI_0_EXI, EXIIntrruptHandler);
     __OSSetInterruptHandler(OS_INTR_EXI_0_TC, TCIntrruptHandler);
@@ -632,7 +630,7 @@ s32 EXIGetID(EXIChannel chan, u32 dev, u32* out) {
     enabled = OSDisableInterrupts();
     ret = !EXILock(chan, dev, (chan < 2 && dev == 0) ? UnlockedHandler : NULL);
     if (ret == 0) {
-        ret = !EXISelect(chan, dev, 0);
+        ret = !EXISelect(chan, dev, EXI_FREQ_1MHZ);
         if (ret == 0) {
             imm = 0;
             ret |= !EXIImm(chan, &imm, sizeof(u16), EXI_WRITE, NULL);

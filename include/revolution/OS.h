@@ -17,7 +17,7 @@ extern "C" {
 #include <revolution/OS/OSFastCast.h>
 #include <revolution/OS/OSFatal.h>
 #include <revolution/OS/OSFont.h>
-#include <revolution/OS/OSGlobals.h>
+#include <revolution/OS/OSHardware.h>
 #include <revolution/OS/OSInterrupt.h>
 #include <revolution/OS/OSIpc.h>
 #include <revolution/OS/OSLink.h>

@@ -1,13 +1,17 @@
 #ifndef RVL_SDK_MEM_EXP_HEAP_H
 #define RVL_SDK_MEM_EXP_HEAP_H
-#include <revolution/MEM/mem_heapCommon.h>
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+// Forward declarations
+typedef struct MEMiHeapHead;
+
 typedef enum {
-    MEM_EXP_HEAP_ALLOC_MODE_0,
+    MEM_EXP_HEAP_ALLOC_FAST, //!< When allocating memory blocks, take the first
+                             //!< usable found block rather than trying to
+                             //!< find a more optimal block
 } MEMiExpHeapAllocMode;
 
 typedef struct MEMiExpHeapMBlock {
@@ -44,23 +48,24 @@ typedef struct MEMiExpHeapHead {
     }; // at 0x12
 } MEMiExpHeapHead;
 
-MEMiHeapHead* MEMCreateExpHeapEx(void*, u32, u16);
-MEMiHeapHead* MEMDestroyExpHeap(MEMiHeapHead*);
-void* MEMAllocFromExpHeapEx(MEMiHeapHead*, u32, s32);
-u32 MEMResizeForMBlockExpHeap(MEMiHeapHead*, void*, u32);
-void MEMFreeToExpHeap(MEMiHeapHead*, void*);
-u32 MEMGetAllocatableSizeForExpHeapEx(MEMiHeapHead*, s32);
-u32 MEMAdjustExpHeap(MEMiHeapHead*);
+struct MEMiHeapHead* MEMCreateExpHeapEx(void* start, u32 size, u16 opt);
+struct MEMiHeapHead* MEMDestroyExpHeap(struct MEMiHeapHead* heap);
+void* MEMAllocFromExpHeapEx(struct MEMiHeapHead* heap, u32 size, s32 align);
+u32 MEMResizeForMBlockExpHeap(struct MEMiHeapHead* heap, void* memBlock,
+                              u32 size);
+void MEMFreeToExpHeap(struct MEMiHeapHead* heap, void* memBlock);
+u32 MEMGetAllocatableSizeForExpHeapEx(struct MEMiHeapHead* heap, s32 align);
+u32 MEMAdjustExpHeap(struct MEMiHeapHead* heap);
 
-static inline MEMiHeapHead* MEMCreateExpHeap(void* start, u32 size) {
+static inline struct MEMiHeapHead* MEMCreateExpHeap(void* start, u32 size) {
     return MEMCreateExpHeapEx(start, size, 0);
 }
 
-static inline void* MEMAllocFromExpHeap(MEMiHeapHead* heap, u32 size) {
+static inline void* MEMAllocFromExpHeap(struct MEMiHeapHead* heap, u32 size) {
     return MEMAllocFromExpHeapEx(heap, size, 4);
 }
 
-static inline u32 MEMGetAllocatableSizeForExpHeap(MEMiHeapHead* heap) {
+static inline u32 MEMGetAllocatableSizeForExpHeap(struct MEMiHeapHead* heap) {
     return MEMGetAllocatableSizeForExpHeapEx(heap, 4);
 }
 

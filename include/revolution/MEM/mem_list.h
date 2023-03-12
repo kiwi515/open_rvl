@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_MEM_LIST_H
 #define RVL_SDK_MEM_LIST_H
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,18 +12,15 @@ typedef struct MEMList {
     u16 offset; // at 0xA
 } MEMList;
 
-typedef struct MEMNode {
+typedef struct MEMLink {
     void* prev; // at 0x0
     void* next; // at 0x4
-} MEMNode;
+} MEMLink;
 
-#define MEMGetObjectNode(list, object)                                         \
-    ((MEMNode*)((char*)object + list->offset))
-
-void MEMInitList(MEMList*, u16);
-void MEMAppendListObject(MEMList*, void*);
-void MEMRemoveListObject(MEMList*, void*);
-void* MEMGetNextListObject(MEMList*, void*);
+void MEMInitList(MEMList* list, u16 offset);
+void MEMAppendListObject(MEMList* list, void* object);
+void MEMRemoveListObject(MEMList* list, void* object);
+void* MEMGetNextListObject(MEMList* list, void* object);
 
 #ifdef __cplusplus
 }

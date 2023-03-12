@@ -1,11 +1,8 @@
-#include <BASE.h>
-#include <EXI/EXIBios.h>
-#include <GX/GXFrameBuf.h>
-#include <GX/GXMisc.h>
-#include <OS.h>
-#include <VI/vi.h>
-#include <VI/vihardware.h>
-
+#include <revolution/BASE.h>
+#include <revolution/EXI.h>
+#include <revolution/GX.h>
+#include <revolution/OS.h>
+#include <revolution/VI.h>
 #include <string.h>
 
 /**
@@ -220,7 +217,7 @@ void OSFatal(GXColor textColor, GXColor bgColor, const char* msg) {
         EXIUnlock(EXI_CHAN_0);
     }
     EXIUnlock(EXI_CHAN_0);
-    while ((EXI_CD006800[EXI_CHAN_0].WORD_0xC & 1) == 1) {
+    while ((EXI_CHAN_CTRL[EXI_CHAN_0].cr & 1) == 1) {
         ;
     }
 

@@ -1,10 +1,18 @@
-#include <BASE.h>
-#include <OS.h>
-#include <TRK/printf.h>
+#include <revolution/BASE.h>
+#include <revolution/DSP.h>
+#include <revolution/OS.h>
+#include <stdio.h>
 
 OSErrorHandler __OSErrorTable[OS_ERR_MAX];
 u32 __OSFpscrEnableBits =
     (FPSCR_VE | FPSCR_OE | FPSCR_UE | FPSCR_ZE | FPSCR_XE);
+
+void OSReport(const char* msg, ...) {
+    va_list list;
+    va_start(list, msg);
+    vprintf(msg, list);
+    va_end(list);
+}
 
 void OSPanic(const char* file, int line, const char* msg, ...) {
     u32 depth;
@@ -46,11 +54,11 @@ OSErrorHandler OSSetErrorHandler(u16 error, OSErrorHandler handler) {
         if (handler != NULL) {
             int i;
             for (thread = OS_THREAD_QUEUE.head; thread != NULL;
-                 thread = thread->next2) {
+                 thread = thread->nextActive) {
                 thread->context.srr1 |= 0x900;
 
-                if (!(thread->context.SHORT_0x1A2 & 0x1)) {
-                    thread->context.SHORT_0x1A2 |= 0x1;
+                if (!(thread->context.state & 0x1)) {
+                    thread->context.state |= 0x1;
 
                     for (i = 0; i < 32; i++) {
                         *(u64*)&thread->context.fprs[i] = 0xFFFFFFFFFFFFFFFF;
@@ -73,7 +81,7 @@ OSErrorHandler OSSetErrorHandler(u16 error, OSErrorHandler handler) {
             msr |= (MSR_FE0 | MSR_FE1);
         } else {
             for (thread = OS_THREAD_QUEUE.head; thread != NULL;
-                 thread = thread->next2) {
+                 thread = thread->nextActive) {
                 thread->context.srr1 &= ~0x900;
                 thread->context.fpscr &=
                     ~(FPSCR_VE | FPSCR_OE | FPSCR_UE | FPSCR_ZE | FPSCR_XE);
@@ -183,10 +191,12 @@ void __OSUnhandledException(u8 error, OSContext* ctx, u32 dsisr, u32 dar) {
         break;
     case OS_ERR_PROTECTION:
         OSReport("\n");
-        OSReport("AI DMA Address =   0x%04x%04x\n", OS_DSP_AI_DMA_ADDR_HI,
-                 OS_DSP_AI_DMA_ADDR_LO);
-        OSReport("ARAM DMA Address = 0x%04x%04x\n", OS_DSP_AR_DMA_MMADDR_HI,
-                 OS_DSP_AR_DMA_MMADDR_LO);
+        OSReport("AI DMA Address =   0x%04x%04x\n",
+                 DSP_HW_REGS[DSP_AI_DMA_START_H],
+                 DSP_HW_REGS[DSP_AI_DMA_START_L]);
+        OSReport("ARAM DMA Address = 0x%04x%04x\n",
+                 DSP_HW_REGS[DSP_AR_DMA_MMADDR_H],
+                 DSP_HW_REGS[DSP_AR_DMA_MMADDR_L]);
         OSReport("DI DMA Address =   0x%08x\n", OS_DI_DMA_ADDR);
         break;
     }

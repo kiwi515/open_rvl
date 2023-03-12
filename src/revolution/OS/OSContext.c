@@ -1,53 +1,53 @@
-#include <BASE.h>
-#include <DB.h>
-#include <OS.h>
+#include <revolution/BASE.h>
+#include <revolution/DB.h>
+#include <revolution/OS.h>
 
 static asm void __OSLoadFPUContext(UNKWORD unused, register OSContext* ctx) {
     // clang-format off
     nofralloc
 
-    lhz r5, ctx->SHORT_0x1A2
+    lhz r5, ctx->state
     clrlwi. r5, r5, 31
     beq _exit
     
-    lfd f0, ctx->fpscr_tmp
+    lfd f0, ctx->fpscr_pad
     mtfs f0
     mfspr r5, 0x398
     rlwinm. r5, r5, 3, 31, 31
     beq _load_fprs
     
-    psq_l f0, 0x1C8(ctx), 0, 0
-    psq_l f1, 0x1D0(ctx), 0, 0
-    psq_l f2, 0x1D8(ctx), 0, 0
-    psq_l f3, 0x1E0(ctx), 0, 0
-    psq_l f4, 0x1E8(ctx), 0, 0
-    psq_l f5, 0x1F0(ctx), 0, 0
-    psq_l f6, 0x1F8(ctx), 0, 0
-    psq_l f7, 0x200(ctx), 0, 0
-    psq_l f8, 0x208(ctx), 0, 0
-    psq_l f9, 0x210(ctx), 0, 0
-    psq_l f10, 0x218(ctx), 0, 0
-    psq_l f11, 0x220(ctx), 0, 0
-    psq_l f12, 0x228(ctx), 0, 0
-    psq_l f13, 0x230(ctx), 0, 0
-    psq_l f14, 0x238(ctx), 0, 0
-    psq_l f15, 0x240(ctx), 0, 0
-    psq_l f16, 0x248(ctx), 0, 0
-    psq_l f17, 0x250(ctx), 0, 0
-    psq_l f18, 0x258(ctx), 0, 0
-    psq_l f19, 0x260(ctx), 0, 0
-    psq_l f20, 0x268(ctx), 0, 0
-    psq_l f21, 0x270(ctx), 0, 0
-    psq_l f22, 0x278(ctx), 0, 0
-    psq_l f23, 0x280(ctx), 0, 0
-    psq_l f24, 0x288(ctx), 0, 0
-    psq_l f25, 0x290(ctx), 0, 0
-    psq_l f26, 0x298(ctx), 0, 0
-    psq_l f27, 0x2A0(ctx), 0, 0
-    psq_l f28, 0x2A8(ctx), 0, 0
-    psq_l f29, 0x2B0(ctx), 0, 0
-    psq_l f30, 0x2B8(ctx), 0, 0
-    psq_l f31, 0x2C0(ctx), 0, 0
+    psq_l f0, OSContext.psfs[0](ctx), 0, 0
+    psq_l f1, OSContext.psfs[1](ctx), 0, 0
+    psq_l f2, OSContext.psfs[2](ctx), 0, 0
+    psq_l f3, OSContext.psfs[3](ctx), 0, 0
+    psq_l f4, OSContext.psfs[4](ctx), 0, 0
+    psq_l f5, OSContext.psfs[5](ctx), 0, 0
+    psq_l f6, OSContext.psfs[6](ctx), 0, 0
+    psq_l f7, OSContext.psfs[7](ctx), 0, 0
+    psq_l f8, OSContext.psfs[8](ctx), 0, 0
+    psq_l f9, OSContext.psfs[9](ctx), 0, 0
+    psq_l f10, OSContext.psfs[10](ctx), 0, 0
+    psq_l f11, OSContext.psfs[11](ctx), 0, 0
+    psq_l f12, OSContext.psfs[12](ctx), 0, 0
+    psq_l f13, OSContext.psfs[13](ctx), 0, 0
+    psq_l f14, OSContext.psfs[14](ctx), 0, 0
+    psq_l f15, OSContext.psfs[15](ctx), 0, 0
+    psq_l f16, OSContext.psfs[16](ctx), 0, 0
+    psq_l f17, OSContext.psfs[17](ctx), 0, 0
+    psq_l f18, OSContext.psfs[18](ctx), 0, 0
+    psq_l f19, OSContext.psfs[19](ctx), 0, 0
+    psq_l f20, OSContext.psfs[20](ctx), 0, 0
+    psq_l f21, OSContext.psfs[21](ctx), 0, 0
+    psq_l f22, OSContext.psfs[22](ctx), 0, 0
+    psq_l f23, OSContext.psfs[23](ctx), 0, 0
+    psq_l f24, OSContext.psfs[24](ctx), 0, 0
+    psq_l f25, OSContext.psfs[25](ctx), 0, 0
+    psq_l f26, OSContext.psfs[26](ctx), 0, 0
+    psq_l f27, OSContext.psfs[27](ctx), 0, 0
+    psq_l f28, OSContext.psfs[28](ctx), 0, 0
+    psq_l f29, OSContext.psfs[29](ctx), 0, 0
+    psq_l f30, OSContext.psfs[30](ctx), 0, 0
+    psq_l f31, OSContext.psfs[31](ctx), 0, 0
 
 _load_fprs:
     lfd f0, ctx->fprs[0]
@@ -93,9 +93,9 @@ static asm void __OSSaveFPUContext(UNKWORD unused, UNKWORD unused1,
     // clang-format off
     nofralloc
     
-    lhz r3, ctx->SHORT_0x1A2
-    ori r3, r3, 1
-    sth r3, ctx->SHORT_0x1A2
+    lhz r3, ctx->state
+    ori r3, r3, OS_CONTEXT_STATE_FP_SAVED
+    sth r3, ctx->state
 
     stfd f0, ctx->fprs[0]
     stfd f1, ctx->fprs[1]
@@ -131,44 +131,44 @@ static asm void __OSSaveFPUContext(UNKWORD unused, UNKWORD unused1,
     stfd f31, ctx->fprs[31]
 
     mffs f0
-    stfd f0, ctx->fpscr_tmp
+    stfd f0, ctx->fpscr_pad
     lfd f0, ctx->fprs[0]
     mfspr r3, 0x398
     rlwinm. r3, r3, 3, 31, 31
     beq _exit
 
-    psq_st f0, 0x1C8(ctx), 0, 0
-    psq_st f1, 0x1D0(ctx), 0, 0
-    psq_st f2, 0x1D8(ctx), 0, 0
-    psq_st f3, 0x1E0(ctx), 0, 0
-    psq_st f4, 0x1E8(ctx), 0, 0
-    psq_st f5, 0x1F0(ctx), 0, 0
-    psq_st f6, 0x1F8(ctx), 0, 0
-    psq_st f7, 0x200(ctx), 0, 0
-    psq_st f8, 0x208(ctx), 0, 0
-    psq_st f9, 0x210(ctx), 0, 0
-    psq_st f10, 0x218(ctx), 0, 0
-    psq_st f11, 0x220(ctx), 0, 0
-    psq_st f12, 0x228(ctx), 0, 0
-    psq_st f13, 0x230(ctx), 0, 0
-    psq_st f14, 0x238(ctx), 0, 0
-    psq_st f15, 0x240(ctx), 0, 0
-    psq_st f16, 0x248(ctx), 0, 0
-    psq_st f17, 0x250(ctx), 0, 0
-    psq_st f18, 0x258(ctx), 0, 0
-    psq_st f19, 0x260(ctx), 0, 0
-    psq_st f20, 0x268(ctx), 0, 0
-    psq_st f21, 0x270(ctx), 0, 0
-    psq_st f22, 0x278(ctx), 0, 0
-    psq_st f23, 0x280(ctx), 0, 0
-    psq_st f24, 0x288(ctx), 0, 0
-    psq_st f25, 0x290(ctx), 0, 0
-    psq_st f26, 0x298(ctx), 0, 0
-    psq_st f27, 0x2A0(ctx), 0, 0
-    psq_st f28, 0x2A8(ctx), 0, 0
-    psq_st f29, 0x2B0(ctx), 0, 0
-    psq_st f30, 0x2B8(ctx), 0, 0
-    psq_st f31, 0x2C0(ctx), 0, 0
+    psq_st f0, OSContext.psfs[0](ctx), 0, 0
+    psq_st f1, OSContext.psfs[1](ctx), 0, 0
+    psq_st f2, OSContext.psfs[2](ctx), 0, 0
+    psq_st f3, OSContext.psfs[3](ctx), 0, 0
+    psq_st f4, OSContext.psfs[4](ctx), 0, 0
+    psq_st f5, OSContext.psfs[5](ctx), 0, 0
+    psq_st f6, OSContext.psfs[6](ctx), 0, 0
+    psq_st f7, OSContext.psfs[7](ctx), 0, 0
+    psq_st f8, OSContext.psfs[8](ctx), 0, 0
+    psq_st f9, OSContext.psfs[9](ctx), 0, 0
+    psq_st f10, OSContext.psfs[10](ctx), 0, 0
+    psq_st f11, OSContext.psfs[11](ctx), 0, 0
+    psq_st f12, OSContext.psfs[12](ctx), 0, 0
+    psq_st f13, OSContext.psfs[13](ctx), 0, 0
+    psq_st f14, OSContext.psfs[14](ctx), 0, 0
+    psq_st f15, OSContext.psfs[15](ctx), 0, 0
+    psq_st f16, OSContext.psfs[16](ctx), 0, 0
+    psq_st f17, OSContext.psfs[17](ctx), 0, 0
+    psq_st f18, OSContext.psfs[18](ctx), 0, 0
+    psq_st f19, OSContext.psfs[19](ctx), 0, 0
+    psq_st f20, OSContext.psfs[20](ctx), 0, 0
+    psq_st f21, OSContext.psfs[21](ctx), 0, 0
+    psq_st f22, OSContext.psfs[22](ctx), 0, 0
+    psq_st f23, OSContext.psfs[23](ctx), 0, 0
+    psq_st f24, OSContext.psfs[24](ctx), 0, 0
+    psq_st f25, OSContext.psfs[25](ctx), 0, 0
+    psq_st f26, OSContext.psfs[26](ctx), 0, 0
+    psq_st f27, OSContext.psfs[27](ctx), 0, 0
+    psq_st f28, OSContext.psfs[28](ctx), 0, 0
+    psq_st f29, OSContext.psfs[29](ctx), 0, 0
+    psq_st f30, OSContext.psfs[30](ctx), 0, 0
+    psq_st f31, OSContext.psfs[31](ctx), 0, 0
 
 _exit:
     blr
@@ -291,12 +291,12 @@ _srr0_not_in_disableintr:
     lwz r0, ctx->gprs[0]
     lwz r1, ctx->gprs[1]
     lwz r2, ctx->gprs[2]
-    lhz r4, ctx->SHORT_0x1A2
+    lhz r4, ctx->state
     rlwinm. r5, r4, 0, 30, 30
     beq _load_saved_gprs
 
     rlwinm r4, r4, 0, 31, 29
-    sth r4, ctx->SHORT_0x1A2
+    sth r4, ctx->state
     lmw r5, ctx->gprs[5]
     b _load_special_regs
     
@@ -405,8 +405,8 @@ asm void OSSwitchFiberEx(u32 r3, u32 r4, u32 r5, u32 r6, register void* func,
 }
 
 void OSClearContext(OSContext* ctx) {
-    ctx->SHORT_0x1A0 = 0;
-    ctx->SHORT_0x1A2 = 0;
+    ctx->mode = 0;
+    ctx->state = 0;
 
     if (ctx == OS_CURRENT_FPU_CONTEXT) {
         OS_CURRENT_FPU_CONTEXT = NULL;
@@ -499,7 +499,7 @@ void OSDumpContext(const OSContext* ctx) {
                  ctx->gqrs[i + 4]);
     }
 
-    if (ctx->SHORT_0x1A2 & 1) {
+    if (ctx->state & OS_CONTEXT_STATE_FP_SAVED) {
         OSContext tempCtx;
         BOOL enabled = OSDisableInterrupts();
         OSContext* currCtx = OSGetCurrentContext();
@@ -570,9 +570,9 @@ _ctx_is_curr_fpu_ctx:
     lwz r3, ctx->xer
     mtxer r3
 
-    lhz r3, ctx->SHORT_0x1A2
+    lhz r3, ctx->state
     rlwinm r3, r3, 0, 31, 29
-    sth r3, ctx->SHORT_0x1A2
+    sth r3, ctx->state
 
     lwz r5, ctx->gprs[5]
     lwz r3, ctx->gprs[3]

@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_OS_EXEC_H
 #define RVL_SDK_OS_EXEC_H
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,7 +16,7 @@ typedef struct OSExecParams {
 
 extern BOOL __OSInReboot;
 
-void __OSGetExecParams(OSExecParams*);
+void __OSGetExecParams(OSExecParams* out);
 void __OSLaunchMenu(void);
 
 #ifdef __cplusplus

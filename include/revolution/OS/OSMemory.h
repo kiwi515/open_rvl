@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_OS_MEMORY_H
 #define RVL_SDK_OS_MEMORY_H
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10,13 +10,6 @@ extern "C" {
 
 #define OS_MEM_IS_MEM1(addr) (((u32)(addr)&0x30000000) == 0)
 #define OS_MEM_IS_MEM2(addr) (((u32)(addr)&0x30000000) == 0x10000000)
-
-volatile u16 OS_MI_CC004010 : 0xCC004010;
-volatile u16 OS_MI_CC00401E : 0xCC00401E;
-volatile u16 OS_MI_CC004020 : 0xCC004020;
-volatile u16 OS_MI_CC004022 : 0xCC004022;
-volatile u16 OS_MI_CC004024 : 0xCC004024;
-volatile u16 OS_MI_CC004028 : 0xCC004028;
 
 u32 OSGetPhysicalMem1Size(void);
 u32 OSGetPhysicalMem2Size(void);

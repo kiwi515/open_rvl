@@ -105,7 +105,7 @@ static MEMiHeapHead* InitExpHeap_(MEMiHeapHead* heap, void* end, u16 opt) {
                      AddU32ToPtr(heap, MEM_EXP_HEAP_HEAD_SIZE), end, opt);
     exp->group = 0;
     exp->SHORT_0x12 = 0;
-    SetAllocMode_(exp, MEM_EXP_HEAP_ALLOC_MODE_0);
+    SetAllocMode_(exp, MEM_EXP_HEAP_ALLOC_FAST);
 
     region[0] = heap->start;
     region[1] = heap->end;
@@ -140,10 +140,10 @@ static void* AllocFromHead_(MEMiHeapHead* heap, u32 size, s32 align) {
     MEMiExpHeapMBlock* bestBlk;
     u32 bestBlkSize;
     void* bestBlkMemPtr;
-    BOOL isModeZero;
+    BOOL isFastAlloc;
 
     exp = GetExpHeapHeadPtrFromHeapHead_(heap);
-    isModeZero = GetAllocMode_(exp) == MEM_EXP_HEAP_ALLOC_MODE_0;
+    isFastAlloc = GetAllocMode_(exp) == MEM_EXP_HEAP_ALLOC_FAST;
     bestBlk = 0;
     bestBlkSize = 0xFFFFFFFF;
     bestBlkMemPtr = 0;
@@ -158,7 +158,7 @@ static void* AllocFromHead_(MEMiHeapHead* heap, u32 size, s32 align) {
             bestBlkSize = it->size;
             bestBlkMemPtr = alignStart;
 
-            if (isModeZero || bestBlkSize == size) {
+            if (isFastAlloc || bestBlkSize == size) {
                 break;
             }
         }
@@ -178,10 +178,10 @@ static void* AllocFromTail_(MEMiHeapHead* heap, u32 size, s32 align) {
     MEMiExpHeapMBlock* bestBlk;
     u32 bestBlkSize;
     void* bestBlkMemPtr;
-    BOOL isModeZero;
+    BOOL isFastAlloc;
 
     exp = GetExpHeapHeadPtrFromHeapHead_(heap);
-    isModeZero = GetAllocMode_(exp) == MEM_EXP_HEAP_ALLOC_MODE_0;
+    isFastAlloc = GetAllocMode_(exp) == MEM_EXP_HEAP_ALLOC_FAST;
     bestBlk = 0;
     bestBlkSize = 0xFFFFFFFF;
     bestBlkMemPtr = 0;
@@ -196,7 +196,7 @@ static void* AllocFromTail_(MEMiHeapHead* heap, u32 size, s32 align) {
             bestBlkSize = it->size;
             bestBlkMemPtr = end;
 
-            if (isModeZero || bestBlkSize == size) {
+            if (isFastAlloc || bestBlkSize == size) {
                 break;
             }
         }

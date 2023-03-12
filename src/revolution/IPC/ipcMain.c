@@ -17,9 +17,9 @@ void IPCInit(void) {
     }
 }
 
-u32 IPCReadReg(s32 idx) { return IPC_REGS[idx]; }
+u32 IPCReadReg(s32 index) { return IPC_HW_REGS[index]; }
 
-void IPCWriteReg(s32 idx, u32 val) { IPC_REGS[idx] = val; }
+void IPCWriteReg(s32 index, u32 value) { IPC_HW_REGS[index] = value; }
 
 void* IPCGetBufferHi(void) { return IPCCurrentBufferHi; }
 

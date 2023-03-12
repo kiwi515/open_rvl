@@ -1,5 +1,10 @@
 #include <revolution/MEM.h>
 
+/**
+ * Get list node from a list object
+ */
+#define OBJECT_GET_NODE(list, object) ((MEMLink*)((char*)object + list->offset))
+
 void MEMInitList(MEMList* list, u16 offset) {
     list->head = NULL;
     list->tail = NULL;
@@ -8,7 +13,7 @@ void MEMInitList(MEMList* list, u16 offset) {
 }
 
 static void SetFirstObject_(MEMList* list, void* object) {
-    MEMNode* node = MEMGetObjectNode(list, object);
+    MEMLink* node = OBJECT_GET_NODE(list, object);
     node->next = NULL;
     node->prev = NULL;
 
@@ -18,17 +23,17 @@ static void SetFirstObject_(MEMList* list, void* object) {
 }
 
 void MEMAppendListObject(MEMList* list, void* object) {
-    MEMNode* node;
-    MEMNode* tail;
+    MEMLink* node;
+    MEMLink* tail;
 
     if (list->head == NULL) {
         SetFirstObject_(list, object);
     } else {
-        node = MEMGetObjectNode(list, object);
+        node = OBJECT_GET_NODE(list, object);
         node->prev = list->tail;
         node->next = NULL;
 
-        tail = MEMGetObjectNode(list, list->tail);
+        tail = OBJECT_GET_NODE(list, list->tail);
         tail->next = object;
 
         list->tail = object;
@@ -37,18 +42,18 @@ void MEMAppendListObject(MEMList* list, void* object) {
 }
 
 void MEMRemoveListObject(MEMList* list, void* object) {
-    MEMNode* node = MEMGetObjectNode(list, object);
+    MEMLink* node = OBJECT_GET_NODE(list, object);
 
     if (node->prev == NULL) {
         list->head = node->next;
     } else {
-        MEMGetObjectNode(list, node->prev)->next = node->next;
+        OBJECT_GET_NODE(list, node->prev)->next = node->next;
     }
 
     if (node->next == NULL) {
         list->tail = node->prev;
     } else {
-        MEMGetObjectNode(list, node->next)->prev = node->prev;
+        OBJECT_GET_NODE(list, node->next)->prev = node->prev;
     }
 
     node->prev = NULL;
@@ -62,5 +67,5 @@ void* MEMGetNextListObject(MEMList* list, void* object) {
         return list->head;
     }
 
-    return MEMGetObjectNode(list, object)->next;
+    return OBJECT_GET_NODE(list, object)->next;
 }

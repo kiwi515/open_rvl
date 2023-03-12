@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_OS_FONT_H
 #define RVL_SDK_OS_FONT_H
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -40,15 +40,21 @@ typedef struct OSFontHeader {
     u16 widthTableOfs; // at 0x22
     u32 sheetImageOfs; // at 0x24
     u32 sheetFullSize; // at 0x28
+    u8 c0;             // at 0x2C
+    u8 c1;             // at 0x2D
+    u8 c2;             // at 0x2E
+    u8 c3;             // at 0x2F
 } OSFontHeader;
 
 u16 OSGetFontEncode(void);
-u16 OSSetFontEncode(u16);
-u32 OSLoadFont(OSFontHeader*, void*);
-const char* OSGetFontTexel(const char*, void*, s32, s32, u32*);
-BOOL OSInitFont(OSFontHeader*);
-const char* OSGetFontTexture(const char*, void**, u32*, u32*, u32*);
-const char* OSGetFontWidth(const char*, u32*);
+u16 OSSetFontEncode(u16 encode);
+u32 OSLoadFont(OSFontHeader* font, void* dst);
+const char* OSGetFontTexel(const char* str, void* dst, s32 xOfs, s32 arg3,
+                           u32* widthOut);
+BOOL OSInitFont(OSFontHeader* font);
+const char* OSGetFontTexture(const char* str, void** texOut, u32* xOut,
+                             u32* yOut, u32* widthOut);
+const char* OSGetFontWidth(const char* str, u32* widthOut);
 
 #ifdef __cplusplus
 }

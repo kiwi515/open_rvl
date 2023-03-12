@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_SC_SCAPI_H
 #define RVL_SDK_SC_SCAPI_H
-#include <types.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,20 +50,20 @@ typedef struct SCBtDeviceInfoArray {
 u8 SCGetAspectRatio(void);
 s8 SCGetDisplayOffsetH(void);
 u8 SCGetEuRgb60Mode(void);
-void SCGetIdleMode(SCIdleMode*);
+void SCGetIdleMode(SCIdleMode* mode);
 u8 SCGetLanguage(void);
 u8 SCGetProgressiveMode(void);
 u8 SCGetScreenSaverMode(void);
 u8 SCGetSoundMode(void);
 u32 SCGetCounterBias(void);
-void SCGetBtDeviceInfoArray(SCBtDeviceInfoArray*);
-void SCSetBtDeviceInfoArray(const SCBtDeviceInfoArray*);
+void SCGetBtDeviceInfoArray(SCBtDeviceInfoArray* info);
+void SCSetBtDeviceInfoArray(const SCBtDeviceInfoArray* info);
 u32 SCGetBtDpdSensibility(void);
 u8 SCGetWpadMotorMode(void);
-void SCSetWpadMotorMode(u8);
+void SCSetWpadMotorMode(u8 mode);
 u8 SCGetWpadSensorBarPosition(void);
 u8 SCGetWpadSpeakerVolume(void);
-void SCSetWpadSpeakerVolume(u8);
+void SCSetWpadSpeakerVolume(u8 vol);
 
 #ifdef __cplusplus
 }

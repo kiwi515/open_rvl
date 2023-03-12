@@ -1,26 +1,42 @@
 #ifndef RVL_SDK_VF_PF_VOLUME_H
 #define RVL_SDK_VF_PF_VOLUME_H
-#include <types.h>
+#include <revolution/VF/pf_code.h>
+#include <revolution/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef size_t (*PF_ConvertCharFunc)(const void* src, void* dst);
-typedef size_t (*PF_UnicodeCharWidthFunc)(const void* data);
-typedef size_t (*PF_OemCharWidthFunc)(int ch);
-typedef BOOL (*PF_IsMBCharFunc)(char ch, u32 mode);
+// TODO: 0x37b91e
+typedef struct PF_VOLUME {
+    u8 dummy[0x1898];
+} PF_VOLUME;
 
-typedef struct PF_VOL_SET {
-    char UNK_0x0[0x24];
-    PF_ConvertCharFunc convOemToUnicode;      // at 0x24
-    PF_ConvertCharFunc convUnicodeToOem;      // at 0x28
-    PF_OemCharWidthFunc oemCharWidth;         // at 0x2C
-    PF_IsMBCharFunc oemIsMBChar;              // at 0x30
-    PF_UnicodeCharWidthFunc unicodeCharWidth; // at 0x34
-    PF_IsMBCharFunc unicodeIsMBChar;          // at 0x38
-} PF_VOL_SET;
+typedef struct PF_CUR_VOLUME {
+    u32 stat;         // at 0x0
+    s32 context_id;   // at 0x4
+    PF_VOLUME* p_vol; // at 0x8
+} PF_CUR_VOLUME;
 
-extern PF_VOL_SET VFipf_vol_set;
+typedef struct PF_CONTEXT {
+    u32 stat;       // at 0x0
+    s32 context_id; // at 0x4
+} PF_CONTEXT;
+
+typedef struct PF_VOLUME_SET {
+    PF_CUR_VOLUME current_vol[1]; // at 0x0
+    s32 num_attached_drives;      // at 0xC
+    s32 num_mounted_volumes;      // at 0x10
+    u32 config;                   // at 0x14
+    void* param;                  // at 0x18
+    s32 last_error;               // at 0x1C
+    s32 last_driver_error;        // at 0x20
+    PF_CHARCODE codeset;          // at 0x24
+    u32 setting;                  // at 0x3C
+    PF_CONTEXT context[1];        // at 0x40
+    PF_VOLUME volumes[26];        // at 0x48
+} PF_VOLUME_SET;
+
+extern PF_VOLUME_SET VFipf_vol_set;
 
 #ifdef __cplusplus
 }

@@ -1,9 +1,9 @@
-#include <BASE.h>
-#include <DVD.h>
-#include <OS.h>
+#include <revolution/BASE.h>
+#include <revolution/DVD.h>
+#include <revolution/OS.h>
 
-static BOOL OnReset(u32, u32);
-static void DecrementerExceptionHandler(u8, OSContext*);
+static BOOL OnReset(u32 pass, u32 event);
+static void DecrementerExceptionHandler(u8 type, OSContext* ctx);
 
 static OSAlarmQueue AlarmQueue;
 static OSShutdownFunctionInfo ShutdownFunctionInfo = {OnReset, 0xFFFFFFFF, 0,
@@ -15,7 +15,7 @@ static void SetTimer(const OSAlarm* alarm) {
     if (timeLeft < 0) {
         PPCMtdec(0);
     } else if (timeLeft < 0x80000000) {
-        PPCMtdec((u32)timeLeft);
+        PPCMtdec(timeLeft);
     } else {
         PPCMtdec(0x7FFFFFFF);
     }
@@ -223,11 +223,11 @@ static asm void DecrementerExceptionHandler(register u8 type,
 
 void OSSetAlarmTag(OSAlarm* alarm, u32 tag) { alarm->tag = tag; }
 
-static BOOL OnReset(u32 arg0, u32 arg1) {
+static BOOL OnReset(u32 pass, u32 event) {
     OSAlarm* iter;
     OSAlarm* next;
 
-    if (arg0 != 0) {
+    if (pass != OS_SD_PASS_FIRST) {
         iter = AlarmQueue.head;
         next = (iter != NULL) ? iter->next : NULL;
 
