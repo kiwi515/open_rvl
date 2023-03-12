@@ -1,4 +1,4 @@
-#include "pf_w_clib.h"
+#include <revolution/VF.h>
 
 size_t VFipf_w_strlen(const wchar_t* str) {
     const wchar_t* it = str;

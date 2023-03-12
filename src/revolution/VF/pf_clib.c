@@ -1,4 +1,4 @@
-#include <revolution/VF/pf_clib.h>
+#include <revolution/VF.h>
 
 int VFipf_toupper(int c) {
     if (c >= 'a' && c <= 'z') {
