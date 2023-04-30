@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 int stricmp(const char*, const char*);
-int itoa(int value, char* str, int base);
+char* itoa(int value, char* str, int base);
 
 #ifdef __cplusplus
 }
