@@ -16,7 +16,7 @@ void GXSetPointSize(u8 width, UNKWORD r5);
 void GXEnableTexOffsets(UNKWORD coordId, GXBool8 r4, GXBool8 r5);
 void GXSetCullMode(GXCullMode mode);
 void GXGetCullMode(GXCullMode* out);
-void GXSetCoPlanar(u8 enable);
+void GXSetCoPlanar(GXBool8 enable);
 void __GXSetGenMode(void);
 
 #ifdef __cplusplus

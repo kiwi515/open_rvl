@@ -173,18 +173,17 @@ void GXEnableTexOffsets(UNKWORD coordId, GXBool8 r4, GXBool8 r5) {
 }
 
 void GXSetCullMode(GXCullMode mode) {
-    GXCullMode mode2 = (GXCullMode)(mode << 1 & 2 | mode >> 1 & 1);
-    __GXData->WORD_0x254 = GX_BITSET(__GXData->WORD_0x254, 16, 2, mode2);
+    GXCullMode bits = (GXCullMode)(mode << 1 & 2 | mode >> 1 & 1);
+    __GXData->WORD_0x254 = GX_BITSET(__GXData->WORD_0x254, 16, 2, bits);
     __GXData->dirtyFlags |= GX_DIRTY_GEN_MODE;
 }
 
 void GXGetCullMode(GXCullMode* out) {
-    u32 temp_r4 = __GXData->WORD_0x254;
-    *out =
-        (GXCullMode)(((s32)(temp_r4 >> 14 & 2) >> 1) & ~2 | temp_r4 >> 13 & 2);
+    GXCullMode bits = (GXCullMode)__GXData->WORD_0x254;
+    *out = (GXCullMode)(((bits >> 14 & 2) >> 1) & ~2 | bits >> 13 & 2);
 }
 
-void GXSetCoPlanar(u8 enable) {
+void GXSetCoPlanar(GXBool8 enable) {
     __GXData->WORD_0x254 = GX_BITSET(__GXData->WORD_0x254, 12, 1, enable);
     GX_WRITE_BP_CMD(0xFE080000);
     GX_WRITE_BP_CMD(__GXData->WORD_0x254);
