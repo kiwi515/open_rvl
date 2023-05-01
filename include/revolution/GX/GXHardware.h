@@ -19,10 +19,15 @@ extern "C" {
  * GX FIFO
  */
 extern volatile union {
+    // 1-byte
     char c;
+    unsigned char uc;
+    // 2-byte
     short s;
     unsigned short us;
+    // 4-byte
     int i;
+    unsigned int ui;
     void* p;
     float f;
 } WGPIPE : 0xcc008000;
@@ -181,7 +186,7 @@ typedef enum {
  */
 #define GX_WRITE_CP_CMD(addr, data)                                            \
     WGPIPE.c = GX_FIFO_LOAD_CP_REG;                                            \
-    WGPIPE.i = (u8)(addr);                                                     \
+    WGPIPE.i = (addr);                                                         \
     WGPIPE.i = (data);
 
 /**
@@ -189,8 +194,8 @@ typedef enum {
  */
 #define GX_WRITE_XF_CMD(addr, data)                                            \
     WGPIPE.c = GX_FIFO_LOAD_XF_REG;                                            \
-    WGPIPE.i = (u16)(addr);                                                    \
-    WGPIPE.i = data;
+    WGPIPE.i = (addr);                                                         \
+    WGPIPE.i = (data);
 
 #ifdef __cplusplus
 }

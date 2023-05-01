@@ -1,8 +1,5 @@
 #include <revolution/GX.h>
 
-#ifndef NON_MATCHING
-#error __GXSetAmbMat has not yet been matched.
-#endif
 inline void __GXSetAmbMat(u32 dirtyFlags) {
     if (dirtyFlags & GX_DIRTY_AMB_COLOR0) {
         GX_WRITE_XF_CMD(GX_FIFO_XF_SETCHAN0_AMBCOLOR,
@@ -25,12 +22,9 @@ inline void __GXSetAmbMat(u32 dirtyFlags) {
     }
 }
 
-#ifndef NON_MATCHING
-#error __GXSetLightChan has not yet been matched.
-#endif
-inline void __GXSetLightChan(u32 dirtyFlags) {
+inline void __GXSetLightChan(volatile s32 dirtyFlags) {
     int i;
-    u32 bit;
+    u32 bits;
     u32 addr = GX_FIFO_XF_SETCHAN0_COLOR;
 
     if (dirtyFlags & 0x1000000) {
@@ -38,87 +32,103 @@ inline void __GXSetLightChan(u32 dirtyFlags) {
         GX_WRITE_XF_CMD(GX_FIFO_XF_SETNUMCHAN, chans);
     }
 
-    bit = dirtyFlags & 0xF000 >> 12;
+    bits = dirtyFlags;
+    bits = (bits >> 12) & 0xF;
     i = 0;
-    for (; bit != 0; i++, addr++, bit >>= 1) {
-        if (bit & 0x1) {
+    for (; bits != 0; i++, addr++, bits >>= 1) {
+        if (bits & 0x1) {
             GX_WRITE_XF_CMD(addr, __GXData->WORDS_0xB8[i]);
         }
     }
 }
 
-#ifndef NON_MATCHING
-#error __GXSetTexGen has not yet been matched.
-#endif
-inline void __GXSetTexGen(u32 dirtyFlags) {
+inline void __GXSetTexGen(volatile s32 dirtyFlags) {
     int i;
-    u32 bit;
+    u32 bits;
     u32 addr = GX_FIFO_XF_SETTEXMTXINFO;
+    u32 addr2;
 
     if (dirtyFlags & 0x2000000) {
         u32 gens = __GXData->WORD_0x254 & 0xF;
         GX_WRITE_XF_CMD(GX_FIFO_XF_SETNUMTEXGENS, gens);
     }
 
-    bit = dirtyFlags & 0x2FF0000 >> 16;
+    bits = dirtyFlags;
+    bits = (bits >> 16) & 0xFF;
     i = 0;
-    for (; bit != 0; addr++, i++, bit >>= 1) {
-        if (bit & 0x1) {
+    for (; bits != 0; addr++, i++, bits >>= 1) {
+        addr2 = addr + 0x10;
+        if (bits & 0x1) {
             GX_WRITE_XF_CMD(addr, __GXData->WORDS_0xC8[i]);
-            GX_WRITE_XF_CMD(addr, __GXData->WORDS_0xE8[i]);
+            GX_WRITE_XF_CMD(addr2, __GXData->WORDS_0xE8[i]);
         }
     }
 }
 
-#ifndef NON_MATCHING
-#error __GXSetDirtyState has not yet been matched. (https://decomp.me/scratch/qKk9k)
-#endif
 void __GXSetDirtyState(void) {
+    u32 tempFlags;
     u32 dirtyFlags = __GXData->dirtyFlags;
 
     if (dirtyFlags & GX_DIRTY_SU_TEX) {
         __GXSetSUTexRegs();
     }
+
     if (dirtyFlags & GX_DIRTY_BP_MASK) {
         __GXUpdateBPMask();
     }
+
     if (dirtyFlags & GX_DIRTY_GEN_MODE) {
         __GXSetGenMode();
     }
+
     if (dirtyFlags & GX_DIRTY_VCD) {
         __GXSetVCD();
     }
+
     if (dirtyFlags & GX_DIRTY_VAT) {
         __GXSetVAT();
     }
+
     if (dirtyFlags & GX_DIRTY_VLIM) {
         __GXCalculateVLim();
     }
 
-    if (dirtyFlags & ~0xFF) {
-        if (dirtyFlags & GX_AMB_MAT_MASK) {
-            __GXSetAmbMat(dirtyFlags & GX_AMB_MAT_MASK);
-        }
-        if (dirtyFlags & GX_LIGHT_CHAN_MASK) {
-            __GXSetLightChan(dirtyFlags & GX_LIGHT_CHAN_MASK);
-        }
-        if (dirtyFlags & GX_TEX_GEN_MASK) {
-            __GXSetTexGen(dirtyFlags & GX_TEX_GEN_MASK);
+    dirtyFlags &= ~0xFF;
+    if (dirtyFlags) {
+        tempFlags = dirtyFlags & GX_AMB_MAT_MASK;
+        if (tempFlags != 0) {
+            __GXSetAmbMat(tempFlags);
         }
 
-        if (dirtyFlags & GX_DIRTY_MTX_IDX) {
+        tempFlags = dirtyFlags & GX_LIGHT_CHAN_MASK;
+        if (tempFlags != 0) {
+            __GXSetLightChan(tempFlags);
+        }
+
+        tempFlags = dirtyFlags & GX_TEX_GEN_MASK;
+        if (tempFlags != 0) {
+            __GXSetTexGen(tempFlags);
+        }
+
+        tempFlags = dirtyFlags & GX_DIRTY_MTX_IDX;
+        if (tempFlags != 0) {
             __GXSetMatrixIndex(0);
             __GXSetMatrixIndex(5);
         }
-        if (dirtyFlags & GX_DIRTY_VIEWPORT) {
+
+        tempFlags = dirtyFlags & GX_DIRTY_VIEWPORT;
+        if (tempFlags != 0) {
             __GXSetViewport();
         }
-        if (dirtyFlags & GX_DIRTY_PROJECTION) {
+
+        tempFlags = dirtyFlags & GX_DIRTY_PROJECTION;
+        if (tempFlags != 0) {
             __GXSetProjection();
         }
 
         __GXData->SHORTS_0x0[1] = 1;
     }
+
     __GXData->dirtyFlags = 0;
 }
 
@@ -139,7 +149,7 @@ void __GXSendFlushPrim(void) {
     u32 i;
     u32 sz = __GXData->SHORT_0x4 * __GXData->SHORT_0x6;
 
-    WGPIPE.c = GX_TRIANGLESTRIP;
+    WGPIPE.uc = GX_TRIANGLESTRIP;
     WGPIPE.us = __GXData->SHORT_0x4;
 
     for (i = 0; i < sz; i += 4) {
@@ -149,25 +159,25 @@ void __GXSendFlushPrim(void) {
     __GXData->SHORTS_0x0[1] = 1;
 }
 
-void GXSetLineWidth(u8 width, UNKWORD r5) {
+void GXSetLineWidth(u8 width, UNKWORD arg1) {
     __GXData->WORD_0x7C = GX_BITSET(__GXData->WORD_0x7C, 24, 8, width);
-    __GXData->WORD_0x7C = GX_BITSET(__GXData->WORD_0x7C, 13, 3, r5);
+    __GXData->WORD_0x7C = GX_BITSET(__GXData->WORD_0x7C, 13, 3, arg1);
     GX_WRITE_BP_CMD(__GXData->WORD_0x7C);
     __GXData->SHORTS_0x0[1] = 0;
 }
 
-void GXSetPointSize(u8 size, UNKWORD r5) {
+void GXSetPointSize(u8 size, UNKWORD arg1) {
     __GXData->WORD_0x7C = GX_BITSET(__GXData->WORD_0x7C, 16, 8, size);
-    __GXData->WORD_0x7C = GX_BITSET(__GXData->WORD_0x7C, 10, 3, r5);
+    __GXData->WORD_0x7C = GX_BITSET(__GXData->WORD_0x7C, 10, 3, arg1);
     GX_WRITE_BP_CMD(__GXData->WORD_0x7C);
     __GXData->SHORTS_0x0[1] = 0;
 }
 
-void GXEnableTexOffsets(UNKWORD coordId, GXBool8 r4, GXBool8 r5) {
+void GXEnableTexOffsets(UNKWORD coordId, GXBool8 arg1, GXBool8 arg2) {
     __GXData->WORDS_0x108[coordId] =
-        GX_BITSET(__GXData->WORDS_0x108[coordId], 13, 1, r4);
+        GX_BITSET(__GXData->WORDS_0x108[coordId], 13, 1, arg1);
     __GXData->WORDS_0x108[coordId] =
-        GX_BITSET(__GXData->WORDS_0x108[coordId], 12, 1, r5);
+        GX_BITSET(__GXData->WORDS_0x108[coordId], 12, 1, arg2);
     GX_WRITE_BP_CMD(__GXData->WORDS_0x108[coordId]);
     __GXData->SHORTS_0x0[1] = 0;
 }

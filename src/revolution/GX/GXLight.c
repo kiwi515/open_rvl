@@ -222,22 +222,23 @@ inline void CopyLightObj(register const GXLightObjImpl* src,
 
 void GXLoadLightObjImm(const GXLightObj* light, GXLightID id) {
     const GXLightObjImpl* impl;
+    u32 value;
     u32 num;
 
     impl = (GXLightObjImpl*)light;
     num = 31 - __cntlzw(id);
     num = (num % 8) << 4;
 
+    value = num + 0x600;
+    value |= 0xF0000;
+
     WGPIPE.c = GX_FIFO_LOAD_XF_REG;
-    WGPIPE.i = (num + 0x600) | 0x000F0000;
+    WGPIPE.i = value;
     CopyLightObj(impl, &WGPIPE);
 
     __GXData->SHORTS_0x0[1] = 1;
 }
 
-#ifndef NON_MATCHING
-#error GXLoadLightObjIndx has not yet been matched. (https://decomp.me/scratch/Hjd7g)
-#endif
 void GXLoadLightObjIndx(u32 index, GXLightID id) {
     u32 value;
     u32 num;
@@ -246,10 +247,11 @@ void GXLoadLightObjIndx(u32 index, GXLightID id) {
     num = 31 - __cntlzw(id);
     num = (num % 8) << 4;
 
-    WGPIPE.c = GX_FIFO_LOAD_INDX_D;
     value = GX_BITSET(value, 20, 12, num + 0x600);
     value |= 0xF000;
     value = GX_BITSET(value, 0, 16, index);
+
+    WGPIPE.c = GX_FIFO_LOAD_INDX_D;
     WGPIPE.i = value;
 
     __GXData->SHORTS_0x0[1] = 1;
@@ -343,20 +345,20 @@ void GXSetNumChans(u8 num) {
     __GXData->dirtyFlags |= GX_DIRTY_GEN_MODE;
 }
 
-void GXSetChanCtrl(GXChannelID chan, GXBool8 r4, GXColorSrc src0,
-                   GXColorSrc src1, GXLightID light, GXDiffuseFn diffFn,
+void GXSetChanCtrl(GXChannelID chan, GXBool8 enable, GXColorSrc ambSrc,
+                   GXColorSrc matSrc, GXLightID lightMask, GXDiffuseFn diffFn,
                    GXAttnFn attnFn) {
     u32 field = 0;
     const u32 idx = chan & 3;
 
-    field = GX_BITSET(field, 30, 1, r4);
-    field = GX_BITSET(field, 31, 1, src1);
-    field = GX_BITSET(field, 25, 1, src0);
+    field = GX_BITSET(field, 30, 1, enable);
+    field = GX_BITSET(field, 31, 1, matSrc);
+    field = GX_BITSET(field, 25, 1, ambSrc);
     field = GX_BITSET(field, 23, 2, attnFn == GX_AF_SPEC ? GX_DF_NONE : diffFn);
     field = GX_BITSET(field, 22, 1, attnFn != GX_AF_NONE);
     field = GX_BITSET(field, 21, 1, attnFn != GX_AF_SPEC);
-    field = GX_BITSET(field, 26, 4, (u32)light);
-    field = GX_BITSET(field, 17, 4, (u32)light >> 4);
+    field = GX_BITSET(field, 26, 4, (u32)lightMask);
+    field = GX_BITSET(field, 17, 4, (u32)lightMask >> 4);
 
     __GXData->WORDS_0xB8[idx] = field;
     __GXData->dirtyFlags |= (0x1000 << (idx));
