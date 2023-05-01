@@ -6,9 +6,7 @@
 extern "C" {
 #endif
 
-typedef struct _GXTexObj {
-    char UNK_0x0[0x20];
-} GXTexObj;
+GX_DECL_PUBLIC_STRUCT(GXTexObj, 32);
 
 void __GXSetSUTexRegs(void);
 

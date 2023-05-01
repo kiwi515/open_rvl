@@ -7,7 +7,7 @@ static GXData __savedGXdata;
 static GXFifoObj OldCPUFifo;
 
 void GXBeginDisplayList(void* list, u32 size) {
-    GXFifoObj* fifo = &DisplayListFifo;
+    GXFifoObjImpl* impl = (GXFifoObjImpl*)&DisplayListFifo;
 
     if (__GXData->dirtyFlags != 0) {
         __GXSetDirtyState();
@@ -17,12 +17,12 @@ void GXBeginDisplayList(void* list, u32 size) {
         memcpy(&__savedGXdata, __GXData, sizeof(GXData));
     }
 
-    fifo->base = list;
-    fifo->end = (u8*)list + size - 4;
-    fifo->size = size;
-    fifo->count = 0;
-    fifo->readPtr = list;
-    fifo->writePtr = list;
+    impl->base = list;
+    impl->end = (u8*)list + size - 4;
+    impl->size = size;
+    impl->count = 0;
+    impl->readPtr = list;
+    impl->writePtr = list;
 
     __GXData->dlistBegan = TRUE;
 
@@ -68,7 +68,7 @@ void GXCallDisplayList(void* list, u32 size) {
         __GXSendFlushPrim();
     }
 
-    WGPIPE.c = 0x40;
+    WGPIPE.c = GX_FIFO_CALL_DL;
     WGPIPE.p = list;
     WGPIPE.i = size;
 }

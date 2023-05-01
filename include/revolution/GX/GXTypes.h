@@ -6,7 +6,21 @@ extern "C" {
 #endif
 
 /**
- * @brief Common types used throughout many GX files.
+ * Pack value into bitfield.
+ * Value is shifted to the specified bit position.
+ */
+#define GX_BITSET(field, pos, size, value)                                     \
+    __rlwimi((field), (value), 31 - (pos) - (size) + 1, (pos), (pos) + (size)-1)
+
+/**
+ * Pack value into bitfield.
+ * Value is not shifted, only masked.
+ */
+#define GX_BITSET_TRUNC(field, mb, size, value)                                \
+    __rlwimi((field), (value), 0, (mb), (mb) + (size)-1)
+
+/**
+ * Common types used throughout many GX files.
  * To avoid circular depencies, common structures and all enums have been moved
  * here. Everything is organized in alphabetical order.
  */
