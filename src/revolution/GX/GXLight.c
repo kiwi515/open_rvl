@@ -190,71 +190,65 @@ void GXInitLightColor(GXLightObj* light, GXColor color) {
 }
 
 // TODO: This inline is fake, and also is a fake match (r6 hardcoded)
-inline void CopyLightObj(register const GXLightObjImpl* src,
-                         register volatile void* dst) {
+inline void WriteLightObj(register volatile void* dst,
+                          register const GXLightObjImpl* src) {
     register u32 color;
+    register f32 ps_0, ps_1, ps_2, ps_3, ps_4, ps_5;
 
     // clang-format off
     asm volatile {
         lwz color, src->color
         xor r6, r6, r6 // make zero
-        psq_l f5, GXLightObjImpl.aa(src), 0, 0
-        psq_l f4, GXLightObjImpl.ac(src), 0, 0
-        psq_l f3, GXLightObjImpl.kb(src), 0, 0
-        psq_l f2, GXLightObjImpl.posX(src), 0, 0
-        psq_l f1, GXLightObjImpl.posZ(src), 0, 0
-        psq_l f0, GXLightObjImpl.dirY(src), 0, 0
+        psq_l ps_0, GXLightObjImpl.aa(src),   0, 0
+        psq_l ps_1, GXLightObjImpl.ac(src),   0, 0
+        psq_l ps_2, GXLightObjImpl.kb(src),   0, 0
+        psq_l ps_3, GXLightObjImpl.posX(src), 0, 0
+        psq_l ps_4, GXLightObjImpl.posZ(src), 0, 0
+        psq_l ps_5, GXLightObjImpl.dirY(src), 0, 0
 
         stw r6, 0(dst)
         stw r6, 0(dst)
         stw r6, 0(dst)
             
-        stw color, 0(dst)
-        psq_st f5, 0(dst), 0, 0
-        psq_st f4, 0(dst), 0, 0
-        psq_st f3, 0(dst), 0, 0
-        psq_st f2, 0(dst), 0, 0
-        psq_st f1, 0(dst), 0, 0
-        psq_st f0, 0(dst), 0, 0
+        stw color,   0(dst)
+        psq_st ps_0, 0(dst), 0, 0
+        psq_st ps_1, 0(dst), 0, 0
+        psq_st ps_2, 0(dst), 0, 0
+        psq_st ps_3, 0(dst), 0, 0
+        psq_st ps_4, 0(dst), 0, 0
+        psq_st ps_5, 0(dst), 0, 0
     }
     // clang-format on
 }
 
 void GXLoadLightObjImm(const GXLightObj* light, GXLightID id) {
     const GXLightObjImpl* impl;
-    u32 value;
     u32 num;
 
     impl = (GXLightObjImpl*)light;
     num = 31 - __cntlzw(id);
-    num = (num % 8) << 4;
+    num = (num % 8) * 16;
 
-    value = num + 0x600;
-    value |= 0xF0000;
-
-    WGPIPE.c = GX_FIFO_LOAD_XF_REG;
-    WGPIPE.i = value;
-    CopyLightObj(impl, &WGPIPE);
-
-    __GXData->SHORTS_0x0[1] = 1;
+    GX_LOAD_XF_REG_NSIZE(16 - 1, num + GX_XF_MEM_LIGHTOBJ);
+    WriteLightObj(&WGPIPE, impl);
+    gxdt->xfWritten = TRUE;
 }
 
-void GXLoadLightObjIndx(u32 index, GXLightID id) {
-    u32 value;
+void GXLoadLightObjIndx(u16 index, GXLightID id) {
+    u32 cmd;
     u32 num;
 
-    value = 0;
+    cmd = 0;
     num = 31 - __cntlzw(id);
-    num = (num % 8) << 4;
+    num = (num % 8) * 16;
 
-    value = GX_BITSET(value, 20, 12, num + 0x600);
-    value |= 0xF000;
-    value = GX_BITSET(value, 0, 16, index);
+    cmd = GX_BITSET(cmd, 20, 12, num + GX_XF_MEM_LIGHTOBJ);
+    cmd |= (16 - 1) << 12;
+    cmd = GX_BITSET(cmd, 0, 16, index);
 
     WGPIPE.c = GX_FIFO_LOAD_INDX_D;
-    WGPIPE.i = value;
-
-    __GXData->SHORTS_0x0[1] = 1;
+    WGPIPE.i = cmd;
+    gxdt->xfWritten = TRUE;
 }
 
 void GXSetChanAmbColor(GXChannelID chan, GXColor color) {
@@ -263,23 +257,21 @@ void GXSetChanAmbColor(GXChannelID chan, GXColor color) {
 
     switch (chan) {
     case GX_COLOR0:
-        ambColor = GX_BITSET_TRUNC(*(u32*)&__GXData->ambColors[0], 0, 24,
-                                   *(u32*)&color);
+        ambColor =
+            GX_BITSET_TRUNC(*(u32*)&gxdt->ambColors[0], 0, 24, *(u32*)&color);
         colorId = 0;
         break;
     case GX_COLOR1:
-        ambColor = GX_BITSET_TRUNC(*(u32*)&__GXData->ambColors[1], 0, 24,
-                                   *(u32*)&color);
+        ambColor =
+            GX_BITSET_TRUNC(*(u32*)&gxdt->ambColors[1], 0, 24, *(u32*)&color);
         colorId = 1;
         break;
     case GX_ALPHA0:
-        ambColor =
-            GX_BITSET_TRUNC(*(u32*)&__GXData->ambColors[0], 24, 8, color.a);
+        ambColor = GX_BITSET_TRUNC(*(u32*)&gxdt->ambColors[0], 24, 8, color.a);
         colorId = 0;
         break;
     case GX_ALPHA1:
-        ambColor =
-            GX_BITSET_TRUNC(*(u32*)&__GXData->ambColors[1], 24, 8, color.a);
+        ambColor = GX_BITSET_TRUNC(*(u32*)&gxdt->ambColors[1], 24, 8, color.a);
         colorId = 1;
         break;
     case GX_COLOR0A0:
@@ -294,8 +286,8 @@ void GXSetChanAmbColor(GXChannelID chan, GXColor color) {
         return;
     }
 
-    __GXData->dirtyFlags |= GX_DIRTY_AMB_COLOR0 << colorId;
-    *(u32*)&__GXData->ambColors[colorId] = ambColor;
+    gxdt->dirtyFlags |= GX_DIRTY_AMB_COLOR0 << colorId;
+    *(u32*)&gxdt->ambColors[colorId] = ambColor;
 }
 
 void GXSetChanMatColor(GXChannelID chan, GXColor color) {
@@ -304,23 +296,21 @@ void GXSetChanMatColor(GXChannelID chan, GXColor color) {
 
     switch (chan) {
     case GX_COLOR0:
-        matColor = GX_BITSET_TRUNC(*(u32*)&__GXData->matColors[0], 0, 24,
-                                   *(u32*)&color);
+        matColor =
+            GX_BITSET_TRUNC(*(u32*)&gxdt->matColors[0], 0, 24, *(u32*)&color);
         colorId = 0;
         break;
     case GX_COLOR1:
-        matColor = GX_BITSET_TRUNC(*(u32*)&__GXData->matColors[1], 0, 24,
-                                   *(u32*)&color);
+        matColor =
+            GX_BITSET_TRUNC(*(u32*)&gxdt->matColors[1], 0, 24, *(u32*)&color);
         colorId = 1;
         break;
     case GX_ALPHA0:
-        matColor =
-            GX_BITSET_TRUNC(*(u32*)&__GXData->matColors[0], 24, 8, color.a);
+        matColor = GX_BITSET_TRUNC(*(u32*)&gxdt->matColors[0], 24, 8, color.a);
         colorId = 0;
         break;
     case GX_ALPHA1:
-        matColor =
-            GX_BITSET_TRUNC(*(u32*)&__GXData->matColors[1], 24, 8, color.a);
+        matColor = GX_BITSET_TRUNC(*(u32*)&gxdt->matColors[1], 24, 8, color.a);
         colorId = 1;
         break;
     case GX_COLOR0A0:
@@ -335,14 +325,14 @@ void GXSetChanMatColor(GXChannelID chan, GXColor color) {
         return;
     }
 
-    __GXData->dirtyFlags |= GX_DIRTY_MAT_COLOR0 << colorId;
-    *(u32*)&__GXData->matColors[colorId] = matColor;
+    gxdt->dirtyFlags |= GX_DIRTY_MAT_COLOR0 << colorId;
+    *(u32*)&gxdt->matColors[colorId] = matColor;
 }
 
 void GXSetNumChans(u8 num) {
-    __GXData->WORD_0x254 = GX_BITSET(__GXData->WORD_0x254, 25, 3, num);
-    __GXData->dirtyFlags |= 0x1000000;
-    __GXData->dirtyFlags |= GX_DIRTY_GEN_MODE;
+    gxdt->genMode = GX_BITSET(gxdt->genMode, 25, 3, num);
+    gxdt->dirtyFlags |= 0x1000000;
+    gxdt->dirtyFlags |= GX_DIRTY_GEN_MODE;
 }
 
 void GXSetChanCtrl(GXChannelID chan, GXBool8 enable, GXColorSrc ambSrc,
@@ -360,14 +350,14 @@ void GXSetChanCtrl(GXChannelID chan, GXBool8 enable, GXColorSrc ambSrc,
     field = GX_BITSET(field, 26, 4, (u32)lightMask);
     field = GX_BITSET(field, 17, 4, (u32)lightMask >> 4);
 
-    __GXData->WORDS_0xB8[idx] = field;
-    __GXData->dirtyFlags |= (0x1000 << (idx));
+    gxdt->colorControl[idx] = field;
+    gxdt->dirtyFlags |= (0x1000 << (idx));
 
     if (chan == GX_COLOR0A0) {
-        __GXData->WORD_0xC0 = field;
-        __GXData->dirtyFlags |= 0x5000;
+        gxdt->colorControl[GX_ALPHA0] = field;
+        gxdt->dirtyFlags |= 0x5000;
     } else if (chan == GX_COLOR1A1) {
-        __GXData->WORD_0xC4 = field;
-        __GXData->dirtyFlags |= 0xA000;
+        gxdt->colorControl[GX_ALPHA1] = field;
+        gxdt->dirtyFlags |= 0xA000;
     }
 }

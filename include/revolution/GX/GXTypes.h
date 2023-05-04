@@ -138,6 +138,13 @@ typedef enum _GXChannelID {
     GX_COLOR_NULL = 255
 } GXChannelID;
 
+// TODO: Fabricated names from patent
+typedef enum _GXClipMode {
+    // "ClipDisable" in XF mem, so 0 = enable
+    GX_CLIP_ENABLE,
+    GX_CLIP_DISABLE,
+} GXClipMode;
+
 typedef enum _GXColorSrc { GX_SRC_REG, GX_SRC_VTX } GXColorSrc;
 
 typedef enum _GXCompare {
@@ -319,6 +326,16 @@ typedef enum _GXLogicOp {
     GX_LO_SET
 } GXLogicOp;
 
+// TODO: Fabricated name
+typedef enum _GXMtxType {
+    GX_MTX_3x4,
+    GX_MTX_2x4,
+} GXMtxType;
+
+/**
+ * Matrix column index into XF memory.
+ * (Multiply by row dimension to get XF mem offset)
+ */
 typedef enum _GXPosNrmMtx {
     GX_PNMTX0 = 0,
     GX_PNMTX1 = 3,
@@ -341,6 +358,11 @@ typedef enum _GXPrimitive {
     GX_TRIANGLEFAN = 0xA0,
     GX_QUADS = 0x80,
 } GXPrimitive;
+
+typedef enum _GXProjectionType {
+    GX_PERSPECTIVE,
+    GX_ORTHOGRAPHIC
+} GXProjectionType;
 
 typedef enum _GXSpotFn {
     GX_SP_OFF,
@@ -654,6 +676,33 @@ typedef enum _GXTexMapID {
     GX_TEX_DISABLE
 } GXTexMapID;
 
+// TODO: Fabricated names
+typedef enum _GXTexMtx {
+    // Any dimension (in standard XF matrix memory)
+    GX_TEXMTX0 = 30,
+    GX_TEXMTX1 = 33,
+    GX_TEXMTX2 = 36,
+    GX_TEXMTX3 = 39,
+    GX_TEXMTX4 = 42,
+    GX_TEXMTX5 = 45,
+    GX_TEXMTX6 = 48,
+    GX_TEXMTX7 = 51,
+    GX_TEXMTX8 = 54,
+    GX_TEXMTX9 = 57,
+
+    // 3x4 matrices (in dual-tex XF matrix memory)
+    GX_DTEXMTX0 = 64,
+    GX_DTEXMTX1 = 67,
+    GX_DTEXMTX2 = 70,
+    GX_DTEXMTX3 = 73,
+    GX_DTEXMTX4 = 76,
+    GX_DTEXMTX5 = 79,
+    GX_DTEXMTX6 = 82,
+    GX_DTEXMTX7 = 85,
+    GX_DTEXMTX8 = 88,
+    GX_DTEXMTX9 = 91,
+} GXTexMtx;
+
 typedef enum _GXTexWrapMode {
     GX_CLAMP,
     GX_REPEAT,
@@ -669,6 +718,11 @@ typedef enum _GXTlutFmt {
 
     GX_MAX_TLUTFMT
 } GXTlutFmt;
+
+// TODO: Fabricated name
+typedef enum _GXVtxFmtIdx {
+    GX_VTXFMT0, // from patent
+} GXVtxFmtIdx;
 
 #ifdef __cplusplus
 }
