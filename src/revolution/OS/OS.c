@@ -749,7 +749,7 @@ static asm void OSExceptionVector(void) {
 
     mtsprg0 r4
     
-    // Currrent OS context (physical address)
+    // Current OS context (physical address)
     lwz r4, 0x000000C0(0)
     stw r3, OSContext.gprs[3](r4)
     mfsprg0 r3
