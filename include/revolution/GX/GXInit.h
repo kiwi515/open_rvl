@@ -45,8 +45,8 @@ typedef struct _GXData {
     u32 genMode; // at 0x254
     char UNK_0x258[0x520 - 0x258];
     GXAttrType normalType;  // at 0x520
-    u8 normal;              // at 0x524
-    u8 binormal;            // at 0x525
+    GXBool normal;          // at 0x524
+    GXBool binormal;        // at 0x525
     GXProjMtxType projType; // at 0x528
     f32 proj[6];            // at 0x52C
     union {
@@ -63,8 +63,8 @@ typedef struct _GXData {
     f32 offsetZ; // at 0x55C
     f32 scaleZ;  // at 0x560
     char UNK_0x564[0x5F8 - 0x564];
-    u8 dlistActive; // at 0x5F8
-    u8 dlistSave;   // at 0x5F9
+    GXBool dlistActive; // at 0x5F8
+    GXBool dlistSave;   // at 0x5F9
     u8 BYTE_0x5FA;
     u8 vatDirtyFlags; // at 0x5FB
     u32 gxDirtyFlags; // at 0x5FC
