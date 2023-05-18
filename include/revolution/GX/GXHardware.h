@@ -146,22 +146,22 @@ typedef enum {
  * Enums for Tex0-Tex7 register fields
  */
 typedef enum {
-    GX_XF_TEX_PROJ_ST, // (s,t): texmul is 2x4
-    GX_XF_TEX_PROJ_STQ // (s,t,q): texmul is 3x4
+    GX_XF_TEX_PROJ_ST, //! (s,t): texmul is 2x4
+    GX_XF_TEX_PROJ_STQ //! (s,t,q): texmul is 3x4
 } GXXfTexProj;
 
 typedef enum {
-    GX_XF_TEX_FORM_AB11, // (A, B, 1.0, 1.0) (used for regular texture source)
-    GX_XF_TEX_FORM_ABC1  // (A, B, C, 1.0) (used for geometry or normal source)
+    GX_XF_TEX_FORM_AB11, //! (A, B, 1.0, 1.0) (used for regular texture source)
+    GX_XF_TEX_FORM_ABC1  //! (A, B, C, 1.0) (used for geometry or normal source)
 } GXXfTexForm;
 
 typedef enum {
-    GX_XF_TG_REGULAR, // Regular transformation (transform incoming data)
-    GX_XF_TG_BUMP,    // Texgen bump mapping
-    GX_XF_TG_CLR0,    // Color texgen: (s,t)=(r,g:b) (g and b are concatenated),
-                      // color0
-    GX_XF_TG_CLR1     // Color texgen: (s,t)=(r,g:b) (g and b are concatenated),
-                      // color 1
+    GX_XF_TG_REGULAR, //! Regular transformation (transform incoming data)
+    GX_XF_TG_BUMP,    //! Texgen bump mapping
+    GX_XF_TG_CLR0, //! Color texgen: (s,t)=(r,g:b) (g and b are concatenated),
+                   //! color0
+    GX_XF_TG_CLR1  //! Color texgen: (s,t)=(r,g:b) (g and b are concatenated),
+                   //! color 1
 } GXXfTexGen;
 
 #ifdef __cplusplus
