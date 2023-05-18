@@ -1,6 +1,7 @@
 #ifndef MSL_CPP_CWCHAR_H
 #define MSL_CPP_CWCHAR_H
 #include <wchar.h>
+#ifdef __cplusplus
 
 namespace std {
 using ::mbstowcs;
@@ -15,4 +16,5 @@ using ::wcsncpy;
 using ::wcstombs;
 } // namespace std
 
+#endif
 #endif

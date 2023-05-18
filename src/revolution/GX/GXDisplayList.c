@@ -9,11 +9,11 @@ static GXFifoObj OldCPUFifo;
 void GXBeginDisplayList(void* list, u32 size) {
     GXFifoObjImpl* impl = (GXFifoObjImpl*)&DisplayListFifo;
 
-    if (gxdt->dirtyFlags != 0) {
+    if (gxdt->gxDirtyFlags != 0) {
         __GXSetDirtyState();
     }
 
-    if (gxdt->BYTE_0x5F9) {
+    if (gxdt->dlistSave) {
         memcpy(&__savedGXdata, gxdt, sizeof(GXData));
     }
 
@@ -24,7 +24,7 @@ void GXBeginDisplayList(void* list, u32 size) {
     impl->readPtr = list;
     impl->writePtr = list;
 
-    gxdt->dlistBegan = TRUE;
+    gxdt->dlistActive = TRUE;
 
     GXGetCPUFifo(&OldCPUFifo);
     GXSetCPUFifo(&DisplayListFifo);
@@ -34,23 +34,23 @@ void GXBeginDisplayList(void* list, u32 size) {
 u32 GXEndDisplayList(void) {
     u8 wrap;
     BOOL enabled;
-    UNKWORD bak;
+    u32 ctrl;
 
     GXGetCPUFifo(&DisplayListFifo);
     wrap = GXGetFifoWrap(&DisplayListFifo);
     GXSetCPUFifo(&OldCPUFifo);
 
-    if (gxdt->BYTE_0x5F9) {
+    if (gxdt->dlistSave) {
         enabled = OSDisableInterrupts();
 
-        bak = gxdt->WORD_0x8;
+        ctrl = gxdt->cpCtrlReg;
         memcpy(gxdt, &__savedGXdata, sizeof(GXData));
-        gxdt->WORD_0x8 = bak;
+        gxdt->cpCtrlReg = ctrl;
 
         OSRestoreInterrupts(enabled);
     }
 
-    gxdt->dlistBegan = FALSE;
+    gxdt->dlistActive = FALSE;
 
     if (!wrap) {
         return GXGetFifoCount(&DisplayListFifo);
@@ -60,7 +60,7 @@ u32 GXEndDisplayList(void) {
 }
 
 void GXCallDisplayList(void* list, u32 size) {
-    if (gxdt->dirtyFlags != 0) {
+    if (gxdt->gxDirtyFlags != 0) {
         __GXSetDirtyState();
     }
 

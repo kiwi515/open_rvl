@@ -1,6 +1,8 @@
 #include <math.h>
 #include <revolution/GX.h>
 
+#define XF_MEM_LOBJ_SIZE 16
+
 void GXInitLightAttn(GXLightObj* light, f32 aa, f32 ab, f32 ac, f32 ka, f32 kb,
                      f32 kc) {
     GXLightObjImpl* impl = (GXLightObjImpl*)light;
@@ -227,9 +229,9 @@ void GXLoadLightObjImm(const GXLightObj* light, GXLightID id) {
 
     impl = (GXLightObjImpl*)light;
     num = 31 - __cntlzw(id);
-    num = (num % 8) * 16;
+    num = (num % 8) * XF_MEM_LOBJ_SIZE;
 
-    GX_LOAD_XF_REG_NSIZE(16 - 1, num + GX_XF_MEM_LIGHTOBJ);
+    GX_XF_LOAD_REGS(XF_MEM_LOBJ_SIZE - 1, num + GX_XF_MEM_LIGHTOBJ);
     WriteLightObj(&WGPIPE, impl);
     gxdt->xfWritten = TRUE;
 }
@@ -240,10 +242,10 @@ void GXLoadLightObjIndx(u16 index, GXLightID id) {
 
     cmd = 0;
     num = 31 - __cntlzw(id);
-    num = (num % 8) * 16;
+    num = (num % 8) * XF_MEM_LOBJ_SIZE;
 
     cmd = GX_BITSET(cmd, 20, 12, num + GX_XF_MEM_LIGHTOBJ);
-    cmd |= (16 - 1) << 12;
+    cmd = GX_BITSET(cmd, 16, 4, XF_MEM_LOBJ_SIZE - 1);
     cmd = GX_BITSET(cmd, 0, 16, index);
 
     WGPIPE.c = GX_FIFO_LOAD_INDX_D;
@@ -286,7 +288,7 @@ void GXSetChanAmbColor(GXChannelID chan, GXColor color) {
         return;
     }
 
-    gxdt->dirtyFlags |= GX_DIRTY_AMB_COLOR0 << colorId;
+    gxdt->gxDirtyFlags |= GX_DIRTY_AMB_COLOR0 << colorId;
     *(u32*)&gxdt->ambColors[colorId] = ambColor;
 }
 
@@ -325,39 +327,42 @@ void GXSetChanMatColor(GXChannelID chan, GXColor color) {
         return;
     }
 
-    gxdt->dirtyFlags |= GX_DIRTY_MAT_COLOR0 << colorId;
+    gxdt->gxDirtyFlags |= GX_DIRTY_MAT_COLOR0 << colorId;
     *(u32*)&gxdt->matColors[colorId] = matColor;
 }
 
 void GXSetNumChans(u8 num) {
     gxdt->genMode = GX_BITSET(gxdt->genMode, 25, 3, num);
-    gxdt->dirtyFlags |= 0x1000000;
-    gxdt->dirtyFlags |= GX_DIRTY_GEN_MODE;
+    gxdt->gxDirtyFlags |= GX_DIRTY_NUM_COLORS;
+    gxdt->gxDirtyFlags |= GX_DIRTY_GEN_MODE;
 }
 
-void GXSetChanCtrl(GXChannelID chan, GXBool8 enable, GXColorSrc ambSrc,
+void GXSetChanCtrl(GXChannelID chan, GXBool enable, GXColorSrc ambSrc,
                    GXColorSrc matSrc, GXLightID lightMask, GXDiffuseFn diffFn,
                    GXAttnFn attnFn) {
-    u32 field = 0;
-    const u32 idx = chan & 3;
+    const u32 regIdx = (u32)chan % 4;
 
-    field = GX_BITSET(field, 30, 1, enable);
-    field = GX_BITSET(field, 31, 1, matSrc);
-    field = GX_BITSET(field, 25, 1, ambSrc);
-    field = GX_BITSET(field, 23, 2, attnFn == GX_AF_SPEC ? GX_DF_NONE : diffFn);
-    field = GX_BITSET(field, 22, 1, attnFn != GX_AF_NONE);
-    field = GX_BITSET(field, 21, 1, attnFn != GX_AF_SPEC);
-    field = GX_BITSET(field, 26, 4, (u32)lightMask);
-    field = GX_BITSET(field, 17, 4, (u32)lightMask >> 4);
+    u32 reg = 0;
+    GX_XF_SET_COLOR0CNTRL_LIGHT(reg, enable);
+    GX_XF_SET_COLOR0CNTRL_MATSRC(reg, matSrc);
+    GX_XF_SET_COLOR0CNTRL_AMBSRC(reg, ambSrc);
+    GX_XF_SET_COLOR0CNTRL_DIFFUSEATTN(reg, attnFn == GX_AF_SPEC ? GX_DF_NONE
+                                                                : diffFn);
+    GX_XF_SET_COLOR0CNTRL_ATTNENABLE(reg, attnFn != GX_AF_NONE);
+    GX_XF_SET_COLOR0CNTRL_ATTNSELECT(reg, attnFn != GX_AF_SPEC);
+    GX_XF_SET_COLOR0CNTRL_LMASKHI(reg, (u32)lightMask);
+    GX_XF_SET_COLOR0CNTRL_LMASKLO(reg, (u32)lightMask >> 4);
 
-    gxdt->colorControl[idx] = field;
-    gxdt->dirtyFlags |= (0x1000 << (idx));
+    gxdt->colorControl[regIdx] = reg;
+    gxdt->gxDirtyFlags |= GX_DIRTY_CHAN_COLOR0 << (regIdx);
 
     if (chan == GX_COLOR0A0) {
-        gxdt->colorControl[GX_ALPHA0] = field;
-        gxdt->dirtyFlags |= 0x5000;
+        gxdt->colorControl[GX_ALPHA0] = reg;
+        gxdt->gxDirtyFlags |= GX_DIRTY_CHAN_COLOR0;
+        gxdt->gxDirtyFlags |= GX_DIRTY_CHAN_ALPHA0;
     } else if (chan == GX_COLOR1A1) {
-        gxdt->colorControl[GX_ALPHA1] = field;
-        gxdt->dirtyFlags |= 0xA000;
+        gxdt->colorControl[GX_ALPHA1] = reg;
+        gxdt->gxDirtyFlags |= GX_DIRTY_CHAN_COLOR1;
+        gxdt->gxDirtyFlags |= GX_DIRTY_CHAN_ALPHA1;
     }
 }

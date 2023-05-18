@@ -3,9 +3,9 @@
 void GXSetTevIndirect(GXTevStageID tevStage, GXIndTexStageID texStage,
                       GXIndTexFormat texFmt, GXIndTexBiasSel biasSel,
                       GXIndTexMtxID mtxId, GXIndTexWrap wrapS,
-                      GXIndTexWrap wrapT, GXBool8 addPrev, GXBool8 utcLod,
+                      GXIndTexWrap wrapT, GXBool addPrev, GXBool utcLod,
                       GXIndTexAlphaSel alphaSel) {
-    u32 opcode = tevStage + GX_BP_REG_IND_CMD;
+    u32 opcode = tevStage + GX_BP_REG_INDTEVSTAGE0;
 
     u32 cmd = 0;
     cmd = GX_BITSET(cmd, 30, 2, texStage);
@@ -17,7 +17,7 @@ void GXSetTevIndirect(GXTevStageID tevStage, GXIndTexStageID texStage,
     cmd = GX_BITSET(cmd, 13, 3, wrapT);
     cmd = GX_BITSET(cmd, 12, 1, utcLod);
     cmd = GX_BITSET(cmd, 11, 1, addPrev);
-    cmd = GX_BITSET(cmd, 0, 8, opcode);
+    GX_BP_SET_OPCODE(cmd, opcode);
 
     GX_LOAD_BP_REG(cmd);
     gxdt->xfWritten = FALSE;
@@ -49,27 +49,31 @@ void GXSetIndTexMtx(GXIndTexMtxID id, const f32 offset[2][3], s8 scaleExp) {
         index = 0;
     }
 
-    scaleExp += 0x11;
+    scaleExp += 17;
 
     cmd = 0;
     cmd = GX_BITSET(cmd, 21, 11, 1024.0f * offset[0][0]);
     cmd = GX_BITSET(cmd, 10, 11, 1024.0f * offset[1][0]);
     cmd = GX_BITSET(cmd, 8, 2, scaleExp);
-    GX_BP_CMD_SET_OPCODE(cmd, (index * 4) - index + GX_BP_REG_IND_MTXA);
+    GX_BP_SET_OPCODE(cmd, index * 3 + GX_BP_REG_INDMTX0A);
     GX_LOAD_BP_REG(cmd);
 
     cmd = 0;
     cmd = GX_BITSET(cmd, 21, 11, 1024.0f * offset[0][1]);
     cmd = GX_BITSET(cmd, 10, 11, 1024.0f * offset[1][1]);
+    // TODO: Match using GX_BITSET
+    // cmd = GX_BITSET(cmd, 8, 2, scaleExp >> 2 & 3);
     cmd = __rlwimi(cmd, scaleExp, 20, 8, 9);
-    GX_BP_CMD_SET_OPCODE(cmd, (index * 4) - index + GX_BP_REG_IND_MTXB);
+    GX_BP_SET_OPCODE(cmd, index * 3 + GX_BP_REG_INDMTX0B);
     GX_LOAD_BP_REG(cmd);
 
     cmd = 0;
     cmd = GX_BITSET(cmd, 21, 11, 1024.0f * offset[0][2]);
     cmd = GX_BITSET(cmd, 10, 11, 1024.0f * offset[1][2]);
+    // TODO: Match using GX_BITSET
+    // cmd = GX_BITSET(cmd, 8, 2, scaleExp >> 4 & 3);
     cmd = __rlwimi(cmd, scaleExp, 18, 8, 9);
-    GX_BP_CMD_SET_OPCODE(cmd, (index * 4) - index + GX_BP_REG_IND_MTXC);
+    GX_BP_SET_OPCODE(cmd, index * 3 + GX_BP_REG_INDMTX0C);
     GX_LOAD_BP_REG(cmd);
 
     gxdt->xfWritten = FALSE;
@@ -81,25 +85,25 @@ void GXSetIndTexCoordScale(GXIndTexStageID stage, GXIndTexScale scaleS,
     case GX_INDTEXSTAGE0:
         gxdt->ras1_ss0 = GX_BITSET(gxdt->ras1_ss0, 28, 4, scaleS);
         gxdt->ras1_ss0 = GX_BITSET(gxdt->ras1_ss0, 24, 4, scaleT);
-        GX_BP_CMD_SET_OPCODE(gxdt->ras1_ss0, GX_BP_REG_RAS1_SS0);
+        GX_BP_SET_OPCODE(gxdt->ras1_ss0, GX_BP_REG_RAS1_SS0);
         GX_LOAD_BP_REG(gxdt->ras1_ss0);
         break;
     case GX_INDTEXSTAGE1:
         gxdt->ras1_ss0 = GX_BITSET(gxdt->ras1_ss0, 20, 4, scaleS);
         gxdt->ras1_ss0 = GX_BITSET(gxdt->ras1_ss0, 16, 4, scaleT);
-        GX_BP_CMD_SET_OPCODE(gxdt->ras1_ss0, GX_BP_REG_RAS1_SS0);
+        GX_BP_SET_OPCODE(gxdt->ras1_ss0, GX_BP_REG_RAS1_SS0);
         GX_LOAD_BP_REG(gxdt->ras1_ss0);
         break;
     case GX_INDTEXSTAGE2:
         gxdt->ras1_ss1 = GX_BITSET(gxdt->ras1_ss1, 28, 4, scaleS);
         gxdt->ras1_ss1 = GX_BITSET(gxdt->ras1_ss1, 24, 4, scaleT);
-        GX_BP_CMD_SET_OPCODE(gxdt->ras1_ss1, GX_BP_REG_RAS1_SS1);
+        GX_BP_SET_OPCODE(gxdt->ras1_ss1, GX_BP_REG_RAS1_SS1);
         GX_LOAD_BP_REG(gxdt->ras1_ss1);
         break;
     case GX_INDTEXSTAGE3:
         gxdt->ras1_ss1 = GX_BITSET(gxdt->ras1_ss1, 20, 4, scaleS);
         gxdt->ras1_ss1 = GX_BITSET(gxdt->ras1_ss1, 16, 4, scaleT);
-        GX_BP_CMD_SET_OPCODE(gxdt->ras1_ss1, GX_BP_REG_RAS1_SS1);
+        GX_BP_SET_OPCODE(gxdt->ras1_ss1, GX_BP_REG_RAS1_SS1);
         GX_LOAD_BP_REG(gxdt->ras1_ss1);
         break;
     }
@@ -137,14 +141,15 @@ void GXSetIndTexOrder(GXIndTexStageID stage, GXTexCoordID coord,
     }
 
     GX_LOAD_BP_REG(gxdt->ras1_iref);
-    gxdt->dirtyFlags |= 0x3;
+    gxdt->gxDirtyFlags |= GX_DIRTY_SU_TEX;
+    gxdt->gxDirtyFlags |= GX_DIRTY_BP_MASK;
     gxdt->xfWritten = FALSE;
 }
 
 void GXSetNumIndStages(u8 num) {
     gxdt->genMode = GX_BITSET(gxdt->genMode, 13, 3, num);
-    gxdt->dirtyFlags |= GX_DIRTY_BP_MASK;
-    gxdt->dirtyFlags |= GX_DIRTY_GEN_MODE;
+    gxdt->gxDirtyFlags |= GX_DIRTY_BP_MASK;
+    gxdt->gxDirtyFlags |= GX_DIRTY_GEN_MODE;
 }
 
 void GXSetTevDirect(GXTevStageID stage) {

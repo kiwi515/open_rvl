@@ -52,12 +52,12 @@ void __GXSetProjection(void) {
     // Temp required to match
     volatile void* wgpipe = &WGPIPE;
 
-    GX_LOAD_XF_REG_NSIZE(ARRAY_LENGTH(gxdt->proj), GX_XF_REG_PROJECTIONA);
+    GX_XF_LOAD_REGS(ARRAY_LENGTH(gxdt->proj), GX_XF_REG_PROJECTIONA);
     WriteProjPS(wgpipe, gxdt->proj);
     WGPIPE.i = gxdt->projType;
 }
 
-void GXSetProjection(const Mtx44 proj, GXProjectionType type) {
+void GXSetProjection(const Mtx44 proj, GXProjMtxType type) {
     gxdt->projType = type;
 
     gxdt->proj[0] = proj[0][0];
@@ -73,13 +73,13 @@ void GXSetProjection(const Mtx44 proj, GXProjectionType type) {
         gxdt->proj[3] = proj[1][2];
     }
 
-    gxdt->dirtyFlags |= GX_DIRTY_PROJECTION;
+    gxdt->gxDirtyFlags |= GX_DIRTY_PROJECTION;
 }
 
 void GXSetProjectionv(const f32 proj[7]) {
     gxdt->projType = proj[0] == 0.0f ? GX_PERSPECTIVE : GX_ORTHOGRAPHIC;
     Copy6Floats(gxdt->proj, proj + 1);
-    gxdt->dirtyFlags |= GX_DIRTY_PROJECTION;
+    gxdt->gxDirtyFlags |= GX_DIRTY_PROJECTION;
 }
 
 void GXGetProjectionv(f32 proj[7]) {
@@ -151,7 +151,7 @@ inline void WriteMTXPS4x2(register volatile void* dst, register const Mtx src) {
 
 void GXLoadPosMtxImm(const Mtx mtx, u32 id) {
     // Position matrices are 4x3
-    GX_LOAD_XF_REG_NSIZE(4 * 3 - 1, id * 4 + GX_XF_MEM_POSMTX);
+    GX_XF_LOAD_REGS(4 * 3 - 1, id * 4 + GX_XF_MEM_POSMTX);
     WriteMTXPS4x3(&WGPIPE, mtx);
 }
 
@@ -168,7 +168,7 @@ void GXLoadPosMtxIndx(u16 index, u32 id) {
 
 void GXLoadNrmMtxImm(const Mtx mtx, u32 id) {
     // Normal matrices are 3x3
-    GX_LOAD_XF_REG_NSIZE(3 * 3 - 1, id * 3 + GX_XF_MEM_NRMMTX);
+    GX_XF_LOAD_REGS(3 * 3 - 1, id * 3 + GX_XF_MEM_NRMMTX);
     WriteMTXPS3x3(&WGPIPE, mtx);
 }
 
@@ -184,8 +184,8 @@ void GXLoadNrmMtxIndx3x3(u16 index, u32 id) {
 }
 
 void GXSetCurrentMtx(u32 id) {
-    gxdt->matrixIndex0 = GX_BITSET(gxdt->matrixIndex0, 26, 6, id);
-    gxdt->dirtyFlags |= GX_DIRTY_MTX_IDX;
+    GX_XF_SET_MATRIXINDEX0_GEOM(gxdt->matrixIndex0, id);
+    gxdt->gxDirtyFlags |= GX_DIRTY_MTX_IDX;
 }
 
 void GXLoadTexMtxImm(const Mtx mtx, u32 id, GXMtxType type) {
@@ -199,7 +199,7 @@ void GXLoadTexMtxImm(const Mtx mtx, u32 id, GXMtxType type) {
     // Number of elements in matrix
     num = type == GX_MTX_2x4 ? (u64)(2 * 4) : 3 * 4;
 
-    GX_LOAD_XF_REG_NSIZE(num - 1, addr);
+    GX_XF_LOAD_REGS(num - 1, addr);
 
     if (type == GX_MTX_3x4) {
         WriteMTXPS4x3(&WGPIPE, mtx);
@@ -223,7 +223,7 @@ void __GXSetViewport(void) {
     c = far - near;
     f = far + gxdt->offsetZ;
 
-    GX_LOAD_XF_REG_NSIZE(6 - 1, GX_XF_REG_VIEWPORT);
+    GX_XF_LOAD_REGS(6 - 1, GX_XF_REG_SCALEX);
     WGPIPE.f = a;
     WGPIPE.f = b;
     WGPIPE.f = c;
@@ -247,7 +247,7 @@ void GXSetViewportJitter(f32 ox, f32 oy, f32 sx, f32 sy, f32 near, f32 far,
     gxdt->vpSy = sy;
     gxdt->vpNear = near;
     gxdt->vpFar = far;
-    gxdt->dirtyFlags |= GX_DIRTY_VIEWPORT;
+    gxdt->gxDirtyFlags |= GX_DIRTY_VIEWPORT;
 }
 
 void GXSetViewport(f32 ox, f32 oy, f32 sx, f32 sy, f32 near, f32 far) {
@@ -257,7 +257,7 @@ void GXSetViewport(f32 ox, f32 oy, f32 sx, f32 sy, f32 near, f32 far) {
     gxdt->vpSy = sy;
     gxdt->vpNear = near;
     gxdt->vpFar = far;
-    gxdt->dirtyFlags |= GX_DIRTY_VIEWPORT;
+    gxdt->gxDirtyFlags |= GX_DIRTY_VIEWPORT;
 }
 
 void GXGetViewportv(f32 view[6]) { Copy6Floats(view, gxdt->view); }
@@ -265,7 +265,7 @@ void GXGetViewportv(f32 view[6]) { Copy6Floats(view, gxdt->view); }
 void GXSetZScaleOffset(f32 scale, f32 offset) {
     gxdt->offsetZ = (f32)0xFFFFFF * offset;      // ???
     gxdt->scaleZ = 1.0f + (f32)0xFFFFFF * scale; // ???
-    gxdt->dirtyFlags |= GX_DIRTY_VIEWPORT;
+    gxdt->gxDirtyFlags |= GX_DIRTY_VIEWPORT;
 }
 
 void GXSetScissor(u32 x, u32 y, u32 w, u32 h) {
@@ -277,18 +277,18 @@ void GXSetScissor(u32 x, u32 y, u32 w, u32 h) {
     x2 = x1 + w - 1;
     y2 = y1 + h - 1;
 
-    cmd = gxdt->scissorX1Y1;
+    cmd = gxdt->scissorTL;
     cmd = GX_BITSET(cmd, 21, 11, y1);
     cmd = GX_BITSET(cmd, 9, 11, x1);
-    gxdt->scissorX1Y1 = cmd;
+    gxdt->scissorTL = cmd;
 
-    cmd = gxdt->scissorX2Y2;
+    cmd = gxdt->scissorBR;
     cmd = GX_BITSET(cmd, 21, 11, y2);
     cmd = GX_BITSET(cmd, 9, 11, x2);
-    gxdt->scissorX2Y2 = cmd;
+    gxdt->scissorBR = cmd;
 
-    GX_LOAD_BP_REG(gxdt->scissorX1Y1);
-    GX_LOAD_BP_REG(gxdt->scissorX2Y2);
+    GX_LOAD_BP_REG(gxdt->scissorTL);
+    GX_LOAD_BP_REG(gxdt->scissorBR);
     gxdt->xfWritten = FALSE;
 }
 
@@ -296,10 +296,10 @@ void GXGetScissor(u32* x, u32* y, u32* w, u32* h) {
     u32 y2, y1;
     u32 x2, x1;
 
-    x1 = gxdt->scissorX1Y1 >> 12 & 0x7FF;
-    y1 = gxdt->scissorX1Y1 & 0x7FF;
-    x2 = gxdt->scissorX2Y2 >> 12 & 0x7FF;
-    y2 = gxdt->scissorX2Y2 & 0x7FF;
+    x1 = GX_BITGET(gxdt->scissorTL, 9, 11);
+    y1 = GX_BITGET(gxdt->scissorTL, 21, 11);
+    x2 = GX_BITGET(gxdt->scissorBR, 9, 11);
+    y2 = GX_BITGET(gxdt->scissorBR, 21, 11);
 
     *x = x1 - 342;
     *y = y1 - 342;
@@ -311,25 +311,25 @@ void GXSetScissorBoxOffset(u32 ox, u32 oy) {
     u32 cmd = 0;
     cmd = GX_BITSET(cmd, 22, 10, (ox + 342) / 2);
     cmd = GX_BITSET(cmd, 12, 10, (oy + 342) / 2);
-    cmd = GX_BITSET(cmd, 0, 8, GX_BP_REG_SCISSOROFFSET);
+    GX_BP_SET_OPCODE(cmd, GX_BP_REG_SCISSOROFFSET);
     GX_LOAD_BP_REG(cmd);
 
     gxdt->xfWritten = FALSE;
 }
 
 void GXSetClipMode(GXClipMode mode) {
-    GX_LOAD_XF_REG(GX_XF_REG_CLIPDISABLE, mode);
+    GX_XF_LOAD_REG(GX_XF_REG_CLIPDISABLE, mode);
     gxdt->xfWritten = TRUE;
 }
 
 void __GXSetMatrixIndex(GXAttr index) {
     // Tex4 and after is stored in XF MatrixIndex1
     if (index < GX_VA_TEX4MTXIDX) {
-        GX_LOAD_CP_REG(GX_CP_REG_MATINDEX_A, gxdt->matrixIndex0);
-        GX_LOAD_XF_REG(GX_XF_REG_MATINDEXA, gxdt->matrixIndex0);
+        GX_CP_LOAD_REG(GX_CP_REG_MATRIXINDEXA, gxdt->matrixIndex0);
+        GX_XF_LOAD_REG(GX_XF_REG_MATRIXINDEX0, gxdt->matrixIndex0);
     } else {
-        GX_LOAD_CP_REG(GX_CP_REG_MATINDEX_B, gxdt->matrixIndex1);
-        GX_LOAD_XF_REG(GX_XF_REG_MATINDEXB, gxdt->matrixIndex1);
+        GX_CP_LOAD_REG(GX_CP_REG_MATRIXINDEXB, gxdt->matrixIndex1);
+        GX_XF_LOAD_REG(GX_XF_REG_MATRIXINDEX1, gxdt->matrixIndex1);
     }
 
     gxdt->xfWritten = TRUE;
