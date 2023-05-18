@@ -27,12 +27,12 @@ typedef struct _GXData {
     u32 matrixIndex0;        // at 0x80
     u32 matrixIndex1;        // at 0x84
     char UNK_0x88[0xA8 - 0x88];
-    GXColor ambColors[2];         // at 0xA8
-    GXColor matColors[2];         // at 0xB0
-    u32 colorControl[4];          // at 0xB8
-    u32 texRegs[8];               // at 0xC8
-    u32 dualTexRegs[8];           // at 0xE8
-    u32 txcRegs[GX_MAX_TEXCOORD]; // at 0x108
+    GXColor ambColors[2];             // at 0xA8
+    GXColor matColors[2];             // at 0xB0
+    u32 colorControl[4];              // at 0xB8
+    u32 texRegs[GX_MAX_TEXCOORD];     // at 0xC8
+    u32 dualTexRegs[GX_MAX_TEXCOORD]; // at 0xE8
+    u32 txcRegs[GX_MAX_TEXCOORD];     // at 0x108
     char UNK_0x128[0x148 - 0x128];
     u32 scissorTL; // at 0x148
     u32 scissorBR; // at 0x14C
