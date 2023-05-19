@@ -156,14 +156,8 @@ void GXLoadPosMtxImm(const Mtx mtx, u32 id) {
 }
 
 void GXLoadPosMtxIndx(u16 index, u32 id) {
-    u32 cmd = 0;
     // Position matrices are 4x3
-    cmd = GX_BITSET(cmd, 20, 12, id * 4);
-    cmd = GX_BITSET(cmd, 16, 4, 4 * 3 - 1);
-    cmd = GX_BITSET(cmd, 0, 16, index);
-
-    WGPIPE.c = GX_FIFO_LOAD_INDX_A;
-    WGPIPE.i = cmd;
+    GX_FIFO_LOAD_INDX_A(id * 4 + GX_XF_MEM_POSMTX, 4 * 3 - 1, index);
 }
 
 void GXLoadNrmMtxImm(const Mtx mtx, u32 id) {
@@ -173,14 +167,8 @@ void GXLoadNrmMtxImm(const Mtx mtx, u32 id) {
 }
 
 void GXLoadNrmMtxIndx3x3(u16 index, u32 id) {
-    u32 cmd = 0;
     // Normal matrices are 3x3
-    cmd = GX_BITSET(cmd, 20, 12, id * 3 + GX_XF_MEM_NRMMTX);
-    cmd = GX_BITSET(cmd, 16, 4, 3 * 3 - 1);
-    cmd = GX_BITSET(cmd, 0, 16, index);
-
-    WGPIPE.c = GX_FIFO_LOAD_INDX_B;
-    WGPIPE.i = cmd;
+    GX_FIFO_LOAD_INDX_B(id * 3 + GX_XF_MEM_NRMMTX, 3 * 3 - 1, index);
 }
 
 void GXSetCurrentMtx(u32 id) {
@@ -270,22 +258,22 @@ void GXSetZScaleOffset(f32 scale, f32 offset) {
 
 void GXSetScissor(u32 x, u32 y, u32 w, u32 h) {
     u32 x1, y1, x2, y2;
-    u32 cmd;
+    u32 reg;
 
     x1 = x + 342;
     y1 = y + 342;
     x2 = x1 + w - 1;
     y2 = y1 + h - 1;
 
-    cmd = gxdt->scissorTL;
-    cmd = GX_BITSET(cmd, 21, 11, y1);
-    cmd = GX_BITSET(cmd, 9, 11, x1);
-    gxdt->scissorTL = cmd;
+    reg = gxdt->scissorTL;
+    GX_BP_SET_SCISSORTL_TOP(reg, y1);
+    GX_BP_SET_SCISSORTL_LEFT(reg, x1);
+    gxdt->scissorTL = reg;
 
-    cmd = gxdt->scissorBR;
-    cmd = GX_BITSET(cmd, 21, 11, y2);
-    cmd = GX_BITSET(cmd, 9, 11, x2);
-    gxdt->scissorBR = cmd;
+    reg = gxdt->scissorBR;
+    GX_BP_SET_SCISSORBR_BOT(reg, y2);
+    GX_BP_SET_SCISSORBR_RIGHT(reg, x2);
+    gxdt->scissorBR = reg;
 
     GX_LOAD_BP_REG(gxdt->scissorTL);
     GX_LOAD_BP_REG(gxdt->scissorBR);
@@ -296,10 +284,10 @@ void GXGetScissor(u32* x, u32* y, u32* w, u32* h) {
     u32 y2, y1;
     u32 x2, x1;
 
-    x1 = GX_BITGET(gxdt->scissorTL, 9, 11);
-    y1 = GX_BITGET(gxdt->scissorTL, 21, 11);
-    x2 = GX_BITGET(gxdt->scissorBR, 9, 11);
-    y2 = GX_BITGET(gxdt->scissorBR, 21, 11);
+    x1 = GX_BP_GET_SCISSORTL_LEFT(gxdt->scissorTL);
+    y1 = GX_BP_GET_SCISSORTL_TOP(gxdt->scissorTL);
+    x2 = GX_BP_GET_SCISSORBR_RIGHT(gxdt->scissorBR);
+    y2 = GX_BP_GET_SCISSORBR_BOT(gxdt->scissorBR);
 
     *x = x1 - 342;
     *y = y1 - 342;
@@ -309,11 +297,11 @@ void GXGetScissor(u32* x, u32* y, u32* w, u32* h) {
 
 void GXSetScissorBoxOffset(u32 ox, u32 oy) {
     u32 cmd = 0;
-    cmd = GX_BITSET(cmd, 22, 10, (ox + 342) / 2);
-    cmd = GX_BITSET(cmd, 12, 10, (oy + 342) / 2);
+    GX_BP_SET_SCISSOROFFSET_OX(cmd, (ox + 342) / 2);
+    GX_BP_SET_SCISSOROFFSET_OY(cmd, (oy + 342) / 2);
     GX_BP_SET_OPCODE(cmd, GX_BP_REG_SCISSOROFFSET);
-    GX_LOAD_BP_REG(cmd);
 
+    GX_LOAD_BP_REG(cmd);
     gxdt->xfWritten = FALSE;
 }
 

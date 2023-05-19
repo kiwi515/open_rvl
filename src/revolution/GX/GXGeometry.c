@@ -24,7 +24,7 @@ inline void __GXSetLightChan(volatile s32 dirtyFlags) {
     u32 addr = GX_XF_REG_COLOR0CNTRL;
 
     if (dirtyFlags & GX_DIRTY_NUM_COLORS) {
-        const u32 colors = GX_BITGET(gxdt->genMode, 25, 3);
+        const u32 colors = GX_BP_GET_GENMODE_NUMCOLORS(gxdt->genMode);
         GX_XF_LOAD_REG(GX_XF_REG_NUMCOLORS, colors);
     }
 
@@ -45,7 +45,7 @@ inline void __GXSetTexGen(volatile s32 dirtyFlags) {
     u32 dtaddr;
 
     if (dirtyFlags & GX_DIRTY_NUM_TEX) {
-        const u32 gens = GX_BITGET(gxdt->genMode, 28, 4);
+        const u32 gens = GX_BP_GET_GENMODE_NUMTEX(gxdt->genMode);
         GX_XF_LOAD_REG(GX_XF_REG_NUMTEX, gens);
     }
 
@@ -156,33 +156,35 @@ void __GXSendFlushPrim(void) {
 }
 
 void GXSetLineWidth(u8 width, u32 offset) {
-    gxdt->linePtWidth = GX_BITSET(gxdt->linePtWidth, 24, 8, width);
-    gxdt->linePtWidth = GX_BITSET(gxdt->linePtWidth, 13, 3, offset);
+    GX_BP_SET_LINEPTWIDTH_LINESZ(gxdt->linePtWidth, width);
+    GX_BP_SET_LINEPTWIDTH_LINEOFS(gxdt->linePtWidth, offset);
     GX_LOAD_BP_REG(gxdt->linePtWidth);
     gxdt->xfWritten = FALSE;
 }
 
 void GXSetPointSize(u8 size, u32 offset) {
-    gxdt->linePtWidth = GX_BITSET(gxdt->linePtWidth, 16, 8, size);
-    gxdt->linePtWidth = GX_BITSET(gxdt->linePtWidth, 10, 3, offset);
+    GX_BP_SET_LINEPTWIDTH_POINTSZ(gxdt->linePtWidth, size);
+    GX_BP_SET_LINEPTWIDTH_POINTOFS(gxdt->linePtWidth, offset);
     GX_LOAD_BP_REG(gxdt->linePtWidth);
     gxdt->xfWritten = FALSE;
 }
 
 void GXEnableTexOffsets(GXTexCoordID id, GXBool lineOfs, GXBool pointOfs) {
-    gxdt->txcRegs[id] = GX_BITSET(gxdt->txcRegs[id], 13, 1, lineOfs);
-    gxdt->txcRegs[id] = GX_BITSET(gxdt->txcRegs[id], 12, 1, pointOfs);
+    GX_BP_SET_SU_SSIZE_USELINEOFS(gxdt->txcRegs[id], lineOfs);
+    GX_BP_SET_SU_SSIZE_USEPOINTOFS(gxdt->txcRegs[id], pointOfs);
     GX_LOAD_BP_REG(gxdt->txcRegs[id]);
     gxdt->xfWritten = FALSE;
 }
 
 void GXSetCullMode(GXCullMode mode) {
+    // Swap bits to get hardware representation (see nw4r::g3d::fifo::cm2hw)
     GXCullMode bits = (GXCullMode)(mode << 1 & 2 | mode >> 1 & 1);
-    gxdt->genMode = GX_BITSET(gxdt->genMode, 16, 2, bits);
+    GX_BP_SET_GENMODE_CULLMODE(gxdt->genMode, bits);
     gxdt->gxDirtyFlags |= GX_DIRTY_GEN_MODE;
 }
 
 void GXGetCullMode(GXCullMode* out) {
+    // TODO: Fakematch? Should use GX_BP_GET_GENMODE_CULLMODE if possible
     s32 bits = 0;
     bits |= (s32)(gxdt->genMode >> (13 + 1) & 2) >> 1;
     bits |= (s32)(gxdt->genMode >> 13 & 2);
@@ -192,8 +194,10 @@ void GXGetCullMode(GXCullMode* out) {
 void GXSetCoPlanar(GXBool coplanar) {
     u32 reg;
 
-    gxdt->genMode = GX_BITSET(gxdt->genMode, 12, 1, coplanar);
+    GX_BP_SET_GENMODE_COPLANAR(gxdt->genMode, coplanar);
 
+    // TODO: GX_BP_SET_OPCODE doesn't work.
+    // Did they really write this out?
     reg = 0;
     reg |= GX_BP_REG_SSMASK << 24;
     reg |= 0x80000;

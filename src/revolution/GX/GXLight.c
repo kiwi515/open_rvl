@@ -237,19 +237,12 @@ void GXLoadLightObjImm(const GXLightObj* light, GXLightID id) {
 }
 
 void GXLoadLightObjIndx(u16 index, GXLightID id) {
-    u32 cmd;
     u32 num;
 
-    cmd = 0;
     num = 31 - __cntlzw(id);
     num = (num % 8) * XF_MEM_LOBJ_SIZE;
 
-    cmd = GX_BITSET(cmd, 20, 12, num + GX_XF_MEM_LIGHTOBJ);
-    cmd = GX_BITSET(cmd, 16, 4, XF_MEM_LOBJ_SIZE - 1);
-    cmd = GX_BITSET(cmd, 0, 16, index);
-
-    WGPIPE.c = GX_FIFO_LOAD_INDX_D;
-    WGPIPE.i = cmd;
+    GX_FIFO_LOAD_INDX_D(num + GX_XF_MEM_LIGHTOBJ, XF_MEM_LOBJ_SIZE - 1, index);
     gxdt->xfWritten = TRUE;
 }
 
@@ -332,7 +325,7 @@ void GXSetChanMatColor(GXChannelID chan, GXColor color) {
 }
 
 void GXSetNumChans(u8 num) {
-    gxdt->genMode = GX_BITSET(gxdt->genMode, 25, 3, num);
+    GX_BP_SET_GENMODE_NUMCOLORS(gxdt->genMode, num);
     gxdt->gxDirtyFlags |= GX_DIRTY_NUM_COLORS;
     gxdt->gxDirtyFlags |= GX_DIRTY_GEN_MODE;
 }

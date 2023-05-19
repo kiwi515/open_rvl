@@ -24,7 +24,7 @@ class Field:
 class Register:
     def __init__(self, res):
         self.name = get_req(res, "name")
-        self.id = get_req(res, "id")
+        self.id = res.get("id", "-1")
 
         # Sanity check on id
         try:
@@ -128,6 +128,10 @@ def write_regs_header(args, res, regs):
             enum_prefix = f"{module.upper()}_{name.upper()}_REG_"
             f.write("typedef enum {\n")
             for reg in regs:
+                # Not "real" register (some are used as generic structure definitions)
+                if reg.id == -1:
+                    continue
+
                 f.write(
                     f"    {enum_case(enum_prefix + reg.name)} = 0x{hex(reg.id)[2:].upper()},\n")
             f.write(f"}} {module.upper()}_{name.upper()}_REG;\n")
@@ -143,8 +147,14 @@ def write_regs_header(args, res, regs):
                 cased_reg = enum_case(reg.name)
 
                 f.write("/**\n")
-                f.write(
-                    f" * {name} register 0x{hex(reg.id)[2:].upper()} - {reg.name}\n")
+
+                if reg.id != -1:
+                    f.write(
+                        f" * {name} register 0x{hex(reg.id)[2:].upper()} - {reg.name}\n")
+                else:
+                    f.write(
+                        f" * {name} structure - {reg.name}\n")
+
                 f.write(" */\n")
 
                 for field in reg.fields:

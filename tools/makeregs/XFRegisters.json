@@ -284,6 +284,41 @@
             "id": "0x103F"
         },
         {
+            "name": "Tex",
+            "fields": [
+                {
+                    "name": "projType",
+                    "start": 30,
+                    "end": 30
+                },
+                {
+                    "name": "inputForm",
+                    "start": 29,
+                    "end": 29
+                },
+                {
+                    "name": "texgenType",
+                    "start": 25,
+                    "end": 27
+                },
+                {
+                    "name": "srcRow",
+                    "start": 20,
+                    "end": 24
+                },
+                {
+                    "name": "bumpSrcTex",
+                    "start": 17,
+                    "end": 19
+                },
+                {
+                    "name": "bumpSrcLight",
+                    "start": 14,
+                    "end": 16
+                }
+            ]
+        },
+        {
             "name": "Tex0",
             "id": "0x1040"
         },
@@ -314,6 +349,23 @@
         {
             "name": "Tex7",
             "id": "0x1047"
+        },
+        {
+            "name": "DualTex",
+            "fields": [
+                {
+                    "name": "baseRow",
+                    "desc": "Indicates which is the base row of the transform matrix",
+                    "start": 26,
+                    "end": 31
+                },
+                {
+                    "name": "normalize",
+                    "desc": "Normalize texcoord before sending transform",
+                    "start": 23,
+                    "end": 23
+                }
+            ]
         },
         {
             "name": "DualTex0",

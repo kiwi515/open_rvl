@@ -186,16 +186,14 @@ typedef enum {
 #define GX_CP_VCD_LO_COLORDIFFUSED_SZ 2
 #define GX_CP_VCD_LO_COLORDIFFUSED_MASK (((1 << 2) - 1) << 31 - 18)
 #define GX_CP_GET_VCD_LO_COLORDIFFUSED(reg) GX_BITGET(reg, 17, 2)
-#define GX_CP_SET_VCD_LO_COLORDIFFUSED(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 17, 2, x))
+#define GX_CP_SET_VCD_LO_COLORDIFFUSED(reg, x) ((reg) = GX_BITSET(reg, 17, 2, x))
 // COLORSPECULAR [15:16] (2)
 #define GX_CP_VCD_LO_COLORSPECULAR_ST 15
 #define GX_CP_VCD_LO_COLORSPECULAR_END 16
 #define GX_CP_VCD_LO_COLORSPECULAR_SZ 2
 #define GX_CP_VCD_LO_COLORSPECULAR_MASK (((1 << 2) - 1) << 31 - 16)
 #define GX_CP_GET_VCD_LO_COLORSPECULAR(reg) GX_BITGET(reg, 15, 2)
-#define GX_CP_SET_VCD_LO_COLORSPECULAR(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 15, 2, x))
+#define GX_CP_SET_VCD_LO_COLORSPECULAR(reg, x) ((reg) = GX_BITSET(reg, 15, 2, x))
 
 /**
  * CP register 0x60 - VCD_Hi
@@ -280,8 +278,7 @@ typedef enum {
 #define GX_CP_VAT_GROUP0_POS_SHIFT_SZ 5
 #define GX_CP_VAT_GROUP0_POS_SHIFT_MASK (((1 << 5) - 1) << 31 - 27)
 #define GX_CP_GET_VAT_GROUP0_POS_SHIFT(reg) GX_BITGET(reg, 23, 5)
-#define GX_CP_SET_VAT_GROUP0_POS_SHIFT(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 23, 5, x))
+#define GX_CP_SET_VAT_GROUP0_POS_SHIFT(reg, x) ((reg) = GX_BITSET(reg, 23, 5, x))
 // NRM_CNT [22:22] (1)
 #define GX_CP_VAT_GROUP0_NRM_CNT_ST 22
 #define GX_CP_VAT_GROUP0_NRM_CNT_END 22
@@ -302,32 +299,28 @@ typedef enum {
 #define GX_CP_VAT_GROUP0_COLORDIFF_CNT_SZ 1
 #define GX_CP_VAT_GROUP0_COLORDIFF_CNT_MASK (((1 << 1) - 1) << 31 - 18)
 #define GX_CP_GET_VAT_GROUP0_COLORDIFF_CNT(reg) GX_BITGET(reg, 18, 1)
-#define GX_CP_SET_VAT_GROUP0_COLORDIFF_CNT(reg, x)                             \
-    ((reg) = GX_BITSET(reg, 18, 1, x))
+#define GX_CP_SET_VAT_GROUP0_COLORDIFF_CNT(reg, x) ((reg) = GX_BITSET(reg, 18, 1, x))
 // COLORDIFF_TYPE [15:17] (3)
 #define GX_CP_VAT_GROUP0_COLORDIFF_TYPE_ST 15
 #define GX_CP_VAT_GROUP0_COLORDIFF_TYPE_END 17
 #define GX_CP_VAT_GROUP0_COLORDIFF_TYPE_SZ 3
 #define GX_CP_VAT_GROUP0_COLORDIFF_TYPE_MASK (((1 << 3) - 1) << 31 - 17)
 #define GX_CP_GET_VAT_GROUP0_COLORDIFF_TYPE(reg) GX_BITGET(reg, 15, 3)
-#define GX_CP_SET_VAT_GROUP0_COLORDIFF_TYPE(reg, x)                            \
-    ((reg) = GX_BITSET(reg, 15, 3, x))
+#define GX_CP_SET_VAT_GROUP0_COLORDIFF_TYPE(reg, x) ((reg) = GX_BITSET(reg, 15, 3, x))
 // COLORSPEC_CNT [14:14] (1)
 #define GX_CP_VAT_GROUP0_COLORSPEC_CNT_ST 14
 #define GX_CP_VAT_GROUP0_COLORSPEC_CNT_END 14
 #define GX_CP_VAT_GROUP0_COLORSPEC_CNT_SZ 1
 #define GX_CP_VAT_GROUP0_COLORSPEC_CNT_MASK (((1 << 1) - 1) << 31 - 14)
 #define GX_CP_GET_VAT_GROUP0_COLORSPEC_CNT(reg) GX_BITGET(reg, 14, 1)
-#define GX_CP_SET_VAT_GROUP0_COLORSPEC_CNT(reg, x)                             \
-    ((reg) = GX_BITSET(reg, 14, 1, x))
+#define GX_CP_SET_VAT_GROUP0_COLORSPEC_CNT(reg, x) ((reg) = GX_BITSET(reg, 14, 1, x))
 // COLORSPEC_TYPE [11:13] (3)
 #define GX_CP_VAT_GROUP0_COLORSPEC_TYPE_ST 11
 #define GX_CP_VAT_GROUP0_COLORSPEC_TYPE_END 13
 #define GX_CP_VAT_GROUP0_COLORSPEC_TYPE_SZ 3
 #define GX_CP_VAT_GROUP0_COLORSPEC_TYPE_MASK (((1 << 3) - 1) << 31 - 13)
 #define GX_CP_GET_VAT_GROUP0_COLORSPEC_TYPE(reg) GX_BITGET(reg, 11, 3)
-#define GX_CP_SET_VAT_GROUP0_COLORSPEC_TYPE(reg, x)                            \
-    ((reg) = GX_BITSET(reg, 11, 3, x))
+#define GX_CP_SET_VAT_GROUP0_COLORSPEC_TYPE(reg, x) ((reg) = GX_BITSET(reg, 11, 3, x))
 // TXC0_CNT [10:10] (1)
 #define GX_CP_VAT_GROUP0_TXC0_CNT_ST 10
 #define GX_CP_VAT_GROUP0_TXC0_CNT_END 10
@@ -348,25 +341,21 @@ typedef enum {
 #define GX_CP_VAT_GROUP0_TXC0_SHIFT_SZ 5
 #define GX_CP_VAT_GROUP0_TXC0_SHIFT_MASK (((1 << 5) - 1) << 31 - 6)
 #define GX_CP_GET_VAT_GROUP0_TXC0_SHIFT(reg) GX_BITGET(reg, 2, 5)
-#define GX_CP_SET_VAT_GROUP0_TXC0_SHIFT(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 2, 5, x))
+#define GX_CP_SET_VAT_GROUP0_TXC0_SHIFT(reg, x) ((reg) = GX_BITSET(reg, 2, 5, x))
 // BYTEDEQUANT [1:1] (1)
 #define GX_CP_VAT_GROUP0_BYTEDEQUANT_ST 1
 #define GX_CP_VAT_GROUP0_BYTEDEQUANT_END 1
 #define GX_CP_VAT_GROUP0_BYTEDEQUANT_SZ 1
 #define GX_CP_VAT_GROUP0_BYTEDEQUANT_MASK (((1 << 1) - 1) << 31 - 1)
 #define GX_CP_GET_VAT_GROUP0_BYTEDEQUANT(reg) GX_BITGET(reg, 1, 1)
-#define GX_CP_SET_VAT_GROUP0_BYTEDEQUANT(reg, x)                               \
-    ((reg) = GX_BITSET(reg, 1, 1, x))
-// NORMALINDEX3 [0:0] (1) - Input will be treated as three staggered indices
-// (one per triple biased by component size) into normal table
+#define GX_CP_SET_VAT_GROUP0_BYTEDEQUANT(reg, x) ((reg) = GX_BITSET(reg, 1, 1, x))
+// NORMALINDEX3 [0:0] (1) - Input will be treated as three staggered indices (one per triple biased by component size) into normal table
 #define GX_CP_VAT_GROUP0_NORMALINDEX3_ST 0
 #define GX_CP_VAT_GROUP0_NORMALINDEX3_END 0
 #define GX_CP_VAT_GROUP0_NORMALINDEX3_SZ 1
 #define GX_CP_VAT_GROUP0_NORMALINDEX3_MASK (((1 << 1) - 1) << 31 - 0)
 #define GX_CP_GET_VAT_GROUP0_NORMALINDEX3(reg) GX_BITGET(reg, 0, 1)
-#define GX_CP_SET_VAT_GROUP0_NORMALINDEX3(reg, x)                              \
-    ((reg) = GX_BITSET(reg, 0, 1, x))
+#define GX_CP_SET_VAT_GROUP0_NORMALINDEX3(reg, x) ((reg) = GX_BITSET(reg, 0, 1, x))
 
 /**
  * CP register 0x80 - VAT_group1
@@ -384,16 +373,14 @@ typedef enum {
 #define GX_CP_VAT_GROUP1_TXC1_TYPE_SZ 3
 #define GX_CP_VAT_GROUP1_TXC1_TYPE_MASK (((1 << 3) - 1) << 31 - 30)
 #define GX_CP_GET_VAT_GROUP1_TXC1_TYPE(reg) GX_BITGET(reg, 28, 3)
-#define GX_CP_SET_VAT_GROUP1_TXC1_TYPE(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 28, 3, x))
+#define GX_CP_SET_VAT_GROUP1_TXC1_TYPE(reg, x) ((reg) = GX_BITSET(reg, 28, 3, x))
 // TXC1_SHIFT [23:27] (5)
 #define GX_CP_VAT_GROUP1_TXC1_SHIFT_ST 23
 #define GX_CP_VAT_GROUP1_TXC1_SHIFT_END 27
 #define GX_CP_VAT_GROUP1_TXC1_SHIFT_SZ 5
 #define GX_CP_VAT_GROUP1_TXC1_SHIFT_MASK (((1 << 5) - 1) << 31 - 27)
 #define GX_CP_GET_VAT_GROUP1_TXC1_SHIFT(reg) GX_BITGET(reg, 23, 5)
-#define GX_CP_SET_VAT_GROUP1_TXC1_SHIFT(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 23, 5, x))
+#define GX_CP_SET_VAT_GROUP1_TXC1_SHIFT(reg, x) ((reg) = GX_BITSET(reg, 23, 5, x))
 // TXC2_CNT [22:22] (1)
 #define GX_CP_VAT_GROUP1_TXC2_CNT_ST 22
 #define GX_CP_VAT_GROUP1_TXC2_CNT_END 22
@@ -407,16 +394,14 @@ typedef enum {
 #define GX_CP_VAT_GROUP1_TXC2_TYPE_SZ 3
 #define GX_CP_VAT_GROUP1_TXC2_TYPE_MASK (((1 << 3) - 1) << 31 - 21)
 #define GX_CP_GET_VAT_GROUP1_TXC2_TYPE(reg) GX_BITGET(reg, 19, 3)
-#define GX_CP_SET_VAT_GROUP1_TXC2_TYPE(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 19, 3, x))
+#define GX_CP_SET_VAT_GROUP1_TXC2_TYPE(reg, x) ((reg) = GX_BITSET(reg, 19, 3, x))
 // TXC2_SHIFT [14:18] (5)
 #define GX_CP_VAT_GROUP1_TXC2_SHIFT_ST 14
 #define GX_CP_VAT_GROUP1_TXC2_SHIFT_END 18
 #define GX_CP_VAT_GROUP1_TXC2_SHIFT_SZ 5
 #define GX_CP_VAT_GROUP1_TXC2_SHIFT_MASK (((1 << 5) - 1) << 31 - 18)
 #define GX_CP_GET_VAT_GROUP1_TXC2_SHIFT(reg) GX_BITGET(reg, 14, 5)
-#define GX_CP_SET_VAT_GROUP1_TXC2_SHIFT(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 14, 5, x))
+#define GX_CP_SET_VAT_GROUP1_TXC2_SHIFT(reg, x) ((reg) = GX_BITSET(reg, 14, 5, x))
 // TXC3_CNT [13:13] (1)
 #define GX_CP_VAT_GROUP1_TXC3_CNT_ST 13
 #define GX_CP_VAT_GROUP1_TXC3_CNT_END 13
@@ -430,16 +415,14 @@ typedef enum {
 #define GX_CP_VAT_GROUP1_TXC3_TYPE_SZ 3
 #define GX_CP_VAT_GROUP1_TXC3_TYPE_MASK (((1 << 3) - 1) << 31 - 12)
 #define GX_CP_GET_VAT_GROUP1_TXC3_TYPE(reg) GX_BITGET(reg, 10, 3)
-#define GX_CP_SET_VAT_GROUP1_TXC3_TYPE(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 10, 3, x))
+#define GX_CP_SET_VAT_GROUP1_TXC3_TYPE(reg, x) ((reg) = GX_BITSET(reg, 10, 3, x))
 // TXC3_SHIFT [5:9] (5)
 #define GX_CP_VAT_GROUP1_TXC3_SHIFT_ST 5
 #define GX_CP_VAT_GROUP1_TXC3_SHIFT_END 9
 #define GX_CP_VAT_GROUP1_TXC3_SHIFT_SZ 5
 #define GX_CP_VAT_GROUP1_TXC3_SHIFT_MASK (((1 << 5) - 1) << 31 - 9)
 #define GX_CP_GET_VAT_GROUP1_TXC3_SHIFT(reg) GX_BITGET(reg, 5, 5)
-#define GX_CP_SET_VAT_GROUP1_TXC3_SHIFT(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 5, 5, x))
+#define GX_CP_SET_VAT_GROUP1_TXC3_SHIFT(reg, x) ((reg) = GX_BITSET(reg, 5, 5, x))
 // TXC4_CNT [4:4] (1)
 #define GX_CP_VAT_GROUP1_TXC4_CNT_ST 4
 #define GX_CP_VAT_GROUP1_TXC4_CNT_END 4
@@ -464,8 +447,7 @@ typedef enum {
 #define GX_CP_VAT_GROUP2_TXC4_SHIFT_SZ 5
 #define GX_CP_VAT_GROUP2_TXC4_SHIFT_MASK (((1 << 5) - 1) << 31 - 31)
 #define GX_CP_GET_VAT_GROUP2_TXC4_SHIFT(reg) GX_BITGET(reg, 27, 5)
-#define GX_CP_SET_VAT_GROUP2_TXC4_SHIFT(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 27, 5, x))
+#define GX_CP_SET_VAT_GROUP2_TXC4_SHIFT(reg, x) ((reg) = GX_BITSET(reg, 27, 5, x))
 // TXC5_CNT [26:26] (1)
 #define GX_CP_VAT_GROUP2_TXC5_CNT_ST 26
 #define GX_CP_VAT_GROUP2_TXC5_CNT_END 26
@@ -479,16 +461,14 @@ typedef enum {
 #define GX_CP_VAT_GROUP2_TXC5_TYPE_SZ 3
 #define GX_CP_VAT_GROUP2_TXC5_TYPE_MASK (((1 << 3) - 1) << 31 - 25)
 #define GX_CP_GET_VAT_GROUP2_TXC5_TYPE(reg) GX_BITGET(reg, 23, 3)
-#define GX_CP_SET_VAT_GROUP2_TXC5_TYPE(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 23, 3, x))
+#define GX_CP_SET_VAT_GROUP2_TXC5_TYPE(reg, x) ((reg) = GX_BITSET(reg, 23, 3, x))
 // TXC5_SHIFT [18:22] (5)
 #define GX_CP_VAT_GROUP2_TXC5_SHIFT_ST 18
 #define GX_CP_VAT_GROUP2_TXC5_SHIFT_END 22
 #define GX_CP_VAT_GROUP2_TXC5_SHIFT_SZ 5
 #define GX_CP_VAT_GROUP2_TXC5_SHIFT_MASK (((1 << 5) - 1) << 31 - 22)
 #define GX_CP_GET_VAT_GROUP2_TXC5_SHIFT(reg) GX_BITGET(reg, 18, 5)
-#define GX_CP_SET_VAT_GROUP2_TXC5_SHIFT(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 18, 5, x))
+#define GX_CP_SET_VAT_GROUP2_TXC5_SHIFT(reg, x) ((reg) = GX_BITSET(reg, 18, 5, x))
 // TXC6_CNT [17:17] (1)
 #define GX_CP_VAT_GROUP2_TXC6_CNT_ST 17
 #define GX_CP_VAT_GROUP2_TXC6_CNT_END 17
@@ -502,16 +482,14 @@ typedef enum {
 #define GX_CP_VAT_GROUP2_TXC6_TYPE_SZ 3
 #define GX_CP_VAT_GROUP2_TXC6_TYPE_MASK (((1 << 3) - 1) << 31 - 16)
 #define GX_CP_GET_VAT_GROUP2_TXC6_TYPE(reg) GX_BITGET(reg, 14, 3)
-#define GX_CP_SET_VAT_GROUP2_TXC6_TYPE(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 14, 3, x))
+#define GX_CP_SET_VAT_GROUP2_TXC6_TYPE(reg, x) ((reg) = GX_BITSET(reg, 14, 3, x))
 // TXC6_SHIFT [9:13] (5)
 #define GX_CP_VAT_GROUP2_TXC6_SHIFT_ST 9
 #define GX_CP_VAT_GROUP2_TXC6_SHIFT_END 13
 #define GX_CP_VAT_GROUP2_TXC6_SHIFT_SZ 5
 #define GX_CP_VAT_GROUP2_TXC6_SHIFT_MASK (((1 << 5) - 1) << 31 - 13)
 #define GX_CP_GET_VAT_GROUP2_TXC6_SHIFT(reg) GX_BITGET(reg, 9, 5)
-#define GX_CP_SET_VAT_GROUP2_TXC6_SHIFT(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 9, 5, x))
+#define GX_CP_SET_VAT_GROUP2_TXC6_SHIFT(reg, x) ((reg) = GX_BITSET(reg, 9, 5, x))
 // TXC7_CNT [8:8] (1)
 #define GX_CP_VAT_GROUP2_TXC7_CNT_ST 8
 #define GX_CP_VAT_GROUP2_TXC7_CNT_END 8
@@ -532,8 +510,7 @@ typedef enum {
 #define GX_CP_VAT_GROUP2_TXC7_SHIFT_SZ 5
 #define GX_CP_VAT_GROUP2_TXC7_SHIFT_MASK (((1 << 5) - 1) << 31 - 4)
 #define GX_CP_GET_VAT_GROUP2_TXC7_SHIFT(reg) GX_BITGET(reg, 0, 5)
-#define GX_CP_SET_VAT_GROUP2_TXC7_SHIFT(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 0, 5, x))
+#define GX_CP_SET_VAT_GROUP2_TXC7_SHIFT(reg, x) ((reg) = GX_BITSET(reg, 0, 5, x))
 
 /**
  * CP register 0xA0 - ArrayBase
@@ -556,6 +533,7 @@ typedef enum {
 #define GX_CP_ARRAYSTRIDE_STRIDE_MASK (((1 << 8) - 1) << 31 - 31)
 #define GX_CP_GET_ARRAYSTRIDE_STRIDE(reg) GX_BITGET(reg, 24, 8)
 #define GX_CP_SET_ARRAYSTRIDE_STRIDE(reg, x) ((reg) = GX_BITSET(reg, 24, 8, x))
+
 
 #ifdef __cplusplus
 }

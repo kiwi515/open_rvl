@@ -257,8 +257,7 @@ typedef enum {
 #define GX_BP_GENMODE_NUMINDSTAGES_SZ 3
 #define GX_BP_GENMODE_NUMINDSTAGES_MASK (((1 << 3) - 1) << 31 - 15)
 #define GX_BP_GET_GENMODE_NUMINDSTAGES(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_GENMODE_NUMINDSTAGES(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 13, 3, x))
+#define GX_BP_SET_GENMODE_NUMINDSTAGES(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
 // COPLANAR [12:12] (1) - Toggle co-planar ("Z freeze" according to Dolphin)
 #define GX_BP_GENMODE_COPLANAR_ST 12
 #define GX_BP_GENMODE_COPLANAR_END 12
@@ -268,229 +267,79 @@ typedef enum {
 #define GX_BP_SET_GENMODE_COPLANAR(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
 
 /**
- * BP register 0x6 - IndMtx0A
+ * BP structure - IndMtxA
  */
 // M00 [21:31] (11) - Texture offset matrix #0 [0][0]
-#define GX_BP_INDMTX0A_M00_ST 21
-#define GX_BP_INDMTX0A_M00_END 31
-#define GX_BP_INDMTX0A_M00_SZ 11
-#define GX_BP_INDMTX0A_M00_MASK (((1 << 11) - 1) << 31 - 31)
-#define GX_BP_GET_INDMTX0A_M00(reg) GX_BITGET(reg, 21, 11)
-#define GX_BP_SET_INDMTX0A_M00(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
+#define GX_BP_INDMTXA_M00_ST 21
+#define GX_BP_INDMTXA_M00_END 31
+#define GX_BP_INDMTXA_M00_SZ 11
+#define GX_BP_INDMTXA_M00_MASK (((1 << 11) - 1) << 31 - 31)
+#define GX_BP_GET_INDMTXA_M00(reg) GX_BITGET(reg, 21, 11)
+#define GX_BP_SET_INDMTXA_M00(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
 // M10 [10:20] (11) - Texture offset matrix #0 [1][0]
-#define GX_BP_INDMTX0A_M10_ST 10
-#define GX_BP_INDMTX0A_M10_END 20
-#define GX_BP_INDMTX0A_M10_SZ 11
-#define GX_BP_INDMTX0A_M10_MASK (((1 << 11) - 1) << 31 - 20)
-#define GX_BP_GET_INDMTX0A_M10(reg) GX_BITGET(reg, 10, 11)
-#define GX_BP_SET_INDMTX0A_M10(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
+#define GX_BP_INDMTXA_M10_ST 10
+#define GX_BP_INDMTXA_M10_END 20
+#define GX_BP_INDMTXA_M10_SZ 11
+#define GX_BP_INDMTXA_M10_MASK (((1 << 11) - 1) << 31 - 20)
+#define GX_BP_GET_INDMTXA_M10(reg) GX_BITGET(reg, 10, 11)
+#define GX_BP_SET_INDMTXA_M10(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
 // EXP [8:9] (2) - Bits 0-1 of scaling exponent #0 (2^x)
-#define GX_BP_INDMTX0A_EXP_ST 8
-#define GX_BP_INDMTX0A_EXP_END 9
-#define GX_BP_INDMTX0A_EXP_SZ 2
-#define GX_BP_INDMTX0A_EXP_MASK (((1 << 2) - 1) << 31 - 9)
-#define GX_BP_GET_INDMTX0A_EXP(reg) GX_BITGET(reg, 8, 2)
-#define GX_BP_SET_INDMTX0A_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
+#define GX_BP_INDMTXA_EXP_ST 8
+#define GX_BP_INDMTXA_EXP_END 9
+#define GX_BP_INDMTXA_EXP_SZ 2
+#define GX_BP_INDMTXA_EXP_MASK (((1 << 2) - 1) << 31 - 9)
+#define GX_BP_GET_INDMTXA_EXP(reg) GX_BITGET(reg, 8, 2)
+#define GX_BP_SET_INDMTXA_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
 
 /**
- * BP register 0x7 - IndMtx0B
+ * BP structure - IndMtxB
  */
 // M01 [21:31] (11) - Texture offset matrix #0 [0][1]
-#define GX_BP_INDMTX0B_M01_ST 21
-#define GX_BP_INDMTX0B_M01_END 31
-#define GX_BP_INDMTX0B_M01_SZ 11
-#define GX_BP_INDMTX0B_M01_MASK (((1 << 11) - 1) << 31 - 31)
-#define GX_BP_GET_INDMTX0B_M01(reg) GX_BITGET(reg, 21, 11)
-#define GX_BP_SET_INDMTX0B_M01(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
+#define GX_BP_INDMTXB_M01_ST 21
+#define GX_BP_INDMTXB_M01_END 31
+#define GX_BP_INDMTXB_M01_SZ 11
+#define GX_BP_INDMTXB_M01_MASK (((1 << 11) - 1) << 31 - 31)
+#define GX_BP_GET_INDMTXB_M01(reg) GX_BITGET(reg, 21, 11)
+#define GX_BP_SET_INDMTXB_M01(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
 // M11 [10:20] (11) - Texture offset matrix #0 [1][1]
-#define GX_BP_INDMTX0B_M11_ST 10
-#define GX_BP_INDMTX0B_M11_END 20
-#define GX_BP_INDMTX0B_M11_SZ 11
-#define GX_BP_INDMTX0B_M11_MASK (((1 << 11) - 1) << 31 - 20)
-#define GX_BP_GET_INDMTX0B_M11(reg) GX_BITGET(reg, 10, 11)
-#define GX_BP_SET_INDMTX0B_M11(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
+#define GX_BP_INDMTXB_M11_ST 10
+#define GX_BP_INDMTXB_M11_END 20
+#define GX_BP_INDMTXB_M11_SZ 11
+#define GX_BP_INDMTXB_M11_MASK (((1 << 11) - 1) << 31 - 20)
+#define GX_BP_GET_INDMTXB_M11(reg) GX_BITGET(reg, 10, 11)
+#define GX_BP_SET_INDMTXB_M11(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
 // EXP [8:9] (2) - Bits 2-3 of scaling exponent #0 (2^x)
-#define GX_BP_INDMTX0B_EXP_ST 8
-#define GX_BP_INDMTX0B_EXP_END 9
-#define GX_BP_INDMTX0B_EXP_SZ 2
-#define GX_BP_INDMTX0B_EXP_MASK (((1 << 2) - 1) << 31 - 9)
-#define GX_BP_GET_INDMTX0B_EXP(reg) GX_BITGET(reg, 8, 2)
-#define GX_BP_SET_INDMTX0B_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
+#define GX_BP_INDMTXB_EXP_ST 8
+#define GX_BP_INDMTXB_EXP_END 9
+#define GX_BP_INDMTXB_EXP_SZ 2
+#define GX_BP_INDMTXB_EXP_MASK (((1 << 2) - 1) << 31 - 9)
+#define GX_BP_GET_INDMTXB_EXP(reg) GX_BITGET(reg, 8, 2)
+#define GX_BP_SET_INDMTXB_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
 
 /**
- * BP register 0x8 - IndMtx0C
+ * BP structure - IndMtxC
  */
 // M02 [21:31] (11) - Texture offset matrix #0 [0][2]
-#define GX_BP_INDMTX0C_M02_ST 21
-#define GX_BP_INDMTX0C_M02_END 31
-#define GX_BP_INDMTX0C_M02_SZ 11
-#define GX_BP_INDMTX0C_M02_MASK (((1 << 11) - 1) << 31 - 31)
-#define GX_BP_GET_INDMTX0C_M02(reg) GX_BITGET(reg, 21, 11)
-#define GX_BP_SET_INDMTX0C_M02(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
+#define GX_BP_INDMTXC_M02_ST 21
+#define GX_BP_INDMTXC_M02_END 31
+#define GX_BP_INDMTXC_M02_SZ 11
+#define GX_BP_INDMTXC_M02_MASK (((1 << 11) - 1) << 31 - 31)
+#define GX_BP_GET_INDMTXC_M02(reg) GX_BITGET(reg, 21, 11)
+#define GX_BP_SET_INDMTXC_M02(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
 // M12 [10:20] (11) - Texture offset matrix #0 [1][2]
-#define GX_BP_INDMTX0C_M12_ST 10
-#define GX_BP_INDMTX0C_M12_END 20
-#define GX_BP_INDMTX0C_M12_SZ 11
-#define GX_BP_INDMTX0C_M12_MASK (((1 << 11) - 1) << 31 - 20)
-#define GX_BP_GET_INDMTX0C_M12(reg) GX_BITGET(reg, 10, 11)
-#define GX_BP_SET_INDMTX0C_M12(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
+#define GX_BP_INDMTXC_M12_ST 10
+#define GX_BP_INDMTXC_M12_END 20
+#define GX_BP_INDMTXC_M12_SZ 11
+#define GX_BP_INDMTXC_M12_MASK (((1 << 11) - 1) << 31 - 20)
+#define GX_BP_GET_INDMTXC_M12(reg) GX_BITGET(reg, 10, 11)
+#define GX_BP_SET_INDMTXC_M12(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
 // EXP [8:9] (2) - Bit 4 of scaling exponent #0 (2^x)
-#define GX_BP_INDMTX0C_EXP_ST 8
-#define GX_BP_INDMTX0C_EXP_END 9
-#define GX_BP_INDMTX0C_EXP_SZ 2
-#define GX_BP_INDMTX0C_EXP_MASK (((1 << 2) - 1) << 31 - 9)
-#define GX_BP_GET_INDMTX0C_EXP(reg) GX_BITGET(reg, 8, 2)
-#define GX_BP_SET_INDMTX0C_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
-
-/**
- * BP register 0x9 - IndMtx1A
- */
-// M00 [21:31] (11) - Texture offset matrix #1 [0][0]
-#define GX_BP_INDMTX1A_M00_ST 21
-#define GX_BP_INDMTX1A_M00_END 31
-#define GX_BP_INDMTX1A_M00_SZ 11
-#define GX_BP_INDMTX1A_M00_MASK (((1 << 11) - 1) << 31 - 31)
-#define GX_BP_GET_INDMTX1A_M00(reg) GX_BITGET(reg, 21, 11)
-#define GX_BP_SET_INDMTX1A_M00(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
-// M10 [10:20] (11) - Texture offset matrix #1 [1][0]
-#define GX_BP_INDMTX1A_M10_ST 10
-#define GX_BP_INDMTX1A_M10_END 20
-#define GX_BP_INDMTX1A_M10_SZ 11
-#define GX_BP_INDMTX1A_M10_MASK (((1 << 11) - 1) << 31 - 20)
-#define GX_BP_GET_INDMTX1A_M10(reg) GX_BITGET(reg, 10, 11)
-#define GX_BP_SET_INDMTX1A_M10(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
-// EXP [8:9] (2) - Bits 0-1 of scaling exponent #1 (2^x)
-#define GX_BP_INDMTX1A_EXP_ST 8
-#define GX_BP_INDMTX1A_EXP_END 9
-#define GX_BP_INDMTX1A_EXP_SZ 2
-#define GX_BP_INDMTX1A_EXP_MASK (((1 << 2) - 1) << 31 - 9)
-#define GX_BP_GET_INDMTX1A_EXP(reg) GX_BITGET(reg, 8, 2)
-#define GX_BP_SET_INDMTX1A_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
-
-/**
- * BP register 0xA - IndMtx1B
- */
-// M01 [21:31] (11) - Texture offset matrix #1 [0][1]
-#define GX_BP_INDMTX1B_M01_ST 21
-#define GX_BP_INDMTX1B_M01_END 31
-#define GX_BP_INDMTX1B_M01_SZ 11
-#define GX_BP_INDMTX1B_M01_MASK (((1 << 11) - 1) << 31 - 31)
-#define GX_BP_GET_INDMTX1B_M01(reg) GX_BITGET(reg, 21, 11)
-#define GX_BP_SET_INDMTX1B_M01(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
-// M11 [10:20] (11) - Texture offset matrix #1 [1][1]
-#define GX_BP_INDMTX1B_M11_ST 10
-#define GX_BP_INDMTX1B_M11_END 20
-#define GX_BP_INDMTX1B_M11_SZ 11
-#define GX_BP_INDMTX1B_M11_MASK (((1 << 11) - 1) << 31 - 20)
-#define GX_BP_GET_INDMTX1B_M11(reg) GX_BITGET(reg, 10, 11)
-#define GX_BP_SET_INDMTX1B_M11(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
-// EXP [8:9] (2) - Bits 2-3 of scaling exponent #1 (2^x)
-#define GX_BP_INDMTX1B_EXP_ST 8
-#define GX_BP_INDMTX1B_EXP_END 9
-#define GX_BP_INDMTX1B_EXP_SZ 2
-#define GX_BP_INDMTX1B_EXP_MASK (((1 << 2) - 1) << 31 - 9)
-#define GX_BP_GET_INDMTX1B_EXP(reg) GX_BITGET(reg, 8, 2)
-#define GX_BP_SET_INDMTX1B_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
-
-/**
- * BP register 0xB - IndMtx1C
- */
-// M02 [21:31] (11) - Texture offset matrix #1 [0][2]
-#define GX_BP_INDMTX1C_M02_ST 21
-#define GX_BP_INDMTX1C_M02_END 31
-#define GX_BP_INDMTX1C_M02_SZ 11
-#define GX_BP_INDMTX1C_M02_MASK (((1 << 11) - 1) << 31 - 31)
-#define GX_BP_GET_INDMTX1C_M02(reg) GX_BITGET(reg, 21, 11)
-#define GX_BP_SET_INDMTX1C_M02(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
-// M12 [10:20] (11) - Texture offset matrix #1 [1][2]
-#define GX_BP_INDMTX1C_M12_ST 10
-#define GX_BP_INDMTX1C_M12_END 20
-#define GX_BP_INDMTX1C_M12_SZ 11
-#define GX_BP_INDMTX1C_M12_MASK (((1 << 11) - 1) << 31 - 20)
-#define GX_BP_GET_INDMTX1C_M12(reg) GX_BITGET(reg, 10, 11)
-#define GX_BP_SET_INDMTX1C_M12(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
-// EXP [8:9] (2) - Bit 4 of scaling exponent #1 (2^x)
-#define GX_BP_INDMTX1C_EXP_ST 8
-#define GX_BP_INDMTX1C_EXP_END 9
-#define GX_BP_INDMTX1C_EXP_SZ 2
-#define GX_BP_INDMTX1C_EXP_MASK (((1 << 2) - 1) << 31 - 9)
-#define GX_BP_GET_INDMTX1C_EXP(reg) GX_BITGET(reg, 8, 2)
-#define GX_BP_SET_INDMTX1C_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
-
-/**
- * BP register 0xC - IndMtx2A
- */
-// M00 [21:31] (11) - Texture offset matrix #2 [0][0]
-#define GX_BP_INDMTX2A_M00_ST 21
-#define GX_BP_INDMTX2A_M00_END 31
-#define GX_BP_INDMTX2A_M00_SZ 11
-#define GX_BP_INDMTX2A_M00_MASK (((1 << 11) - 1) << 31 - 31)
-#define GX_BP_GET_INDMTX2A_M00(reg) GX_BITGET(reg, 21, 11)
-#define GX_BP_SET_INDMTX2A_M00(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
-// M10 [10:20] (11) - Texture offset matrix #2 [1][0]
-#define GX_BP_INDMTX2A_M10_ST 10
-#define GX_BP_INDMTX2A_M10_END 20
-#define GX_BP_INDMTX2A_M10_SZ 11
-#define GX_BP_INDMTX2A_M10_MASK (((1 << 11) - 1) << 31 - 20)
-#define GX_BP_GET_INDMTX2A_M10(reg) GX_BITGET(reg, 10, 11)
-#define GX_BP_SET_INDMTX2A_M10(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
-// EXP [8:9] (2) - Bits 0-1 of scaling exponent #2 (2^x)
-#define GX_BP_INDMTX2A_EXP_ST 8
-#define GX_BP_INDMTX2A_EXP_END 9
-#define GX_BP_INDMTX2A_EXP_SZ 2
-#define GX_BP_INDMTX2A_EXP_MASK (((1 << 2) - 1) << 31 - 9)
-#define GX_BP_GET_INDMTX2A_EXP(reg) GX_BITGET(reg, 8, 2)
-#define GX_BP_SET_INDMTX2A_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
-
-/**
- * BP register 0xD - IndMtx2B
- */
-// M01 [21:31] (11) - Texture offset matrix #2 [0][1]
-#define GX_BP_INDMTX2B_M01_ST 21
-#define GX_BP_INDMTX2B_M01_END 31
-#define GX_BP_INDMTX2B_M01_SZ 11
-#define GX_BP_INDMTX2B_M01_MASK (((1 << 11) - 1) << 31 - 31)
-#define GX_BP_GET_INDMTX2B_M01(reg) GX_BITGET(reg, 21, 11)
-#define GX_BP_SET_INDMTX2B_M01(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
-// M11 [10:20] (11) - Texture offset matrix #2 [1][1]
-#define GX_BP_INDMTX2B_M11_ST 10
-#define GX_BP_INDMTX2B_M11_END 20
-#define GX_BP_INDMTX2B_M11_SZ 11
-#define GX_BP_INDMTX2B_M11_MASK (((1 << 11) - 1) << 31 - 20)
-#define GX_BP_GET_INDMTX2B_M11(reg) GX_BITGET(reg, 10, 11)
-#define GX_BP_SET_INDMTX2B_M11(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
-// EXP [8:9] (2) - Bits 2-3 of scaling exponent #2 (2^x)
-#define GX_BP_INDMTX2B_EXP_ST 8
-#define GX_BP_INDMTX2B_EXP_END 9
-#define GX_BP_INDMTX2B_EXP_SZ 2
-#define GX_BP_INDMTX2B_EXP_MASK (((1 << 2) - 1) << 31 - 9)
-#define GX_BP_GET_INDMTX2B_EXP(reg) GX_BITGET(reg, 8, 2)
-#define GX_BP_SET_INDMTX2B_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
-
-/**
- * BP register 0xE - IndMtx2C
- */
-// M02 [21:31] (11) - Texture offset matrix #2 [0][2]
-#define GX_BP_INDMTX2C_M02_ST 21
-#define GX_BP_INDMTX2C_M02_END 31
-#define GX_BP_INDMTX2C_M02_SZ 11
-#define GX_BP_INDMTX2C_M02_MASK (((1 << 11) - 1) << 31 - 31)
-#define GX_BP_GET_INDMTX2C_M02(reg) GX_BITGET(reg, 21, 11)
-#define GX_BP_SET_INDMTX2C_M02(reg, x) ((reg) = GX_BITSET(reg, 21, 11, x))
-// M12 [10:20] (11) - Texture offset matrix #2 [1][2]
-#define GX_BP_INDMTX2C_M12_ST 10
-#define GX_BP_INDMTX2C_M12_END 20
-#define GX_BP_INDMTX2C_M12_SZ 11
-#define GX_BP_INDMTX2C_M12_MASK (((1 << 11) - 1) << 31 - 20)
-#define GX_BP_GET_INDMTX2C_M12(reg) GX_BITGET(reg, 10, 11)
-#define GX_BP_SET_INDMTX2C_M12(reg, x) ((reg) = GX_BITSET(reg, 10, 11, x))
-// EXP [8:9] (2) - Bit 4 of scaling exponent #2 (2^x)
-#define GX_BP_INDMTX2C_EXP_ST 8
-#define GX_BP_INDMTX2C_EXP_END 9
-#define GX_BP_INDMTX2C_EXP_SZ 2
-#define GX_BP_INDMTX2C_EXP_MASK (((1 << 2) - 1) << 31 - 9)
-#define GX_BP_GET_INDMTX2C_EXP(reg) GX_BITGET(reg, 8, 2)
-#define GX_BP_SET_INDMTX2C_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
+#define GX_BP_INDMTXC_EXP_ST 8
+#define GX_BP_INDMTXC_EXP_END 9
+#define GX_BP_INDMTXC_EXP_SZ 2
+#define GX_BP_INDMTXC_EXP_MASK (((1 << 2) - 1) << 31 - 9)
+#define GX_BP_GET_INDMTXC_EXP(reg) GX_BITGET(reg, 8, 2)
+#define GX_BP_SET_INDMTXC_EXP(reg, x) ((reg) = GX_BITSET(reg, 8, 2, x))
 
 /**
  * BP register 0xF - IndIMask
@@ -504,1130 +353,71 @@ typedef enum {
 #define GX_BP_SET_INDIMASK_IMASK(reg, x) ((reg) = GX_BITSET(reg, 24, 8, x))
 
 /**
- * BP register 0x10 - IndTevStage0
+ * BP structure - IndTevStage
  */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 0)
-#define GX_BP_INDTEVSTAGE0_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE0_STAGE_END 31
-#define GX_BP_INDTEVSTAGE0_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE0_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE0_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE0_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 0)
-#define GX_BP_INDTEVSTAGE0_FMT_ST 28
-#define GX_BP_INDTEVSTAGE0_FMT_END 29
-#define GX_BP_INDTEVSTAGE0_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE0_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE0_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE0_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 0)
-#define GX_BP_INDTEVSTAGE0_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE0_BIAS_END 27
-#define GX_BP_INDTEVSTAGE0_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE0_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE0_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE0_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 0)
-#define GX_BP_INDTEVSTAGE0_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE0_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE0_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE0_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE0_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE0_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 0)
-#define GX_BP_INDTEVSTAGE0_MTX_ST 19
-#define GX_BP_INDTEVSTAGE0_MTX_END 22
-#define GX_BP_INDTEVSTAGE0_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE0_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE0_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE0_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 0)
-#define GX_BP_INDTEVSTAGE0_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE0_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE0_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE0_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE0_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE0_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 0)
-#define GX_BP_INDTEVSTAGE0_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE0_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE0_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE0_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE0_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE0_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 0)
-#define GX_BP_INDTEVSTAGE0_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE0_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE0_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE0_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE0_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE0_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
+// STAGE [30:31] (2) - Indirect texture stage ID
+#define GX_BP_INDTEVSTAGE_STAGE_ST 30
+#define GX_BP_INDTEVSTAGE_STAGE_END 31
+#define GX_BP_INDTEVSTAGE_STAGE_SZ 2
+#define GX_BP_INDTEVSTAGE_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
+#define GX_BP_GET_INDTEVSTAGE_STAGE(reg) GX_BITGET(reg, 30, 2)
+#define GX_BP_SET_INDTEVSTAGE_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
+// FORMAT [28:29] (2) - Indirect texture format
+#define GX_BP_INDTEVSTAGE_FORMAT_ST 28
+#define GX_BP_INDTEVSTAGE_FORMAT_END 29
+#define GX_BP_INDTEVSTAGE_FORMAT_SZ 2
+#define GX_BP_INDTEVSTAGE_FORMAT_MASK (((1 << 2) - 1) << 31 - 29)
+#define GX_BP_GET_INDTEVSTAGE_FORMAT(reg) GX_BITGET(reg, 28, 2)
+#define GX_BP_SET_INDTEVSTAGE_FORMAT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
+// BIAS [25:27] (3) - Indirect texture bias
+#define GX_BP_INDTEVSTAGE_BIAS_ST 25
+#define GX_BP_INDTEVSTAGE_BIAS_END 27
+#define GX_BP_INDTEVSTAGE_BIAS_SZ 3
+#define GX_BP_INDTEVSTAGE_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
+#define GX_BP_GET_INDTEVSTAGE_BIAS(reg) GX_BITGET(reg, 25, 3)
+#define GX_BP_SET_INDTEVSTAGE_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
+// ALPHA [23:24] (2) - Indirect texture alpha
+#define GX_BP_INDTEVSTAGE_ALPHA_ST 23
+#define GX_BP_INDTEVSTAGE_ALPHA_END 24
+#define GX_BP_INDTEVSTAGE_ALPHA_SZ 2
+#define GX_BP_INDTEVSTAGE_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
+#define GX_BP_GET_INDTEVSTAGE_ALPHA(reg) GX_BITGET(reg, 23, 2)
+#define GX_BP_SET_INDTEVSTAGE_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
+// MTX [19:22] (4) - Indirect texture matrix
+#define GX_BP_INDTEVSTAGE_MTX_ST 19
+#define GX_BP_INDTEVSTAGE_MTX_END 22
+#define GX_BP_INDTEVSTAGE_MTX_SZ 4
+#define GX_BP_INDTEVSTAGE_MTX_MASK (((1 << 4) - 1) << 31 - 22)
+#define GX_BP_GET_INDTEVSTAGE_MTX(reg) GX_BITGET(reg, 19, 4)
+#define GX_BP_SET_INDTEVSTAGE_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
+// WRAPS [16:18] (3) - S component wrap factor
+#define GX_BP_INDTEVSTAGE_WRAPS_ST 16
+#define GX_BP_INDTEVSTAGE_WRAPS_END 18
+#define GX_BP_INDTEVSTAGE_WRAPS_SZ 3
+#define GX_BP_INDTEVSTAGE_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
+#define GX_BP_GET_INDTEVSTAGE_WRAPS(reg) GX_BITGET(reg, 16, 3)
+#define GX_BP_SET_INDTEVSTAGE_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
+// WRAPT [13:15] (3) - T component wrap factor
+#define GX_BP_INDTEVSTAGE_WRAPT_ST 13
+#define GX_BP_INDTEVSTAGE_WRAPT_END 15
+#define GX_BP_INDTEVSTAGE_WRAPT_SZ 3
+#define GX_BP_INDTEVSTAGE_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
+#define GX_BP_GET_INDTEVSTAGE_WRAPT(reg) GX_BITGET(reg, 13, 3)
+#define GX_BP_SET_INDTEVSTAGE_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
+// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps
+#define GX_BP_INDTEVSTAGE_UTCLOD_ST 12
+#define GX_BP_INDTEVSTAGE_UTCLOD_END 12
+#define GX_BP_INDTEVSTAGE_UTCLOD_SZ 1
+#define GX_BP_INDTEVSTAGE_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
+#define GX_BP_GET_INDTEVSTAGE_UTCLOD(reg) GX_BITGET(reg, 12, 1)
+#define GX_BP_SET_INDTEVSTAGE_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
 // ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 0)
-#define GX_BP_INDTEVSTAGE0_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE0_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE0_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE0_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE0_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE0_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x11 - IndTevStage1
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 1)
-#define GX_BP_INDTEVSTAGE1_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE1_STAGE_END 31
-#define GX_BP_INDTEVSTAGE1_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE1_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE1_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE1_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 1)
-#define GX_BP_INDTEVSTAGE1_FMT_ST 28
-#define GX_BP_INDTEVSTAGE1_FMT_END 29
-#define GX_BP_INDTEVSTAGE1_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE1_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE1_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE1_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 1)
-#define GX_BP_INDTEVSTAGE1_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE1_BIAS_END 27
-#define GX_BP_INDTEVSTAGE1_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE1_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE1_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE1_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 1)
-#define GX_BP_INDTEVSTAGE1_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE1_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE1_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE1_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE1_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE1_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 1)
-#define GX_BP_INDTEVSTAGE1_MTX_ST 19
-#define GX_BP_INDTEVSTAGE1_MTX_END 22
-#define GX_BP_INDTEVSTAGE1_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE1_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE1_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE1_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 1)
-#define GX_BP_INDTEVSTAGE1_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE1_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE1_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE1_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE1_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE1_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 1)
-#define GX_BP_INDTEVSTAGE1_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE1_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE1_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE1_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE1_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE1_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 1)
-#define GX_BP_INDTEVSTAGE1_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE1_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE1_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE1_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE1_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE1_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 1)
-#define GX_BP_INDTEVSTAGE1_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE1_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE1_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE1_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE1_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE1_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x12 - IndTevStage2
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 2)
-#define GX_BP_INDTEVSTAGE2_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE2_STAGE_END 31
-#define GX_BP_INDTEVSTAGE2_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE2_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE2_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE2_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 2)
-#define GX_BP_INDTEVSTAGE2_FMT_ST 28
-#define GX_BP_INDTEVSTAGE2_FMT_END 29
-#define GX_BP_INDTEVSTAGE2_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE2_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE2_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE2_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 2)
-#define GX_BP_INDTEVSTAGE2_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE2_BIAS_END 27
-#define GX_BP_INDTEVSTAGE2_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE2_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE2_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE2_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 2)
-#define GX_BP_INDTEVSTAGE2_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE2_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE2_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE2_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE2_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE2_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 2)
-#define GX_BP_INDTEVSTAGE2_MTX_ST 19
-#define GX_BP_INDTEVSTAGE2_MTX_END 22
-#define GX_BP_INDTEVSTAGE2_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE2_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE2_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE2_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 2)
-#define GX_BP_INDTEVSTAGE2_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE2_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE2_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE2_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE2_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE2_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 2)
-#define GX_BP_INDTEVSTAGE2_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE2_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE2_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE2_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE2_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE2_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 2)
-#define GX_BP_INDTEVSTAGE2_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE2_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE2_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE2_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE2_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE2_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 2)
-#define GX_BP_INDTEVSTAGE2_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE2_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE2_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE2_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE2_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE2_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x13 - IndTevStage3
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 3)
-#define GX_BP_INDTEVSTAGE3_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE3_STAGE_END 31
-#define GX_BP_INDTEVSTAGE3_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE3_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE3_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE3_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 3)
-#define GX_BP_INDTEVSTAGE3_FMT_ST 28
-#define GX_BP_INDTEVSTAGE3_FMT_END 29
-#define GX_BP_INDTEVSTAGE3_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE3_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE3_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE3_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 3)
-#define GX_BP_INDTEVSTAGE3_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE3_BIAS_END 27
-#define GX_BP_INDTEVSTAGE3_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE3_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE3_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE3_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 3)
-#define GX_BP_INDTEVSTAGE3_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE3_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE3_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE3_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE3_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE3_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 3)
-#define GX_BP_INDTEVSTAGE3_MTX_ST 19
-#define GX_BP_INDTEVSTAGE3_MTX_END 22
-#define GX_BP_INDTEVSTAGE3_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE3_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE3_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE3_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 3)
-#define GX_BP_INDTEVSTAGE3_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE3_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE3_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE3_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE3_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE3_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 3)
-#define GX_BP_INDTEVSTAGE3_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE3_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE3_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE3_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE3_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE3_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 3)
-#define GX_BP_INDTEVSTAGE3_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE3_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE3_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE3_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE3_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE3_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 3)
-#define GX_BP_INDTEVSTAGE3_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE3_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE3_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE3_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE3_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE3_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x14 - IndTevStage4
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 4)
-#define GX_BP_INDTEVSTAGE4_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE4_STAGE_END 31
-#define GX_BP_INDTEVSTAGE4_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE4_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE4_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE4_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 4)
-#define GX_BP_INDTEVSTAGE4_FMT_ST 28
-#define GX_BP_INDTEVSTAGE4_FMT_END 29
-#define GX_BP_INDTEVSTAGE4_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE4_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE4_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE4_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 4)
-#define GX_BP_INDTEVSTAGE4_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE4_BIAS_END 27
-#define GX_BP_INDTEVSTAGE4_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE4_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE4_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE4_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 4)
-#define GX_BP_INDTEVSTAGE4_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE4_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE4_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE4_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE4_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE4_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 4)
-#define GX_BP_INDTEVSTAGE4_MTX_ST 19
-#define GX_BP_INDTEVSTAGE4_MTX_END 22
-#define GX_BP_INDTEVSTAGE4_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE4_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE4_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE4_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 4)
-#define GX_BP_INDTEVSTAGE4_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE4_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE4_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE4_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE4_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE4_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 4)
-#define GX_BP_INDTEVSTAGE4_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE4_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE4_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE4_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE4_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE4_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 4)
-#define GX_BP_INDTEVSTAGE4_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE4_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE4_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE4_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE4_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE4_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 4)
-#define GX_BP_INDTEVSTAGE4_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE4_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE4_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE4_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE4_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE4_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x15 - IndTevStage5
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 5)
-#define GX_BP_INDTEVSTAGE5_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE5_STAGE_END 31
-#define GX_BP_INDTEVSTAGE5_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE5_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE5_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE5_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 5)
-#define GX_BP_INDTEVSTAGE5_FMT_ST 28
-#define GX_BP_INDTEVSTAGE5_FMT_END 29
-#define GX_BP_INDTEVSTAGE5_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE5_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE5_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE5_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 5)
-#define GX_BP_INDTEVSTAGE5_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE5_BIAS_END 27
-#define GX_BP_INDTEVSTAGE5_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE5_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE5_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE5_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 5)
-#define GX_BP_INDTEVSTAGE5_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE5_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE5_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE5_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE5_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE5_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 5)
-#define GX_BP_INDTEVSTAGE5_MTX_ST 19
-#define GX_BP_INDTEVSTAGE5_MTX_END 22
-#define GX_BP_INDTEVSTAGE5_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE5_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE5_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE5_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 5)
-#define GX_BP_INDTEVSTAGE5_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE5_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE5_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE5_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE5_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE5_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 5)
-#define GX_BP_INDTEVSTAGE5_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE5_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE5_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE5_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE5_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE5_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 5)
-#define GX_BP_INDTEVSTAGE5_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE5_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE5_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE5_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE5_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE5_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 5)
-#define GX_BP_INDTEVSTAGE5_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE5_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE5_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE5_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE5_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE5_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x16 - IndTevStage6
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 6)
-#define GX_BP_INDTEVSTAGE6_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE6_STAGE_END 31
-#define GX_BP_INDTEVSTAGE6_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE6_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE6_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE6_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 6)
-#define GX_BP_INDTEVSTAGE6_FMT_ST 28
-#define GX_BP_INDTEVSTAGE6_FMT_END 29
-#define GX_BP_INDTEVSTAGE6_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE6_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE6_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE6_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 6)
-#define GX_BP_INDTEVSTAGE6_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE6_BIAS_END 27
-#define GX_BP_INDTEVSTAGE6_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE6_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE6_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE6_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 6)
-#define GX_BP_INDTEVSTAGE6_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE6_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE6_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE6_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE6_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE6_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 6)
-#define GX_BP_INDTEVSTAGE6_MTX_ST 19
-#define GX_BP_INDTEVSTAGE6_MTX_END 22
-#define GX_BP_INDTEVSTAGE6_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE6_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE6_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE6_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 6)
-#define GX_BP_INDTEVSTAGE6_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE6_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE6_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE6_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE6_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE6_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 6)
-#define GX_BP_INDTEVSTAGE6_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE6_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE6_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE6_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE6_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE6_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 6)
-#define GX_BP_INDTEVSTAGE6_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE6_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE6_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE6_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE6_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE6_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 6)
-#define GX_BP_INDTEVSTAGE6_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE6_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE6_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE6_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE6_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE6_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x17 - IndTevStage7
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 7)
-#define GX_BP_INDTEVSTAGE7_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE7_STAGE_END 31
-#define GX_BP_INDTEVSTAGE7_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE7_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE7_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE7_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 7)
-#define GX_BP_INDTEVSTAGE7_FMT_ST 28
-#define GX_BP_INDTEVSTAGE7_FMT_END 29
-#define GX_BP_INDTEVSTAGE7_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE7_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE7_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE7_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 7)
-#define GX_BP_INDTEVSTAGE7_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE7_BIAS_END 27
-#define GX_BP_INDTEVSTAGE7_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE7_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE7_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE7_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 7)
-#define GX_BP_INDTEVSTAGE7_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE7_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE7_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE7_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE7_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE7_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 7)
-#define GX_BP_INDTEVSTAGE7_MTX_ST 19
-#define GX_BP_INDTEVSTAGE7_MTX_END 22
-#define GX_BP_INDTEVSTAGE7_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE7_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE7_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE7_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 7)
-#define GX_BP_INDTEVSTAGE7_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE7_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE7_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE7_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE7_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE7_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 7)
-#define GX_BP_INDTEVSTAGE7_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE7_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE7_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE7_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE7_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE7_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 7)
-#define GX_BP_INDTEVSTAGE7_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE7_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE7_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE7_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE7_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE7_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 7)
-#define GX_BP_INDTEVSTAGE7_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE7_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE7_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE7_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE7_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE7_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x18 - IndTevStage8
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 8)
-#define GX_BP_INDTEVSTAGE8_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE8_STAGE_END 31
-#define GX_BP_INDTEVSTAGE8_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE8_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE8_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE8_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 8)
-#define GX_BP_INDTEVSTAGE8_FMT_ST 28
-#define GX_BP_INDTEVSTAGE8_FMT_END 29
-#define GX_BP_INDTEVSTAGE8_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE8_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE8_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE8_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 8)
-#define GX_BP_INDTEVSTAGE8_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE8_BIAS_END 27
-#define GX_BP_INDTEVSTAGE8_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE8_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE8_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE8_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 8)
-#define GX_BP_INDTEVSTAGE8_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE8_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE8_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE8_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE8_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE8_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 8)
-#define GX_BP_INDTEVSTAGE8_MTX_ST 19
-#define GX_BP_INDTEVSTAGE8_MTX_END 22
-#define GX_BP_INDTEVSTAGE8_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE8_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE8_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE8_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 8)
-#define GX_BP_INDTEVSTAGE8_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE8_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE8_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE8_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE8_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE8_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 8)
-#define GX_BP_INDTEVSTAGE8_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE8_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE8_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE8_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE8_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE8_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 8)
-#define GX_BP_INDTEVSTAGE8_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE8_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE8_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE8_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE8_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE8_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 8)
-#define GX_BP_INDTEVSTAGE8_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE8_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE8_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE8_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE8_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE8_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x19 - IndTevStage9
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 9)
-#define GX_BP_INDTEVSTAGE9_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE9_STAGE_END 31
-#define GX_BP_INDTEVSTAGE9_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE9_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE9_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE9_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 9)
-#define GX_BP_INDTEVSTAGE9_FMT_ST 28
-#define GX_BP_INDTEVSTAGE9_FMT_END 29
-#define GX_BP_INDTEVSTAGE9_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE9_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE9_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE9_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 9)
-#define GX_BP_INDTEVSTAGE9_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE9_BIAS_END 27
-#define GX_BP_INDTEVSTAGE9_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE9_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE9_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE9_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 9)
-#define GX_BP_INDTEVSTAGE9_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE9_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE9_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE9_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE9_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE9_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 9)
-#define GX_BP_INDTEVSTAGE9_MTX_ST 19
-#define GX_BP_INDTEVSTAGE9_MTX_END 22
-#define GX_BP_INDTEVSTAGE9_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE9_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE9_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE9_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 9)
-#define GX_BP_INDTEVSTAGE9_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE9_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE9_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE9_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE9_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE9_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 9)
-#define GX_BP_INDTEVSTAGE9_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE9_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE9_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE9_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE9_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE9_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 9)
-#define GX_BP_INDTEVSTAGE9_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE9_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE9_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE9_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE9_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE9_UTCLOD(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 9)
-#define GX_BP_INDTEVSTAGE9_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE9_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE9_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE9_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE9_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE9_ADDPREV(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x1A - IndTevStage10
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 10)
-#define GX_BP_INDTEVSTAGE10_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE10_STAGE_END 31
-#define GX_BP_INDTEVSTAGE10_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE10_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE10_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE10_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 10)
-#define GX_BP_INDTEVSTAGE10_FMT_ST 28
-#define GX_BP_INDTEVSTAGE10_FMT_END 29
-#define GX_BP_INDTEVSTAGE10_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE10_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE10_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE10_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 10)
-#define GX_BP_INDTEVSTAGE10_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE10_BIAS_END 27
-#define GX_BP_INDTEVSTAGE10_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE10_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE10_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE10_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 10)
-#define GX_BP_INDTEVSTAGE10_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE10_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE10_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE10_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE10_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE10_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 10)
-#define GX_BP_INDTEVSTAGE10_MTX_ST 19
-#define GX_BP_INDTEVSTAGE10_MTX_END 22
-#define GX_BP_INDTEVSTAGE10_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE10_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE10_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE10_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 10)
-#define GX_BP_INDTEVSTAGE10_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE10_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE10_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE10_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE10_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE10_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 10)
-#define GX_BP_INDTEVSTAGE10_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE10_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE10_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE10_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE10_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE10_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 10)
-#define GX_BP_INDTEVSTAGE10_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE10_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE10_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE10_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE10_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE10_UTCLOD(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 10)
-#define GX_BP_INDTEVSTAGE10_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE10_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE10_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE10_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE10_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE10_ADDPREV(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x1B - IndTevStage11
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 11)
-#define GX_BP_INDTEVSTAGE11_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE11_STAGE_END 31
-#define GX_BP_INDTEVSTAGE11_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE11_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE11_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE11_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 11)
-#define GX_BP_INDTEVSTAGE11_FMT_ST 28
-#define GX_BP_INDTEVSTAGE11_FMT_END 29
-#define GX_BP_INDTEVSTAGE11_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE11_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE11_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE11_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 11)
-#define GX_BP_INDTEVSTAGE11_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE11_BIAS_END 27
-#define GX_BP_INDTEVSTAGE11_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE11_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE11_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE11_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 11)
-#define GX_BP_INDTEVSTAGE11_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE11_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE11_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE11_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE11_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE11_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 11)
-#define GX_BP_INDTEVSTAGE11_MTX_ST 19
-#define GX_BP_INDTEVSTAGE11_MTX_END 22
-#define GX_BP_INDTEVSTAGE11_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE11_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE11_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE11_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 11)
-#define GX_BP_INDTEVSTAGE11_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE11_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE11_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE11_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE11_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE11_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 11)
-#define GX_BP_INDTEVSTAGE11_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE11_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE11_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE11_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE11_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE11_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 11)
-#define GX_BP_INDTEVSTAGE11_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE11_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE11_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE11_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE11_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE11_UTCLOD(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 11)
-#define GX_BP_INDTEVSTAGE11_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE11_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE11_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE11_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE11_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE11_ADDPREV(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x1C - IndTevStage12
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 12)
-#define GX_BP_INDTEVSTAGE12_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE12_STAGE_END 31
-#define GX_BP_INDTEVSTAGE12_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE12_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE12_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE12_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 12)
-#define GX_BP_INDTEVSTAGE12_FMT_ST 28
-#define GX_BP_INDTEVSTAGE12_FMT_END 29
-#define GX_BP_INDTEVSTAGE12_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE12_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE12_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE12_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 12)
-#define GX_BP_INDTEVSTAGE12_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE12_BIAS_END 27
-#define GX_BP_INDTEVSTAGE12_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE12_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE12_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE12_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 12)
-#define GX_BP_INDTEVSTAGE12_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE12_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE12_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE12_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE12_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE12_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 12)
-#define GX_BP_INDTEVSTAGE12_MTX_ST 19
-#define GX_BP_INDTEVSTAGE12_MTX_END 22
-#define GX_BP_INDTEVSTAGE12_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE12_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE12_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE12_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 12)
-#define GX_BP_INDTEVSTAGE12_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE12_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE12_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE12_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE12_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE12_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 12)
-#define GX_BP_INDTEVSTAGE12_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE12_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE12_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE12_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE12_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE12_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 12)
-#define GX_BP_INDTEVSTAGE12_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE12_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE12_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE12_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE12_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE12_UTCLOD(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 12)
-#define GX_BP_INDTEVSTAGE12_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE12_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE12_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE12_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE12_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE12_ADDPREV(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x1D - IndTevStage13
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 13)
-#define GX_BP_INDTEVSTAGE13_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE13_STAGE_END 31
-#define GX_BP_INDTEVSTAGE13_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE13_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE13_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE13_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 13)
-#define GX_BP_INDTEVSTAGE13_FMT_ST 28
-#define GX_BP_INDTEVSTAGE13_FMT_END 29
-#define GX_BP_INDTEVSTAGE13_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE13_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE13_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE13_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 13)
-#define GX_BP_INDTEVSTAGE13_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE13_BIAS_END 27
-#define GX_BP_INDTEVSTAGE13_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE13_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE13_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE13_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 13)
-#define GX_BP_INDTEVSTAGE13_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE13_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE13_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE13_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE13_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE13_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 13)
-#define GX_BP_INDTEVSTAGE13_MTX_ST 19
-#define GX_BP_INDTEVSTAGE13_MTX_END 22
-#define GX_BP_INDTEVSTAGE13_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE13_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE13_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE13_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 13)
-#define GX_BP_INDTEVSTAGE13_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE13_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE13_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE13_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE13_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE13_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 13)
-#define GX_BP_INDTEVSTAGE13_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE13_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE13_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE13_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE13_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE13_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 13)
-#define GX_BP_INDTEVSTAGE13_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE13_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE13_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE13_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE13_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE13_UTCLOD(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 13)
-#define GX_BP_INDTEVSTAGE13_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE13_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE13_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE13_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE13_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE13_ADDPREV(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x1E - IndTevStage14
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 14)
-#define GX_BP_INDTEVSTAGE14_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE14_STAGE_END 31
-#define GX_BP_INDTEVSTAGE14_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE14_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE14_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE14_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 14)
-#define GX_BP_INDTEVSTAGE14_FMT_ST 28
-#define GX_BP_INDTEVSTAGE14_FMT_END 29
-#define GX_BP_INDTEVSTAGE14_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE14_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE14_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE14_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 14)
-#define GX_BP_INDTEVSTAGE14_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE14_BIAS_END 27
-#define GX_BP_INDTEVSTAGE14_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE14_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE14_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE14_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 14)
-#define GX_BP_INDTEVSTAGE14_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE14_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE14_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE14_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE14_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE14_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 14)
-#define GX_BP_INDTEVSTAGE14_MTX_ST 19
-#define GX_BP_INDTEVSTAGE14_MTX_END 22
-#define GX_BP_INDTEVSTAGE14_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE14_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE14_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE14_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 14)
-#define GX_BP_INDTEVSTAGE14_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE14_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE14_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE14_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE14_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE14_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 14)
-#define GX_BP_INDTEVSTAGE14_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE14_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE14_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE14_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE14_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE14_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 14)
-#define GX_BP_INDTEVSTAGE14_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE14_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE14_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE14_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE14_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE14_UTCLOD(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 14)
-#define GX_BP_INDTEVSTAGE14_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE14_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE14_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE14_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE14_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE14_ADDPREV(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
-
-/**
- * BP register 0x1F - IndTevStage15
- */
-// STAGE [30:31] (2) - Indirect texture stage ID (stage 15)
-#define GX_BP_INDTEVSTAGE15_STAGE_ST 30
-#define GX_BP_INDTEVSTAGE15_STAGE_END 31
-#define GX_BP_INDTEVSTAGE15_STAGE_SZ 2
-#define GX_BP_INDTEVSTAGE15_STAGE_MASK (((1 << 2) - 1) << 31 - 31)
-#define GX_BP_GET_INDTEVSTAGE15_STAGE(reg) GX_BITGET(reg, 30, 2)
-#define GX_BP_SET_INDTEVSTAGE15_STAGE(reg, x) ((reg) = GX_BITSET(reg, 30, 2, x))
-// FMT [28:29] (2) - Indirect texture format (stage 15)
-#define GX_BP_INDTEVSTAGE15_FMT_ST 28
-#define GX_BP_INDTEVSTAGE15_FMT_END 29
-#define GX_BP_INDTEVSTAGE15_FMT_SZ 2
-#define GX_BP_INDTEVSTAGE15_FMT_MASK (((1 << 2) - 1) << 31 - 29)
-#define GX_BP_GET_INDTEVSTAGE15_FMT(reg) GX_BITGET(reg, 28, 2)
-#define GX_BP_SET_INDTEVSTAGE15_FMT(reg, x) ((reg) = GX_BITSET(reg, 28, 2, x))
-// BIAS [25:27] (3) - Indirect texture bias (stage 15)
-#define GX_BP_INDTEVSTAGE15_BIAS_ST 25
-#define GX_BP_INDTEVSTAGE15_BIAS_END 27
-#define GX_BP_INDTEVSTAGE15_BIAS_SZ 3
-#define GX_BP_INDTEVSTAGE15_BIAS_MASK (((1 << 3) - 1) << 31 - 27)
-#define GX_BP_GET_INDTEVSTAGE15_BIAS(reg) GX_BITGET(reg, 25, 3)
-#define GX_BP_SET_INDTEVSTAGE15_BIAS(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
-// ALPHA [23:24] (2) - Indirect texture alpha (stage 15)
-#define GX_BP_INDTEVSTAGE15_ALPHA_ST 23
-#define GX_BP_INDTEVSTAGE15_ALPHA_END 24
-#define GX_BP_INDTEVSTAGE15_ALPHA_SZ 2
-#define GX_BP_INDTEVSTAGE15_ALPHA_MASK (((1 << 2) - 1) << 31 - 24)
-#define GX_BP_GET_INDTEVSTAGE15_ALPHA(reg) GX_BITGET(reg, 23, 2)
-#define GX_BP_SET_INDTEVSTAGE15_ALPHA(reg, x) ((reg) = GX_BITSET(reg, 23, 2, x))
-// MTX [19:22] (4) - Indirect texture matrix (stage 15)
-#define GX_BP_INDTEVSTAGE15_MTX_ST 19
-#define GX_BP_INDTEVSTAGE15_MTX_END 22
-#define GX_BP_INDTEVSTAGE15_MTX_SZ 4
-#define GX_BP_INDTEVSTAGE15_MTX_MASK (((1 << 4) - 1) << 31 - 22)
-#define GX_BP_GET_INDTEVSTAGE15_MTX(reg) GX_BITGET(reg, 19, 4)
-#define GX_BP_SET_INDTEVSTAGE15_MTX(reg, x) ((reg) = GX_BITSET(reg, 19, 4, x))
-// WRAPS [16:18] (3) - S component wrap factor (stage 15)
-#define GX_BP_INDTEVSTAGE15_WRAPS_ST 16
-#define GX_BP_INDTEVSTAGE15_WRAPS_END 18
-#define GX_BP_INDTEVSTAGE15_WRAPS_SZ 3
-#define GX_BP_INDTEVSTAGE15_WRAPS_MASK (((1 << 3) - 1) << 31 - 18)
-#define GX_BP_GET_INDTEVSTAGE15_WRAPS(reg) GX_BITGET(reg, 16, 3)
-#define GX_BP_SET_INDTEVSTAGE15_WRAPS(reg, x) ((reg) = GX_BITSET(reg, 16, 3, x))
-// WRAPT [13:15] (3) - T component wrap factor (stage 15)
-#define GX_BP_INDTEVSTAGE15_WRAPT_ST 13
-#define GX_BP_INDTEVSTAGE15_WRAPT_END 15
-#define GX_BP_INDTEVSTAGE15_WRAPT_SZ 3
-#define GX_BP_INDTEVSTAGE15_WRAPT_MASK (((1 << 3) - 1) << 31 - 15)
-#define GX_BP_GET_INDTEVSTAGE15_WRAPT(reg) GX_BITGET(reg, 13, 3)
-#define GX_BP_SET_INDTEVSTAGE15_WRAPT(reg, x) ((reg) = GX_BITSET(reg, 13, 3, x))
-// UTCLOD [12:12] (1) - Whether to use unmodified texcoords for mipmaps (stage
-// 15)
-#define GX_BP_INDTEVSTAGE15_UTCLOD_ST 12
-#define GX_BP_INDTEVSTAGE15_UTCLOD_END 12
-#define GX_BP_INDTEVSTAGE15_UTCLOD_SZ 1
-#define GX_BP_INDTEVSTAGE15_UTCLOD_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_INDTEVSTAGE15_UTCLOD(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_INDTEVSTAGE15_UTCLOD(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-// ADDPREV [11:11] (1) - Whether to add in results from previous tev stage
-// (stage 15)
-#define GX_BP_INDTEVSTAGE15_ADDPREV_ST 11
-#define GX_BP_INDTEVSTAGE15_ADDPREV_END 11
-#define GX_BP_INDTEVSTAGE15_ADDPREV_SZ 1
-#define GX_BP_INDTEVSTAGE15_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
-#define GX_BP_GET_INDTEVSTAGE15_ADDPREV(reg) GX_BITGET(reg, 11, 1)
-#define GX_BP_SET_INDTEVSTAGE15_ADDPREV(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 11, 1, x))
+#define GX_BP_INDTEVSTAGE_ADDPREV_ST 11
+#define GX_BP_INDTEVSTAGE_ADDPREV_END 11
+#define GX_BP_INDTEVSTAGE_ADDPREV_SZ 1
+#define GX_BP_INDTEVSTAGE_ADDPREV_MASK (((1 << 1) - 1) << 31 - 11)
+#define GX_BP_GET_INDTEVSTAGE_ADDPREV(reg) GX_BITGET(reg, 11, 1)
+#define GX_BP_SET_INDTEVSTAGE_ADDPREV(reg, x) ((reg) = GX_BITSET(reg, 11, 1, x))
 
 /**
  * BP register 0x20 - scissorTL
@@ -1695,8 +485,7 @@ typedef enum {
 #define GX_BP_LINEPTWIDTH_POINTOFS_SZ 3
 #define GX_BP_LINEPTWIDTH_POINTOFS_MASK (((1 << 3) - 1) << 31 - 12)
 #define GX_BP_GET_LINEPTWIDTH_POINTOFS(reg) GX_BITGET(reg, 10, 3)
-#define GX_BP_SET_LINEPTWIDTH_POINTOFS(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 10, 3, x))
+#define GX_BP_SET_LINEPTWIDTH_POINTOFS(reg, x) ((reg) = GX_BITSET(reg, 10, 3, x))
 
 /**
  * BP register 0x25 - ras1_ss0
@@ -1823,164 +612,22 @@ typedef enum {
 #define GX_BP_SET_RAS1_IREF_TXC3(reg, x) ((reg) = GX_BITSET(reg, 8, 3, x))
 
 /**
- * BP register 0x30 - su_ssize0
+ * BP structure - su_ssize
  */
 // USELINEOFS [13:13] (1)
-#define GX_BP_SU_SSIZE0_USELINEOFS_ST 13
-#define GX_BP_SU_SSIZE0_USELINEOFS_END 13
-#define GX_BP_SU_SSIZE0_USELINEOFS_SZ 1
-#define GX_BP_SU_SSIZE0_USELINEOFS_MASK (((1 << 1) - 1) << 31 - 13)
-#define GX_BP_GET_SU_SSIZE0_USELINEOFS(reg) GX_BITGET(reg, 13, 1)
-#define GX_BP_SET_SU_SSIZE0_USELINEOFS(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 13, 1, x))
+#define GX_BP_SU_SSIZE_USELINEOFS_ST 13
+#define GX_BP_SU_SSIZE_USELINEOFS_END 13
+#define GX_BP_SU_SSIZE_USELINEOFS_SZ 1
+#define GX_BP_SU_SSIZE_USELINEOFS_MASK (((1 << 1) - 1) << 31 - 13)
+#define GX_BP_GET_SU_SSIZE_USELINEOFS(reg) GX_BITGET(reg, 13, 1)
+#define GX_BP_SET_SU_SSIZE_USELINEOFS(reg, x) ((reg) = GX_BITSET(reg, 13, 1, x))
 // USEPOINTOFS [12:12] (1)
-#define GX_BP_SU_SSIZE0_USEPOINTOFS_ST 12
-#define GX_BP_SU_SSIZE0_USEPOINTOFS_END 12
-#define GX_BP_SU_SSIZE0_USEPOINTOFS_SZ 1
-#define GX_BP_SU_SSIZE0_USEPOINTOFS_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_SU_SSIZE0_USEPOINTOFS(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_SU_SSIZE0_USEPOINTOFS(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-
-/**
- * BP register 0x32 - su_ssize1
- */
-// USELINEOFS [13:13] (1)
-#define GX_BP_SU_SSIZE1_USELINEOFS_ST 13
-#define GX_BP_SU_SSIZE1_USELINEOFS_END 13
-#define GX_BP_SU_SSIZE1_USELINEOFS_SZ 1
-#define GX_BP_SU_SSIZE1_USELINEOFS_MASK (((1 << 1) - 1) << 31 - 13)
-#define GX_BP_GET_SU_SSIZE1_USELINEOFS(reg) GX_BITGET(reg, 13, 1)
-#define GX_BP_SET_SU_SSIZE1_USELINEOFS(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 13, 1, x))
-// USEPOINTOFS [12:12] (1)
-#define GX_BP_SU_SSIZE1_USEPOINTOFS_ST 12
-#define GX_BP_SU_SSIZE1_USEPOINTOFS_END 12
-#define GX_BP_SU_SSIZE1_USEPOINTOFS_SZ 1
-#define GX_BP_SU_SSIZE1_USEPOINTOFS_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_SU_SSIZE1_USEPOINTOFS(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_SU_SSIZE1_USEPOINTOFS(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-
-/**
- * BP register 0x34 - su_ssize2
- */
-// USELINEOFS [13:13] (1)
-#define GX_BP_SU_SSIZE2_USELINEOFS_ST 13
-#define GX_BP_SU_SSIZE2_USELINEOFS_END 13
-#define GX_BP_SU_SSIZE2_USELINEOFS_SZ 1
-#define GX_BP_SU_SSIZE2_USELINEOFS_MASK (((1 << 1) - 1) << 31 - 13)
-#define GX_BP_GET_SU_SSIZE2_USELINEOFS(reg) GX_BITGET(reg, 13, 1)
-#define GX_BP_SET_SU_SSIZE2_USELINEOFS(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 13, 1, x))
-// USEPOINTOFS [12:12] (1)
-#define GX_BP_SU_SSIZE2_USEPOINTOFS_ST 12
-#define GX_BP_SU_SSIZE2_USEPOINTOFS_END 12
-#define GX_BP_SU_SSIZE2_USEPOINTOFS_SZ 1
-#define GX_BP_SU_SSIZE2_USEPOINTOFS_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_SU_SSIZE2_USEPOINTOFS(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_SU_SSIZE2_USEPOINTOFS(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-
-/**
- * BP register 0x36 - su_ssize3
- */
-// USELINEOFS [13:13] (1)
-#define GX_BP_SU_SSIZE3_USELINEOFS_ST 13
-#define GX_BP_SU_SSIZE3_USELINEOFS_END 13
-#define GX_BP_SU_SSIZE3_USELINEOFS_SZ 1
-#define GX_BP_SU_SSIZE3_USELINEOFS_MASK (((1 << 1) - 1) << 31 - 13)
-#define GX_BP_GET_SU_SSIZE3_USELINEOFS(reg) GX_BITGET(reg, 13, 1)
-#define GX_BP_SET_SU_SSIZE3_USELINEOFS(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 13, 1, x))
-// USEPOINTOFS [12:12] (1)
-#define GX_BP_SU_SSIZE3_USEPOINTOFS_ST 12
-#define GX_BP_SU_SSIZE3_USEPOINTOFS_END 12
-#define GX_BP_SU_SSIZE3_USEPOINTOFS_SZ 1
-#define GX_BP_SU_SSIZE3_USEPOINTOFS_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_SU_SSIZE3_USEPOINTOFS(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_SU_SSIZE3_USEPOINTOFS(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-
-/**
- * BP register 0x38 - su_ssize4
- */
-// USELINEOFS [13:13] (1)
-#define GX_BP_SU_SSIZE4_USELINEOFS_ST 13
-#define GX_BP_SU_SSIZE4_USELINEOFS_END 13
-#define GX_BP_SU_SSIZE4_USELINEOFS_SZ 1
-#define GX_BP_SU_SSIZE4_USELINEOFS_MASK (((1 << 1) - 1) << 31 - 13)
-#define GX_BP_GET_SU_SSIZE4_USELINEOFS(reg) GX_BITGET(reg, 13, 1)
-#define GX_BP_SET_SU_SSIZE4_USELINEOFS(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 13, 1, x))
-// USEPOINTOFS [12:12] (1)
-#define GX_BP_SU_SSIZE4_USEPOINTOFS_ST 12
-#define GX_BP_SU_SSIZE4_USEPOINTOFS_END 12
-#define GX_BP_SU_SSIZE4_USEPOINTOFS_SZ 1
-#define GX_BP_SU_SSIZE4_USEPOINTOFS_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_SU_SSIZE4_USEPOINTOFS(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_SU_SSIZE4_USEPOINTOFS(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-
-/**
- * BP register 0x3A - su_ssize5
- */
-// USELINEOFS [13:13] (1)
-#define GX_BP_SU_SSIZE5_USELINEOFS_ST 13
-#define GX_BP_SU_SSIZE5_USELINEOFS_END 13
-#define GX_BP_SU_SSIZE5_USELINEOFS_SZ 1
-#define GX_BP_SU_SSIZE5_USELINEOFS_MASK (((1 << 1) - 1) << 31 - 13)
-#define GX_BP_GET_SU_SSIZE5_USELINEOFS(reg) GX_BITGET(reg, 13, 1)
-#define GX_BP_SET_SU_SSIZE5_USELINEOFS(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 13, 1, x))
-// USEPOINTOFS [12:12] (1)
-#define GX_BP_SU_SSIZE5_USEPOINTOFS_ST 12
-#define GX_BP_SU_SSIZE5_USEPOINTOFS_END 12
-#define GX_BP_SU_SSIZE5_USEPOINTOFS_SZ 1
-#define GX_BP_SU_SSIZE5_USEPOINTOFS_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_SU_SSIZE5_USEPOINTOFS(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_SU_SSIZE5_USEPOINTOFS(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-
-/**
- * BP register 0x3C - su_ssize6
- */
-// USELINEOFS [13:13] (1)
-#define GX_BP_SU_SSIZE6_USELINEOFS_ST 13
-#define GX_BP_SU_SSIZE6_USELINEOFS_END 13
-#define GX_BP_SU_SSIZE6_USELINEOFS_SZ 1
-#define GX_BP_SU_SSIZE6_USELINEOFS_MASK (((1 << 1) - 1) << 31 - 13)
-#define GX_BP_GET_SU_SSIZE6_USELINEOFS(reg) GX_BITGET(reg, 13, 1)
-#define GX_BP_SET_SU_SSIZE6_USELINEOFS(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 13, 1, x))
-// USEPOINTOFS [12:12] (1)
-#define GX_BP_SU_SSIZE6_USEPOINTOFS_ST 12
-#define GX_BP_SU_SSIZE6_USEPOINTOFS_END 12
-#define GX_BP_SU_SSIZE6_USEPOINTOFS_SZ 1
-#define GX_BP_SU_SSIZE6_USEPOINTOFS_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_SU_SSIZE6_USEPOINTOFS(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_SU_SSIZE6_USEPOINTOFS(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
-
-/**
- * BP register 0x3E - su_ssize7
- */
-// USELINEOFS [13:13] (1)
-#define GX_BP_SU_SSIZE7_USELINEOFS_ST 13
-#define GX_BP_SU_SSIZE7_USELINEOFS_END 13
-#define GX_BP_SU_SSIZE7_USELINEOFS_SZ 1
-#define GX_BP_SU_SSIZE7_USELINEOFS_MASK (((1 << 1) - 1) << 31 - 13)
-#define GX_BP_GET_SU_SSIZE7_USELINEOFS(reg) GX_BITGET(reg, 13, 1)
-#define GX_BP_SET_SU_SSIZE7_USELINEOFS(reg, x)                                 \
-    ((reg) = GX_BITSET(reg, 13, 1, x))
-// USEPOINTOFS [12:12] (1)
-#define GX_BP_SU_SSIZE7_USEPOINTOFS_ST 12
-#define GX_BP_SU_SSIZE7_USEPOINTOFS_END 12
-#define GX_BP_SU_SSIZE7_USEPOINTOFS_SZ 1
-#define GX_BP_SU_SSIZE7_USEPOINTOFS_MASK (((1 << 1) - 1) << 31 - 12)
-#define GX_BP_GET_SU_SSIZE7_USEPOINTOFS(reg) GX_BITGET(reg, 12, 1)
-#define GX_BP_SET_SU_SSIZE7_USEPOINTOFS(reg, x)                                \
-    ((reg) = GX_BITSET(reg, 12, 1, x))
+#define GX_BP_SU_SSIZE_USEPOINTOFS_ST 12
+#define GX_BP_SU_SSIZE_USEPOINTOFS_END 12
+#define GX_BP_SU_SSIZE_USEPOINTOFS_SZ 1
+#define GX_BP_SU_SSIZE_USEPOINTOFS_MASK (((1 << 1) - 1) << 31 - 12)
+#define GX_BP_GET_SU_SSIZE_USEPOINTOFS(reg) GX_BITGET(reg, 12, 1)
+#define GX_BP_SET_SU_SSIZE_USEPOINTOFS(reg, x) ((reg) = GX_BITSET(reg, 12, 1, x))
 
 /**
  * BP register 0x59 - ScissorOffset
@@ -1999,6 +646,7 @@ typedef enum {
 #define GX_BP_SCISSOROFFSET_OY_MASK (((1 << 10) - 1) << 31 - 21)
 #define GX_BP_GET_SCISSOROFFSET_OY(reg) GX_BITGET(reg, 12, 10)
 #define GX_BP_SET_SCISSOROFFSET_OY(reg, x) ((reg) = GX_BITSET(reg, 12, 10, x))
+
 
 #ifdef __cplusplus
 }

@@ -263,6 +263,70 @@ typedef enum {
 #define GX_XF_GET_MATRIXINDEX1_TEX7(reg) GX_BITGET(reg, 8, 6)
 #define GX_XF_SET_MATRIXINDEX1_TEX7(reg, x) ((reg) = GX_BITSET(reg, 8, 6, x))
 
+/**
+ * XF structure - Tex
+ */
+// PROJTYPE [30:30] (1)
+#define GX_XF_TEX_PROJTYPE_ST 30
+#define GX_XF_TEX_PROJTYPE_END 30
+#define GX_XF_TEX_PROJTYPE_SZ 1
+#define GX_XF_TEX_PROJTYPE_MASK (((1 << 1) - 1) << 31 - 30)
+#define GX_XF_GET_TEX_PROJTYPE(reg) GX_BITGET(reg, 30, 1)
+#define GX_XF_SET_TEX_PROJTYPE(reg, x) ((reg) = GX_BITSET(reg, 30, 1, x))
+// INPUTFORM [29:29] (1)
+#define GX_XF_TEX_INPUTFORM_ST 29
+#define GX_XF_TEX_INPUTFORM_END 29
+#define GX_XF_TEX_INPUTFORM_SZ 1
+#define GX_XF_TEX_INPUTFORM_MASK (((1 << 1) - 1) << 31 - 29)
+#define GX_XF_GET_TEX_INPUTFORM(reg) GX_BITGET(reg, 29, 1)
+#define GX_XF_SET_TEX_INPUTFORM(reg, x) ((reg) = GX_BITSET(reg, 29, 1, x))
+// TEXGENTYPE [25:27] (3)
+#define GX_XF_TEX_TEXGENTYPE_ST 25
+#define GX_XF_TEX_TEXGENTYPE_END 27
+#define GX_XF_TEX_TEXGENTYPE_SZ 3
+#define GX_XF_TEX_TEXGENTYPE_MASK (((1 << 3) - 1) << 31 - 27)
+#define GX_XF_GET_TEX_TEXGENTYPE(reg) GX_BITGET(reg, 25, 3)
+#define GX_XF_SET_TEX_TEXGENTYPE(reg, x) ((reg) = GX_BITSET(reg, 25, 3, x))
+// SRCROW [20:24] (5)
+#define GX_XF_TEX_SRCROW_ST 20
+#define GX_XF_TEX_SRCROW_END 24
+#define GX_XF_TEX_SRCROW_SZ 5
+#define GX_XF_TEX_SRCROW_MASK (((1 << 5) - 1) << 31 - 24)
+#define GX_XF_GET_TEX_SRCROW(reg) GX_BITGET(reg, 20, 5)
+#define GX_XF_SET_TEX_SRCROW(reg, x) ((reg) = GX_BITSET(reg, 20, 5, x))
+// BUMPSRCTEX [17:19] (3)
+#define GX_XF_TEX_BUMPSRCTEX_ST 17
+#define GX_XF_TEX_BUMPSRCTEX_END 19
+#define GX_XF_TEX_BUMPSRCTEX_SZ 3
+#define GX_XF_TEX_BUMPSRCTEX_MASK (((1 << 3) - 1) << 31 - 19)
+#define GX_XF_GET_TEX_BUMPSRCTEX(reg) GX_BITGET(reg, 17, 3)
+#define GX_XF_SET_TEX_BUMPSRCTEX(reg, x) ((reg) = GX_BITSET(reg, 17, 3, x))
+// BUMPSRCLIGHT [14:16] (3)
+#define GX_XF_TEX_BUMPSRCLIGHT_ST 14
+#define GX_XF_TEX_BUMPSRCLIGHT_END 16
+#define GX_XF_TEX_BUMPSRCLIGHT_SZ 3
+#define GX_XF_TEX_BUMPSRCLIGHT_MASK (((1 << 3) - 1) << 31 - 16)
+#define GX_XF_GET_TEX_BUMPSRCLIGHT(reg) GX_BITGET(reg, 14, 3)
+#define GX_XF_SET_TEX_BUMPSRCLIGHT(reg, x) ((reg) = GX_BITSET(reg, 14, 3, x))
+
+/**
+ * XF structure - DualTex
+ */
+// BASEROW [26:31] (6) - Indicates which is the base row of the transform matrix
+#define GX_XF_DUALTEX_BASEROW_ST 26
+#define GX_XF_DUALTEX_BASEROW_END 31
+#define GX_XF_DUALTEX_BASEROW_SZ 6
+#define GX_XF_DUALTEX_BASEROW_MASK (((1 << 6) - 1) << 31 - 31)
+#define GX_XF_GET_DUALTEX_BASEROW(reg) GX_BITGET(reg, 26, 6)
+#define GX_XF_SET_DUALTEX_BASEROW(reg, x) ((reg) = GX_BITSET(reg, 26, 6, x))
+// NORMALIZE [23:23] (1) - Normalize texcoord before sending transform
+#define GX_XF_DUALTEX_NORMALIZE_ST 23
+#define GX_XF_DUALTEX_NORMALIZE_END 23
+#define GX_XF_DUALTEX_NORMALIZE_SZ 1
+#define GX_XF_DUALTEX_NORMALIZE_MASK (((1 << 1) - 1) << 31 - 23)
+#define GX_XF_GET_DUALTEX_NORMALIZE(reg) GX_BITGET(reg, 23, 1)
+#define GX_XF_SET_DUALTEX_NORMALIZE(reg, x) ((reg) = GX_BITSET(reg, 23, 1, x))
+
 
 #ifdef __cplusplus
 }

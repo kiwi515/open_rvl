@@ -59,8 +59,7 @@
             "id": "0x04"
         },
         {
-            "name": "IndMtx0A",
-            "id": "0x06",
+            "name": "IndMtxA",
             "fields": [
                 {
                     "name": "m00",
@@ -83,8 +82,7 @@
             ]
         },
         {
-            "name": "IndMtx0B",
-            "id": "0x07",
+            "name": "IndMtxB",
             "fields": [
                 {
                     "name": "m01",
@@ -107,8 +105,7 @@
             ]
         },
         {
-            "name": "IndMtx0C",
-            "id": "0x08",
+            "name": "IndMtxC",
             "fields": [
                 {
                     "name": "m02",
@@ -131,148 +128,40 @@
             ]
         },
         {
+            "name": "IndMtx0A",
+            "id": "0x06"
+        },
+        {
+            "name": "IndMtx0B",
+            "id": "0x07"
+        },
+        {
+            "name": "IndMtx0C",
+            "id": "0x08"
+        },
+        {
             "name": "IndMtx1A",
-            "id": "0x09",
-            "fields": [
-                {
-                    "name": "m00",
-                    "desc": "Texture offset matrix #1 [0][0]",
-                    "start": 21,
-                    "end": 31
-                },
-                {
-                    "name": "m10",
-                    "desc": "Texture offset matrix #1 [1][0]",
-                    "start": 10,
-                    "end": 20
-                },
-                {
-                    "name": "exp",
-                    "desc": "Bits 0-1 of scaling exponent #1 (2^x)",
-                    "start": 8,
-                    "end": 9
-                }
-            ]
+            "id": "0x09"
         },
         {
             "name": "IndMtx1B",
-            "id": "0x0A",
-            "fields": [
-                {
-                    "name": "m01",
-                    "desc": "Texture offset matrix #1 [0][1]",
-                    "start": 21,
-                    "end": 31
-                },
-                {
-                    "name": "m11",
-                    "desc": "Texture offset matrix #1 [1][1]",
-                    "start": 10,
-                    "end": 20
-                },
-                {
-                    "name": "exp",
-                    "desc": "Bits 2-3 of scaling exponent #1 (2^x)",
-                    "start": 8,
-                    "end": 9
-                }
-            ]
+            "id": "0x0A"
         },
         {
             "name": "IndMtx1C",
-            "id": "0x0B",
-            "fields": [
-                {
-                    "name": "m02",
-                    "desc": "Texture offset matrix #1 [0][2]",
-                    "start": 21,
-                    "end": 31
-                },
-                {
-                    "name": "m12",
-                    "desc": "Texture offset matrix #1 [1][2]",
-                    "start": 10,
-                    "end": 20
-                },
-                {
-                    "name": "exp",
-                    "desc": "Bit 4 of scaling exponent #1 (2^x)",
-                    "start": 8,
-                    "end": 9
-                }
-            ]
+            "id": "0x0B"
         },
         {
             "name": "IndMtx2A",
-            "id": "0x0C",
-            "fields": [
-                {
-                    "name": "m00",
-                    "desc": "Texture offset matrix #2 [0][0]",
-                    "start": 21,
-                    "end": 31
-                },
-                {
-                    "name": "m10",
-                    "desc": "Texture offset matrix #2 [1][0]",
-                    "start": 10,
-                    "end": 20
-                },
-                {
-                    "name": "exp",
-                    "desc": "Bits 0-1 of scaling exponent #2 (2^x)",
-                    "start": 8,
-                    "end": 9
-                }
-            ]
+            "id": "0x0C"
         },
         {
             "name": "IndMtx2B",
-            "id": "0x0D",
-            "fields": [
-                {
-                    "name": "m01",
-                    "desc": "Texture offset matrix #2 [0][1]",
-                    "start": 21,
-                    "end": 31
-                },
-                {
-                    "name": "m11",
-                    "desc": "Texture offset matrix #2 [1][1]",
-                    "start": 10,
-                    "end": 20
-                },
-                {
-                    "name": "Exp",
-                    "desc": "Bits 2-3 of scaling exponent #2 (2^x)",
-                    "start": 8,
-                    "end": 9
-                }
-            ]
+            "id": "0x0D"
         },
         {
             "name": "IndMtx2C",
-            "id": "0x0E",
-            "fields": [
-                {
-                    "name": "m02",
-                    "desc": "Texture offset matrix #2 [0][2]",
-                    "start": 21,
-                    "end": 31
-                },
-                {
-                    "name": "m12",
-                    "desc": "Texture offset matrix #2 [1][2]",
-                    "start": 10,
-                    "end": 20
-                },
-                {
-                    "name": "exp",
-                    "desc": "Bit 4 of scaling exponent #2 (2^x)",
-                    "start": 8,
-                    "end": 9
-                }
-            ]
+            "id": "0x0E"
         },
         {
             "name": "IndIMask",
@@ -287,964 +176,127 @@
             ]
         },
         {
-            "name": "IndTevStage0",
-            "id": "0x10",
+            "name": "IndTevStage",
             "fields": [
                 {
                     "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 0)",
+                    "desc": "Indirect texture stage ID",
                     "start": 30,
                     "end": 31
                 },
                 {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 0)",
+                    "name": "format",
+                    "desc": "Indirect texture format",
                     "start": 28,
                     "end": 29
                 },
                 {
                     "name": "bias",
-                    "desc": "Indirect texture bias (stage 0)",
+                    "desc": "Indirect texture bias",
                     "start": 25,
                     "end": 27
                 },
                 {
                     "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 0)",
+                    "desc": "Indirect texture alpha",
                     "start": 23,
                     "end": 24
                 },
                 {
                     "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 0)",
+                    "desc": "Indirect texture matrix",
                     "start": 19,
                     "end": 22
                 },
                 {
                     "name": "wrapS",
-                    "desc": "S component wrap factor (stage 0)",
+                    "desc": "S component wrap factor",
                     "start": 16,
                     "end": 18
                 },
                 {
                     "name": "wrapT",
-                    "desc": "T component wrap factor (stage 0)",
+                    "desc": "T component wrap factor",
                     "start": 13,
                     "end": 15
                 },
                 {
                     "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 0)",
+                    "desc": "Whether to use unmodified texcoords for mipmaps",
                     "start": 12,
                     "end": 12
                 },
                 {
                     "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 0)",
+                    "desc": "Whether to add in results from previous tev stage",
                     "start": 11,
                     "end": 11
                 }
             ]
+        },
+        {
+            "name": "IndTevStage0",
+            "id": "0x10"
         },
         {
             "name": "IndTevStage1",
-            "id": "0x11",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 1)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 1)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 1)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 1)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 1)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 1)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 1)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 1)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 1)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x11"
         },
         {
             "name": "IndTevStage2",
-            "id": "0x12",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 2)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 2)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 2)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 2)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 2)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 2)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 2)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 2)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 2)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x12"
         },
         {
             "name": "IndTevStage3",
-            "id": "0x13",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 3)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 3)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 3)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 3)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 3)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 3)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 3)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 3)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 3)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x13"
         },
         {
             "name": "IndTevStage4",
-            "id": "0x14",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 4)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 4)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 4)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 4)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 4)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 4)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 4)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 4)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 4)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x14"
         },
         {
             "name": "IndTevStage5",
-            "id": "0x15",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 5)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 5)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 5)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 5)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 5)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 5)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 5)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 5)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 5)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x15"
         },
         {
             "name": "IndTevStage6",
-            "id": "0x16",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 6)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 6)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 6)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 6)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 6)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 6)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 6)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 6)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 6)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x16"
         },
         {
             "name": "IndTevStage7",
-            "id": "0x17",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 7)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 7)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 7)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 7)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 7)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 7)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 7)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 7)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 7)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x17"
         },
         {
             "name": "IndTevStage8",
-            "id": "0x18",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 8)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 8)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 8)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 8)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 8)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 8)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 8)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 8)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 8)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x18"
         },
         {
             "name": "IndTevStage9",
-            "id": "0x19",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 9)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 9)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 9)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 9)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 9)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 9)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 9)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 9)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 9)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x19"
         },
         {
             "name": "IndTevStage10",
-            "id": "0x1A",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 10)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 10)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 10)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 10)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 10)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 10)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 10)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 10)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 10)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x1A"
         },
         {
             "name": "IndTevStage11",
-            "id": "0x1B",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 11)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 11)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 11)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 11)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 11)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 11)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 11)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 11)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 11)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x1B"
         },
         {
             "name": "IndTevStage12",
-            "id": "0x1C",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 12)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 12)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 12)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 12)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 12)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 12)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 12)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 12)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 12)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x1C"
         },
         {
             "name": "IndTevStage13",
-            "id": "0x1D",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 13)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 13)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 13)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 13)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 13)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 13)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 13)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 13)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 13)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x1D"
         },
         {
             "name": "IndTevStage14",
-            "id": "0x1E",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 14)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 14)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 14)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 14)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 14)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 14)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 14)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 14)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 14)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x1E"
         },
         {
             "name": "IndTevStage15",
-            "id": "0x1F",
-            "fields": [
-                {
-                    "name": "stage",
-                    "desc": "Indirect texture stage ID (stage 15)",
-                    "start": 30,
-                    "end": 31
-                },
-                {
-                    "name": "fmt",
-                    "desc": "Indirect texture format (stage 15)",
-                    "start": 28,
-                    "end": 29
-                },
-                {
-                    "name": "bias",
-                    "desc": "Indirect texture bias (stage 15)",
-                    "start": 25,
-                    "end": 27
-                },
-                {
-                    "name": "alpha",
-                    "desc": "Indirect texture alpha (stage 15)",
-                    "start": 23,
-                    "end": 24
-                },
-                {
-                    "name": "mtx",
-                    "desc": "Indirect texture matrix (stage 15)",
-                    "start": 19,
-                    "end": 22
-                },
-                {
-                    "name": "wrapS",
-                    "desc": "S component wrap factor (stage 15)",
-                    "start": 16,
-                    "end": 18
-                },
-                {
-                    "name": "wrapT",
-                    "desc": "T component wrap factor (stage 15)",
-                    "start": 13,
-                    "end": 15
-                },
-                {
-                    "name": "utcLod",
-                    "desc": "Whether to use unmodified texcoords for mipmaps (stage 15)",
-                    "start": 12,
-                    "end": 12
-                },
-                {
-                    "name": "addPrev",
-                    "desc": "Whether to add in results from previous tev stage (stage 15)",
-                    "start": 11,
-                    "end": 11
-                }
-            ]
+            "id": "0x1F"
         },
         {
             "name": "scissorTL",
@@ -1467,8 +519,7 @@
             "id": "0x2F"
         },
         {
-            "name": "su_ssize0",
-            "id": "0x30",
+            "name": "su_ssize",
             "fields": [
                 {
                     "name": "useLineOfs",
@@ -1481,6 +532,10 @@
                     "end": 12
                 }
             ]
+        },
+        {
+            "name": "su_ssize0",
+            "id": "0x30"
         },
         {
             "name": "su_tsize0",
@@ -1488,19 +543,7 @@
         },
         {
             "name": "su_ssize1",
-            "id": "0x32",
-            "fields": [
-                {
-                    "name": "useLineOfs",
-                    "start": 13,
-                    "end": 13
-                },
-                {
-                    "name": "usePointOfs",
-                    "start": 12,
-                    "end": 12
-                }
-            ]
+            "id": "0x32"
         },
         {
             "name": "su_tsize1",
@@ -1508,19 +551,7 @@
         },
         {
             "name": "su_ssize2",
-            "id": "0x34",
-            "fields": [
-                {
-                    "name": "useLineOfs",
-                    "start": 13,
-                    "end": 13
-                },
-                {
-                    "name": "usePointOfs",
-                    "start": 12,
-                    "end": 12
-                }
-            ]
+            "id": "0x34"
         },
         {
             "name": "su_tsize2",
@@ -1528,19 +559,7 @@
         },
         {
             "name": "su_ssize3",
-            "id": "0x36",
-            "fields": [
-                {
-                    "name": "useLineOfs",
-                    "start": 13,
-                    "end": 13
-                },
-                {
-                    "name": "usePointOfs",
-                    "start": 12,
-                    "end": 12
-                }
-            ]
+            "id": "0x36"
         },
         {
             "name": "su_tsize3",
@@ -1548,19 +567,7 @@
         },
         {
             "name": "su_ssize4",
-            "id": "0x38",
-            "fields": [
-                {
-                    "name": "useLineOfs",
-                    "start": 13,
-                    "end": 13
-                },
-                {
-                    "name": "usePointOfs",
-                    "start": 12,
-                    "end": 12
-                }
-            ]
+            "id": "0x38"
         },
         {
             "name": "su_tsize4",
@@ -1568,19 +575,7 @@
         },
         {
             "name": "su_ssize5",
-            "id": "0x3A",
-            "fields": [
-                {
-                    "name": "useLineOfs",
-                    "start": 13,
-                    "end": 13
-                },
-                {
-                    "name": "usePointOfs",
-                    "start": 12,
-                    "end": 12
-                }
-            ]
+            "id": "0x3A"
         },
         {
             "name": "su_tsize5",
@@ -1588,19 +583,7 @@
         },
         {
             "name": "su_ssize6",
-            "id": "0x3C",
-            "fields": [
-                {
-                    "name": "useLineOfs",
-                    "start": 13,
-                    "end": 13
-                },
-                {
-                    "name": "usePointOfs",
-                    "start": 12,
-                    "end": 12
-                }
-            ]
+            "id": "0x3C"
         },
         {
             "name": "su_tsize6",
@@ -1608,19 +591,7 @@
         },
         {
             "name": "su_ssize7",
-            "id": "0x3E",
-            "fields": [
-                {
-                    "name": "useLineOfs",
-                    "start": 13,
-                    "end": 13
-                },
-                {
-                    "name": "usePointOfs",
-                    "start": 12,
-                    "end": 12
-                }
-            ]
+            "id": "0x3E"
         },
         {
             "name": "su_tsize7",

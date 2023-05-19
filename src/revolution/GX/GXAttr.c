@@ -437,7 +437,7 @@ void __GXSetVAT(void) {
         flags >>= 1;
     } while (flags != 0);
 
-    WGPIPE.c = GX_FIFO_NO_OP;
+    WGPIPE.c = GX_FIFO_CMD_NOOP;
     gxdt->vatDirtyFlags = 0;
 }
 
@@ -569,7 +569,7 @@ void GXSetArray(GXAttr attr, u32 base, u8 stride) {
     GX_CP_LOAD_REG(GX_BP_REG_SETIMAGE2_TEX4 | idx, stride);
 }
 
-void GXInvalidateVtxCache(void) { WGPIPE.c = GX_FIFO_INVAL_VTX; }
+void GXInvalidateVtxCache(void) { WGPIPE.c = GX_FIFO_CMD_INVAL_VTX; }
 
 void GXSetTexCoordGen2(GXTexCoordID id, GXTexGenType type, GXTexGenSrc src,
                        u32 texMtxIdx, GXBool normalize, u32 dualTexMtxIdx) {
@@ -635,15 +635,15 @@ void GXSetTexCoordGen2(GXTexCoordID id, GXTexGenType type, GXTexGenSrc src,
     switch (type) {
     case GX_TG_MTX2x4:
         reg = 0;
-        reg = GX_BITSET(reg, 30, 1, GX_XF_TEX_PROJ_ST); // 2x4 projection
-        reg = GX_BITSET(reg, 29, 1, inputForm);
-        reg = GX_BITSET(reg, 20, 5, inputRow);
+        GX_XF_SET_TEX_PROJTYPE(reg, GX_XF_TEX_PROJ_ST); // 2x4 projection
+        GX_XF_SET_TEX_INPUTFORM(reg, inputForm);
+        GX_XF_SET_TEX_SRCROW(reg, inputRow);
         break;
     case GX_TG_MTX3x4:
         reg = 0;
-        reg = GX_BITSET(reg, 30, 1, GX_XF_TEX_PROJ_STQ); // 3x4 projection
-        reg = GX_BITSET(reg, 29, 1, inputForm);
-        reg = GX_BITSET(reg, 20, 5, inputRow);
+        GX_XF_SET_TEX_PROJTYPE(reg, GX_XF_TEX_PROJ_STQ); // 3x4 projection
+        GX_XF_SET_TEX_INPUTFORM(reg, inputForm);
+        GX_XF_SET_TEX_SRCROW(reg, inputRow);
         break;
     case GX_TG_BUMP0:
     case GX_TG_BUMP1:
@@ -654,21 +654,23 @@ void GXSetTexCoordGen2(GXTexCoordID id, GXTexGenType type, GXTexGenSrc src,
     case GX_TG_BUMP6:
     case GX_TG_BUMP7:
         reg = 0;
-        reg = GX_BITSET(reg, 29, 1, inputForm);
-        reg = GX_BITSET(reg, 25, 3, GX_XF_TG_BUMP);
-        reg = GX_BITSET(reg, 20, 5, inputRow);
-        reg = GX_BITSET(reg, 17, 3, src - GX_TG_TEXCOORD0);
-        reg = GX_BITSET(reg, 14, 3, type - GX_TG_BUMP0);
+        GX_XF_SET_TEX_INPUTFORM(reg, inputForm);
+        GX_XF_SET_TEX_TEXGENTYPE(reg, GX_XF_TG_BUMP);
+        GX_XF_SET_TEX_SRCROW(reg, inputRow);
+        GX_XF_SET_TEX_BUMPSRCTEX(reg, src - GX_TG_TEXCOORD0);
+        GX_XF_SET_TEX_BUMPSRCLIGHT(reg, type - GX_TG_BUMP0);
         break;
     case GX_TG_SRTG:
         reg = 0;
-        reg = GX_BITSET(reg, 29, 1, inputForm);
+        GX_XF_SET_TEX_INPUTFORM(reg, inputForm);
+
         if (src == GX_TG_COLOR0) {
-            reg = GX_BITSET(reg, 25, 3, GX_XF_TG_CLR0);
+            GX_XF_SET_TEX_TEXGENTYPE(reg, GX_XF_TG_CLR0);
         } else {
-            reg = GX_BITSET(reg, 25, 3, GX_XF_TG_CLR1);
+            GX_XF_SET_TEX_TEXGENTYPE(reg, GX_XF_TG_CLR1);
         }
-        reg = GX_BITSET(reg, 20, 5, 2);
+
+        GX_XF_SET_TEX_SRCROW(reg, 2);
         break;
     default:
         break;
@@ -678,8 +680,8 @@ void GXSetTexCoordGen2(GXTexCoordID id, GXTexGenType type, GXTexGenSrc src,
     gxdt->gxDirtyFlags |= GX_DIRTY_TEX0 << id;
 
     reg = 0;
-    reg = GX_BITSET(reg, 26, 6, dualTexMtxIdx - GX_DTEXMTX0);
-    reg = GX_BITSET(reg, 23, 1, normalize);
+    GX_XF_SET_DUALTEX_BASEROW(reg, dualTexMtxIdx - GX_DTEXMTX0);
+    GX_XF_SET_DUALTEX_NORMALIZE(reg, normalize);
     gxdt->dualTexRegs[id] = reg;
 
     switch (id) {
