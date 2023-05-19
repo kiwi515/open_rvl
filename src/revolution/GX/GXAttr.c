@@ -139,7 +139,7 @@ static inline void SETVCDATTR(GXAttr name, GXAttrType type) {
     }
 }
 
-void GXSetVtxDescv(const GXVtxDescList list) {
+void GXSetVtxDescv(const GXVtxDescList* list) {
     for (; list->attr != GX_VA_NULL; list++) {
         SETVCDATTR(list->attr, list->type);
     }
@@ -287,7 +287,7 @@ void GXGetVtxDesc(GXAttr name, GXAttrType* type) {
     *type = result;
 }
 
-void GXGetVtxDescv(GXVtxDescList list) {
+void GXGetVtxDescv(GXVtxDescList* list) {
     int i;
     GXAttr attr;
     int* new_var2;
@@ -404,7 +404,7 @@ static inline void SETVAT(u32* vatA, u32* vatB, u32* vatC, GXAttr attr,
     }
 }
 
-void GXSetVtxAttrFmtv(s16 fmt, const GXVtxAttrFmtList list) {
+void GXSetVtxAttrFmtv(s16 fmt, const GXVtxAttrFmtList* list) {
     u32* vatA;
     u32* vatB;
     u32* vatC;
@@ -539,7 +539,7 @@ static u8 GetFracForNrm(GXCompType compType) {
     }
 }
 
-void GXGetVtxAttrFmtv(GXVtxFmt fmt, GXVtxAttrFmtList list) {
+void GXGetVtxAttrFmtv(GXVtxFmt fmt, GXVtxAttrFmtList* list) {
     int i;
     GXAttr attr;
 

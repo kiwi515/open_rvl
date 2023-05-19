@@ -7,6 +7,7 @@ extern "C" {
 #include <revolution/GX/GXAttr.h>
 #include <revolution/GX/GXBump.h>
 #include <revolution/GX/GXDisplayList.h>
+#include <revolution/GX/GXDraw.h>
 #include <revolution/GX/GXFifo.h>
 #include <revolution/GX/GXFrameBuf.h>
 #include <revolution/GX/GXGeometry.h>
