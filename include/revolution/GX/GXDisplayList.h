@@ -11,7 +11,7 @@ u32 GXEndDisplayList(void);
 void GXCallDisplayList(void* list, u32 size);
 
 static inline void GXFastCallDisplayList(void* list, u32 size) {
-    WGPIPE.c = GX_FIFO_CALL_DL;
+    WGPIPE.c = GX_FIFO_CMD_CALL_DL;
     WGPIPE.p = list;
     WGPIPE.i = size;
 }

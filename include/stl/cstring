@@ -1,6 +1,7 @@
 #ifndef MSL_CPP_CSTRING_H
 #define MSL_CPP_CSTRING_H
 #include <string.h>
+#ifdef __cplusplus
 
 namespace std {
 using ::strcat;
@@ -15,4 +16,5 @@ using ::strncpy;
 using ::strstr;
 } // namespace std
 
+#endif
 #endif

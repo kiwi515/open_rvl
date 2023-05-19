@@ -7,8 +7,7 @@
 extern "C" {
 #endif
 
-void __GXSetProjection(void);
-void GXSetProjection(const Mtx44 proj, GXProjectionType type);
+void GXSetProjection(const Mtx44 proj, GXProjMtxType type);
 void GXSetProjectionv(const f32 proj[7]);
 void GXGetProjectionv(f32 proj[7]);
 void GXLoadPosMtxImm(const Mtx mtx, u32 id);
@@ -17,7 +16,6 @@ void GXLoadNrmMtxImm(const Mtx mtx, u32 id);
 void GXLoadNrmMtxIndx3x3(u16 index, u32 id);
 void GXSetCurrentMtx(u32 id);
 void GXLoadTexMtxImm(const Mtx mtx, u32 id, GXMtxType type);
-void __GXSetViewport(void);
 void GXSetViewportJitter(f32 ox, f32 oy, f32 sx, f32 sy, f32 near, f32 far,
                          u32 nextField);
 void GXSetViewport(f32 ox, f32 oy, f32 sx, f32 sy, f32 near, f32 far);
@@ -27,6 +25,9 @@ void GXSetScissor(u32 x, u32 y, u32 w, u32 h);
 void GXGetScissor(u32* x, u32* y, u32* w, u32* h);
 void GXSetScissorBoxOffset(u32 ox, u32 oy);
 void GXSetClipMode(GXClipMode mode);
+
+void __GXSetProjection(void);
+void __GXSetViewport(void);
 void __GXSetMatrixIndex(GXAttr index);
 
 #ifdef __cplusplus
