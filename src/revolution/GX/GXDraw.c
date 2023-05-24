@@ -1,7 +1,7 @@
 #include <math.h>
 #include <revolution/GX.h>
 
-// Was this a mistake?
+// +1 for null terminator
 static GXVtxDescList vcd[GX_VA_MAX_ATTR + 1];
 static GXVtxAttrFmtList vat[GX_VA_MAX_ATTR + 1];
 
