@@ -233,7 +233,7 @@ void GXLoadLightObjImm(const GXLightObj* light, GXLightID id) {
 
     GX_XF_LOAD_REGS(XF_MEM_LOBJ_SIZE - 1, num + GX_XF_MEM_LIGHTOBJ);
     WriteLightObj(&WGPIPE, impl);
-    gxdt->xfWritten = TRUE;
+    gxdt->lastWriteWasXF = TRUE;
 }
 
 void GXLoadLightObjIndx(u16 index, GXLightID id) {
@@ -243,7 +243,7 @@ void GXLoadLightObjIndx(u16 index, GXLightID id) {
     num = (num % 8) * XF_MEM_LOBJ_SIZE;
 
     GX_FIFO_LOAD_INDX_D(num + GX_XF_MEM_LIGHTOBJ, XF_MEM_LOBJ_SIZE - 1, index);
-    gxdt->xfWritten = TRUE;
+    gxdt->lastWriteWasXF = TRUE;
 }
 
 void GXSetChanAmbColor(GXChannelID chan, GXColor color) {

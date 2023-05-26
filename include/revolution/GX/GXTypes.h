@@ -276,12 +276,17 @@ typedef enum _GXFogType {
     GX_FOG_PERSP_REVEXP = 6,
     GX_FOG_PERSP_REVEXP2 = 7,
 
-    GX_FOG_ORTHO_LIN = 10,
-    GX_FOG_ORTHO_EXP = 12,
-    GX_FOG_ORTHO_EXP2 = 13,
-    GX_FOG_ORTHO_REVEXP = 14,
-    GX_FOG_ORTHO_REVEXP2 = 15,
+    // Fourth bit is set to mark orthographic
+    GX_FOG_ORTHO_LIN = 1 << 3 | GX_FOG_PERSP_LIN,
+    GX_FOG_ORTHO_EXP = 1 << 3 | GX_FOG_PERSP_EXP,
+    GX_FOG_ORTHO_EXP2 = 1 << 3 | GX_FOG_PERSP_EXP2,
+    GX_FOG_ORTHO_REVEXP = 1 << 3 | GX_FOG_PERSP_REVEXP,
+    GX_FOG_ORTHO_REVEXP2 = 1 << 3 | GX_FOG_PERSP_REVEXP2
 } GXFogType;
+
+// Access components of the fog type
+#define GX_FOG_GET_PROJ(x) ((x) >> 3 & 1)
+#define GX_FOG_GET_FSEL(x) ((x)&7)
 
 typedef enum _GXIndTexAlphaSel {
     GX_ITBA_OFF,
@@ -402,6 +407,19 @@ typedef enum _GXMtxType {
     GX_MTX_3x4,
     GX_MTX_2x4,
 } GXMtxType;
+
+typedef enum _GXPixelFmt {
+    GX_PF_RGB8_Z24,    // from Dolphin
+    GX_PF_RGBA6_Z24,   // from EGG
+    GX_PF_RGBA565_Z16, // from Dolphin
+    GX_PF_Z24,         // from Dolphin
+    GX_PF_Y8,          // from Dolphin
+    GX_PF_U8,          // from Dolphin
+    GX_PF_V8,          // from Dolphin
+    GX_PF_YUV420,      // from Dolphin
+
+    GX_MAX_PIXELFMT
+} GXPixelFmt;
 
 /**
  * Matrix column index into XF memory.
@@ -800,6 +818,13 @@ typedef enum _GXVtxFmt {
 
     GX_MAX_VTXFMT,
 } GXVtxFmt;
+
+typedef enum _GXZFmt {
+    GX_ZC_LINEAR, // from patent
+    GX_ZC_NEAR,   // from Dolphin
+    GX_ZC_MID,    // from Dolphin
+    GX_ZC_FAR,    // from Dolphin
+} GXZFmt;
 
 #ifdef __cplusplus
 }

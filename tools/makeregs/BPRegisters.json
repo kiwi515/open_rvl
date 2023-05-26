@@ -23,14 +23,17 @@
                     "end": 27
                 },
                 {
+                    "name": "multisample",
+                    "start": 22,
+                    "end": 22
+                },
+                {
                     "name": "cullMode",
-                    "desc": "Cull mode",
                     "start": 16,
                     "end": 17
                 },
                 {
                     "name": "numIndStages",
-                    "desc": "Indirect stage count",
                     "start": 13,
                     "end": 15
                 },
@@ -361,6 +364,12 @@
                     "desc": "Point offset",
                     "start": 10,
                     "end": 12
+                },
+                {
+                    "name": "adjust_ar",
+                    "desc": "Interlacing: adjust for pixels having aspect ratio of 1/2",
+                    "start": 9,
+                    "end": 9
                 }
             ]
         },
@@ -599,23 +608,136 @@
         },
         {
             "name": "ZMode",
-            "id": "0x40"
+            "id": "0x40",
+            "fields": [
+                {
+                    "name": "test_enable",
+                    "start": 31,
+                    "end": 31
+                },
+                {
+                    "name": "compare",
+                    "start": 28,
+                    "end": 30
+                },
+                {
+                    "name": "update_enable",
+                    "start": 27,
+                    "end": 27
+                }
+            ]
         },
         {
             "name": "BlendMode",
-            "id": "0x41"
+            "id": "0x41",
+            "fields": [
+                {
+                    "name": "blend_enable",
+                    "start": 31,
+                    "end": 31
+                },
+                {
+                    "name": "logic_op_enable",
+                    "start": 30,
+                    "end": 30
+                },
+                {
+                    "name": "dither",
+                    "start": 29,
+                    "end": 29
+                },
+                {
+                    "name": "color_update",
+                    "start": 28,
+                    "end": 28
+                },
+                {
+                    "name": "alpha_update",
+                    "start": 27,
+                    "end": 27
+                },
+                {
+                    "name": "dst_factor",
+                    "start": 24,
+                    "end": 26
+                },
+                {
+                    "name": "src_factor",
+                    "start": 21,
+                    "end": 23
+                },
+                {
+                    "name": "subtract",
+                    "start": 20,
+                    "end": 20
+                },
+                {
+                    "name": "logic_mode",
+                    "start": 16,
+                    "end": 19
+                }
+            ]
         },
         {
             "name": "DstAlpha",
-            "id": "0x42"
+            "id": "0x42",
+            "fields": [
+                {
+                    "name": "alpha",
+                    "start": 24,
+                    "end": 31
+                },
+                {
+                    "name": "enable",
+                    "start": 23,
+                    "end": 23
+                },
+                {
+                    "name": "yuv_fmt",
+                    "start": 21,
+                    "end": 22
+                }
+            ]
         },
         {
             "name": "ZControl",
-            "id": "0x43"
+            "id": "0x43",
+            "fields": [
+                {
+                    "name": "pixel_fmt",
+                    "start": 29,
+                    "end": 31
+                },
+                {
+                    "name": "z_fmt",
+                    "start": 26,
+                    "end": 28
+                },
+                {
+                    "name": "before_tex",
+                    "desc": "Determines whether Z-buffering occurs before or after texturing",
+                    "start": 25,
+                    "end": 25
+                }
+            ]
         },
         {
             "name": "FieldMask",
-            "id": "0x44"
+            "id": "0x44",
+            "fields": [
+                {
+                    "name": "odd",
+                    "desc": "Whether to write odd fields to the EFB",
+                    "start": 31,
+                    "end": 31
+                },
+                {
+                    "name": "even",
+                    "desc": "Whether to write even fields to the EFB",
+                    "start": 30,
+                    "end": 30
+                }
+            ]
         },
         {
             "name": "DrawDone",
@@ -727,7 +849,15 @@
         },
         {
             "name": "FieldMode",
-            "id": "0x68"
+            "id": "0x68",
+            "fields": [
+                {
+                    "name": "tex_lod",
+                    "desc": "Adjust vertex tex LOD computation to account for interlacing",
+                    "start": 31,
+                    "end": 31
+                }
+            ]
         },
         {
             "name": "SetMode0_Tex0",
@@ -1115,27 +1245,139 @@
         },
         {
             "name": "FogRange",
-            "id": "0xE8"
+            "id": "0xE8",
+            "fields": [
+                {
+                    "name": "center",
+                    "start": 22,
+                    "end": 31
+                },
+                {
+                    "name": "enabled",
+                    "start": 21,
+                    "end": 21
+                }
+            ]
+        },
+        {
+            "name": "FogRangeK",
+            "fields": [
+                {
+                    "name": "hi",
+                    "start": 20,
+                    "end": 31
+                },
+                {
+                    "name": "lo",
+                    "start": 8,
+                    "end": 19
+                }
+            ]
+        },
+        {
+            "name": "FogRangeK0",
+            "id": "0xE9"
+        },
+        {
+            "name": "FogRangeK1",
+            "id": "0xEA"
+        },
+        {
+            "name": "FogRangeK2",
+            "id": "0xEB"
+        },
+        {
+            "name": "FogRangeK3",
+            "id": "0xEC"
+        },
+        {
+            "name": "FogRangeK4",
+            "id": "0xED"
         },
         {
             "name": "FogParam0",
-            "id": "0xEE"
+            "id": "0xEE",
+            "fields": [
+                {
+                    "name": "a_mant",
+                    "start": 21,
+                    "end": 31
+                },
+                {
+                    "name": "a_exp",
+                    "start": 13,
+                    "end": 20
+                },
+                {
+                    "name": "a_sign",
+                    "start": 12,
+                    "end": 12
+                }
+            ]
         },
         {
             "name": "FogParam1",
-            "id": "0xEF"
+            "id": "0xEF",
+            "fields": [
+                {
+                    "name": "b_mag",
+                    "start": 8,
+                    "end": 31
+                }
+            ]
         },
         {
             "name": "FogParam2",
-            "id": "0xF0"
+            "id": "0xF0",
+            "fields": [
+                {
+                    "name": "b_shift",
+                    "start": 27,
+                    "end": 31
+                }
+            ]
         },
         {
             "name": "FogParam3",
-            "id": "0xF1"
+            "id": "0xF1",
+            "fields": [
+                {
+                    "name": "c_mant",
+                    "start": 21,
+                    "end": 31
+                },
+                {
+                    "name": "c_exp",
+                    "start": 13,
+                    "end": 20
+                },
+                {
+                    "name": "c_sign",
+                    "start": 12,
+                    "end": 12
+                },
+                {
+                    "name": "proj",
+                    "start": 11,
+                    "end": 11
+                },
+                {
+                    "name": "fsel",
+                    "start": 8,
+                    "end": 10
+                }
+            ]
         },
         {
             "name": "FogColor",
-            "id": "0xF2"
+            "id": "0xF2",
+            "fields": [
+                {
+                    "name": "rgb",
+                    "start": 8,
+                    "end": 31
+                }
+            ]
         },
         {
             "name": "AlphaCompare",

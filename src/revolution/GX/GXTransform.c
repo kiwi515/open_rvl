@@ -275,9 +275,9 @@ void GXSetScissor(u32 x, u32 y, u32 w, u32 h) {
     GX_BP_SET_SCISSORBR_RIGHT(reg, x2);
     gxdt->scissorBR = reg;
 
-    GX_LOAD_BP_REG(gxdt->scissorTL);
-    GX_LOAD_BP_REG(gxdt->scissorBR);
-    gxdt->xfWritten = FALSE;
+    GX_BP_LOAD_REG(gxdt->scissorTL);
+    GX_BP_LOAD_REG(gxdt->scissorBR);
+    gxdt->lastWriteWasXF = FALSE;
 }
 
 void GXGetScissor(u32* x, u32* y, u32* w, u32* h) {
@@ -301,13 +301,13 @@ void GXSetScissorBoxOffset(u32 ox, u32 oy) {
     GX_BP_SET_SCISSOROFFSET_OY(cmd, (oy + 342) / 2);
     GX_BP_SET_OPCODE(cmd, GX_BP_REG_SCISSOROFFSET);
 
-    GX_LOAD_BP_REG(cmd);
-    gxdt->xfWritten = FALSE;
+    GX_BP_LOAD_REG(cmd);
+    gxdt->lastWriteWasXF = FALSE;
 }
 
 void GXSetClipMode(GXClipMode mode) {
     GX_XF_LOAD_REG(GX_XF_REG_CLIPDISABLE, mode);
-    gxdt->xfWritten = TRUE;
+    gxdt->lastWriteWasXF = TRUE;
 }
 
 void __GXSetMatrixIndex(GXAttr index) {
@@ -320,5 +320,5 @@ void __GXSetMatrixIndex(GXAttr index) {
         GX_XF_LOAD_REG(GX_XF_REG_MATRIXINDEX1, gxdt->matrixIndex1);
     }
 
-    gxdt->xfWritten = TRUE;
+    gxdt->lastWriteWasXF = TRUE;
 }

@@ -122,7 +122,7 @@ void __GXSetDirtyState(void) {
             __GXSetProjection();
         }
 
-        gxdt->xfWritten = TRUE;
+        gxdt->lastWriteWasXF = TRUE;
     }
 
     gxdt->gxDirtyFlags = 0;
@@ -152,28 +152,28 @@ void __GXSendFlushPrim(void) {
         WGPIPE.i = 0;
     }
 
-    gxdt->xfWritten = TRUE;
+    gxdt->lastWriteWasXF = TRUE;
 }
 
 void GXSetLineWidth(u8 width, u32 offset) {
     GX_BP_SET_LINEPTWIDTH_LINESZ(gxdt->linePtWidth, width);
     GX_BP_SET_LINEPTWIDTH_LINEOFS(gxdt->linePtWidth, offset);
-    GX_LOAD_BP_REG(gxdt->linePtWidth);
-    gxdt->xfWritten = FALSE;
+    GX_BP_LOAD_REG(gxdt->linePtWidth);
+    gxdt->lastWriteWasXF = FALSE;
 }
 
 void GXSetPointSize(u8 size, u32 offset) {
     GX_BP_SET_LINEPTWIDTH_POINTSZ(gxdt->linePtWidth, size);
     GX_BP_SET_LINEPTWIDTH_POINTOFS(gxdt->linePtWidth, offset);
-    GX_LOAD_BP_REG(gxdt->linePtWidth);
-    gxdt->xfWritten = FALSE;
+    GX_BP_LOAD_REG(gxdt->linePtWidth);
+    gxdt->lastWriteWasXF = FALSE;
 }
 
 void GXEnableTexOffsets(GXTexCoordID id, GXBool lineOfs, GXBool pointOfs) {
     GX_BP_SET_SU_SSIZE_USELINEOFS(gxdt->txcRegs[id], lineOfs);
     GX_BP_SET_SU_SSIZE_USEPOINTOFS(gxdt->txcRegs[id], pointOfs);
-    GX_LOAD_BP_REG(gxdt->txcRegs[id]);
-    gxdt->xfWritten = FALSE;
+    GX_BP_LOAD_REG(gxdt->txcRegs[id]);
+    gxdt->lastWriteWasXF = FALSE;
 }
 
 void GXSetCullMode(GXCullMode mode) {
@@ -202,11 +202,11 @@ void GXSetCoPlanar(GXBool coplanar) {
     reg |= GX_BP_REG_SSMASK << 24;
     reg |= 0x80000;
 
-    GX_LOAD_BP_REG(reg);
-    GX_LOAD_BP_REG(gxdt->genMode);
+    GX_BP_LOAD_REG(reg);
+    GX_BP_LOAD_REG(gxdt->genMode);
 }
 
 void __GXSetGenMode(void) {
-    GX_LOAD_BP_REG(gxdt->genMode);
-    gxdt->xfWritten = FALSE;
+    GX_BP_LOAD_REG(gxdt->genMode);
+    gxdt->lastWriteWasXF = FALSE;
 }

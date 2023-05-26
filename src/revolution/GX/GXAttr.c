@@ -36,7 +36,7 @@ static void __GXXfVtxSpecs(void) {
     cmd = (txc << 3) & ~0xF | cmd;
     WGPIPE.i = cmd | nrm << 2;
 
-    gxdt->xfWritten = TRUE;
+    gxdt->lastWriteWasXF = TRUE;
 }
 
 void GXSetVtxDesc(GXAttr name, GXAttrType type) {

@@ -9,8 +9,8 @@ typedef struct _GXData {
     union {
         UNKWORD WORD_0x0;
         struct {
-            u16 SHORT_0x0; // at 0x0
-            u16 xfWritten; // at 0x2
+            u16 SHORT_0x0;      // at 0x0
+            u16 lastWriteWasXF; // at 0x2
         };
     }; // at 0x0
     u16 SHORT_0x4;
@@ -41,7 +41,12 @@ typedef struct _GXData {
     u32 ind_imask; // at 0x174
     u32 ras1_ss0;  // at 0x178
     u32 ras1_ss1;  // at 0x17C
-    char UNK_0x180[0x254 - 0x180];
+    char UNK_0x180[0x220 - 0x180];
+    u32 blendMode; // at 0x220
+    u32 dstAlpha;  // at 0x224
+    u32 zMode;     // at 0x228
+    u32 zControl;  // at 0x22C
+    char UNK_0x230[0x254 - 0x230];
     u32 genMode; // at 0x254
     char UNK_0x258[0x520 - 0x258];
     GXAttrType normalType;  // at 0x520
